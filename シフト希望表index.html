@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>シフト希望表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
+
+header{background:#2c3e6b;color:#fff;padding:10px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em;white-space:nowrap;}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;}
+.hdr-right select{padding:5px 9px;border-radius:5px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
+#saveStatus{font-size:.75rem;opacity:.8;white-space:nowrap;color:#adf;}
+
+.toolbar{background:#fff;border-bottom:2px solid #d0d4e0;padding:7px 14px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+.btn{padding:5px 13px;border:none;border-radius:5px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn:hover{opacity:.85;} .btn:active{transform:scale(.97);}
+.btn-blue{background:#4a7fda;color:#fff;}
+.btn-teal{background:#2a9d8f;color:#fff;}
+.btn-gray{background:#8a94a8;color:#fff;}
+.btn-dark{background:#2c3e6b;color:#fff;}
+.btn-orange{background:#e07a20;color:#fff;}
+.lock-btn{padding:5px 12px;border-radius:5px;font-size:.8rem;font-weight:700;cursor:pointer;border:1.5px solid #4caf7d;background:#e8f4e8;color:#1a6636;}
+.lock-btn.on{background:#fde8e8;color:#c0392b;border-color:#e74c3c;}
+.sep{width:1px;height:22px;background:#d0d4e0;margin:0 2px;}
+.req-wrap{display:flex;align-items:center;gap:5px;font-size:.8rem;color:#555;}
+.req-wrap input{width:44px;padding:3px 5px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.82rem;}
+
+.legend{background:#f8f9fc;border-bottom:1px solid #d8dce8;padding:5px 14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:.76rem;color:#555;}
+.leg-item{display:flex;align-items:center;gap:4px;}
+.leg-dot{width:20px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;}
+.leg-x{background:#fde8e8;color:#c0392b;}
+.leg-o{background:#d5f0e0;color:#1a7a40;}
+.leg-bl{background:#f7f8fb;color:#bbb;border:1px solid #ddd;}
+.leg-off{background:#d0cece;color:#777;}
+
+#valBox{margin:6px 14px;padding:7px 12px;border-radius:6px;font-size:.8rem;display:none;}
+#valBox.ok{background:#e6f9ee;border:1px solid #4caf7d;color:#1a6636;display:block;}
+#valBox.err{background:#fff0f0;border:1px solid #e55;color:#b00020;display:block;}
+
+.table-outer{overflow:auto;padding:12px 14px 40px;}
+.table-wrap{display:inline-block;min-width:100%;background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12);overflow:hidden;}
+table{border-collapse:collapse;table-layout:fixed;}
+
+thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
+th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
+th.s-name{position:sticky;left:26px;z-index:30;background:#1e2d50;width:96px;min-width:96px;}
+th.s-target{position:sticky;right:0;z-index:30;background:#1e2d50;width:54px;min-width:54px;}
+th.sat{background:#1e3f7a!important;}
+th.sun{background:#7a1c1c!important;}
+th.hdr-off{background:#7a7878!important;color:#ddd!important;}
+.th-day{font-size:.92rem;display:block;font-weight:800;line-height:1.3;}
+.th-wd{font-size:.68rem;display:block;opacity:.85;}
+
+tr.note-row td{background:#f0f4ff;font-size:.62rem;color:#444;text-align:center;padding:1px;border:1px solid #d0d4e0;height:14px;overflow:hidden;white-space:nowrap;cursor:pointer;}
+tr.note-row td.s-no,tr.note-row td.s-name{position:sticky;background:#e4e8f4;font-weight:700;z-index:10;cursor:default;}
+tr.note-row td.s-no{left:0;}
+tr.note-row td.s-name{left:26px;}
+tr.note-row td.s-target{position:sticky;right:0;background:#e4e8f4;z-index:10;cursor:default;}
+tr.note-row td.nd-off{background:#bfbdbd!important;color:#888;cursor:default;}
+
+tr.ampm-row td{background:#e8ecf5;font-size:.6rem;color:#777;text-align:center;padding:1px;border:1px solid #d0d4e0;height:13px;}
+tr.ampm-row td.s-no{position:sticky;left:0;z-index:10;background:#d8dce8;}
+tr.ampm-row td.s-name{position:sticky;left:26px;z-index:10;background:#d8dce8;}
+tr.ampm-row td.s-target{position:sticky;right:0;z-index:10;background:#d8dce8;}
+tr.ampm-row td.ap-off{background:#b8b6b6!important;}
+.half-lbl{display:flex;}
+.half-lbl span{flex:1;text-align:center;}
+
+tr.data-row td{border:1px solid #d0d4e0;vertical-align:middle;padding:0;}
+td.s-no{position:sticky;left:0;z-index:5;background:#f0f2f8;text-align:center;font-weight:700;font-size:.78rem;color:#555;padding:2px;border-right:1px solid #b0b8cc;}
+td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left;font-weight:600;font-size:.8rem;padding:3px 5px;border-right:2px solid #a0a8c0;white-space:nowrap;}
+td.s-target{position:sticky;right:0;z-index:5;background:#fffbe6;padding:2px;text-align:center;border-left:2px solid #a0a8c0;}
+td.s-target input{width:42px;padding:3px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.85rem;font-weight:700;background:transparent;}
+td.s-target input:focus{outline:none;border-color:#4a7fda;}
+tr.data-row:nth-child(even) td.s-name{background:#f2f4fc;}
+
+td.cell-day{min-width:44px;width:44px;padding:0;}
+td.cell-day.day-off{background:#d0cece!important;}
+.cell-wrap{display:grid;grid-template-columns:1fr 1fr;height:42px;}
+.hc{display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.05rem;font-weight:700;user-select:none;transition:background .1s;}
+.hc.am{border-right:1px dashed #b8bcc8;}
+.hc[data-s="0"]{background:#f7f8fb;color:transparent;}
+.hc[data-s="1"]{background:#fde8e8;color:#c0392b;}
+.hc[data-s="2"]{background:#d5f0e0;color:#1a7a40;}
+.hc[data-s="0"]:hover:not(.lk){background:#e4e6f5;}
+.hc[data-s="1"]:hover:not(.lk){background:#f9cfcf;}
+.hc[data-s="2"]:hover:not(.lk){background:#bde8d0;}
+.hc.lk{cursor:default!important;}
+
+tr.count-row td{background:#eef1f8;text-align:center;font-size:.68rem;padding:2px 1px;border:1px solid #cdd0de;color:#444;}
+tr.count-row td.s-no{position:sticky;left:0;z-index:10;background:#e0e4f0;font-weight:700;}
+tr.count-row td.s-name{position:sticky;left:26px;z-index:10;background:#e0e4f0;font-weight:700;font-size:.72rem;}
+tr.count-row td.s-target{position:sticky;right:0;z-index:10;background:#e0e4f0;}
+td.cnt-off{background:#bfbdbd!important;}
+.cnt-wrap{display:flex;flex-direction:column;gap:1px;}
+.cc{padding:1px 3px;border-radius:3px;font-weight:700;font-size:.68rem;}
+.cc-ok{background:#c3e6cb;color:#155724;}
+.cc-warn{background:#f8d7da;color:#721c24;}
+.cc-idle{background:#e2e3e5;color:#555;}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:10px;padding:22px;min-width:320px;max-width:640px;box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.modal h3{font-size:.95rem;font-weight:700;margin-bottom:12px;color:#2c3e6b;}
+.modal input[type=text]{width:100%;padding:7px 10px;border:1.5px solid #ccc;border-radius:5px;font-size:.9rem;margin-bottom:10px;}
+.modal input[type=text]:focus{outline:none;border-color:#4a7fda;}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+.note-all-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.note-all-row label{width:70px;font-size:.82rem;color:#555;white-space:nowrap;flex-shrink:0;}
+.note-all-row input{flex:1;padding:5px 8px;border:1px solid #ccc;border-radius:4px;font-size:.82rem;}
+#allNotesList{max-height:420px;overflow-y:auto;padding-right:4px;}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2c3e6b;color:#fff;padding:9px 20px;border-radius:7px;font-size:.84rem;z-index:600;box-shadow:0 4px 16px rgba(0,0,0,.22);pointer-events:none;opacity:0;transition:opacity .3s;}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📅 シフト希望表</h1>
+  <div class="hdr-right">
+    <select id="yearSel"></select>年
+    <select id="monthSel"></select>月
+    <span id="saveStatus">💾 自動保存</span>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 編集中</button>
+  <div class="sep"></div>
+  <button class="btn btn-orange" id="holBtn" onclick="toggleHolMode()">🏖 休業日設定</button>
+  <button class="btn btn-blue" onclick="openAllNotes()">📝 備考編集</button>
+  <div class="sep"></div>
+  <button class="btn btn-teal" onclick="autoAssign()">✨ 自動割り当て</button>
+  <button class="btn btn-gray" onclick="resetMonth()">↩ リセット</button>
+  <div class="sep"></div>
+  <button class="btn btn-dark" id="exportXlsxBtn" onclick="exportXLSX()">📊 Excel出力</button>
+  <button class="btn btn-gray" onclick="exportCSV()">📥 CSV出力</button>
+  <div class="sep"></div>
+  <div class="req-wrap">
+    <label>必要人数:</label>
+    <input type="number" id="reqCount" value="3" min="1" max="20" onchange="validate();updateCounts();">
+  </div>
+</div>
+
+<div class="legend">
+  <strong>凡例：</strong>
+  <div class="leg-item"><div class="leg-dot leg-x">×</div>入れない</div>
+  <div class="leg-item"><div class="leg-dot leg-o">○</div>入りたい</div>
+  <div class="leg-item"><div class="leg-dot leg-bl"></div>どちらでも</div>
+  <div class="leg-item"><div class="leg-dot leg-off">休</div>休業日</div>
+  <span style="color:#aaa;margin-left:8px">クリック：空欄→×→○ ／ 左＝午前・右＝午後</span>
+</div>
+
+<div id="valBox"></div>
+
+<div class="table-outer">
+  <div class="table-wrap">
+    <table id="mainTable">
+      <thead id="tHead"></thead>
+      <tbody id="tBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 備考1日編集モーダル -->
+<div class="modal-bg" id="noteModal">
+  <div class="modal">
+    <h3 id="noteModalTitle">備考編集</h3>
+    <input type="text" id="noteInput" placeholder="例：会議、おはなし会など">
+    <div class="modal-btns">
+      <button class="btn btn-gray" onclick="closeNoteModal()">キャンセル</button>
+      <button class="btn btn-blue" onclick="saveNote()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 備考一括編集モーダル -->
+<div class="modal-bg" id="allModal">
+  <div class="modal" style="min-width:480px;">
+    <h3>📝 備考一括編集</h3>
+    <div id="allNotesList"></div>
+    <div class="modal-btns" style="margin-top:12px;">
+      <button class="btn btn-gray" onclick="closeAllNotes()">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script>
+/* ── 定数 ── */
+const STAFF_DEF = [
+  '森 玲子','佐藤 祐子','浅野 ゆり子','加屋野 美紀','椙山 真澄',
+  '熊本 和美','髙橋 洋子','西島 紀子','神宮司 智子','篠　智子',
+  '金澤 緑','高橋 貴美枝','櫻井 佐和子','島袋 公子','中山 琴美','柳川 たづ江'
+];
+const WD = ['日','月','火','水','木','金','土'];
+const SL = ['','×','○'];
+
+/* ── 状態 ── */
+let staffList = [];
+let locked = false;
+let holMode = false;
+let noteDay = null;
+let store = {};
+
+/* ── storageラッパー（localStorage が使えない環境に対応） ── */
+const memStore = {};
+const storage = {
+  getItem(k) {
+    try { return localStorage.getItem(k); } catch(e) { return memStore[k] ?? null; }
+  },
+  setItem(k, v) {
+    try { localStorage.setItem(k, v); } catch(e) { memStore[k] = v; }
+  }
+};
+
+/* ── localStorage ラッパー ── */
+function lsKey(y,m)  { return 'sft_' + y + '_' + String(m).padStart(2,'0'); }
+function lsStaff()   { return 'sft_staff_v2'; }
+
+function saveMonth(y,m) {
+  const k = lsKey(y,m);
+  try {
+    storage.setItem(k, JSON.stringify(store[k]));
+    const el = document.getElementById('saveStatus');
+    if (el) el.textContent = '✅ ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) { showToast('⚠️ 保存に失敗しました（容量不足の可能性）'); }
+}
+
+function loadMonth(y,m) {
+  const k = lsKey(y,m);
+  if (store[k]) return store[k];
+  try {
+    const v = storage.getItem(k);
+    store[k] = v ? JSON.parse(v) : {shifts:{},hols:{},notes:{},targets:{}};
+  } catch(e) {
+    store[k] = {shifts:{},hols:{},notes:{},targets:{}};
+  }
+  return store[k];
+}
+
+function saveStaff() {
+  try { storage.setItem(lsStaff(), JSON.stringify(staffList)); } catch(e){}
+}
+function loadStaff() {
+  try { const v = storage.getItem(lsStaff()); if (v) { staffList = JSON.parse(v); return; } } catch(e){}
+  staffList = [...STAFF_DEF];
+}
+
+/* ── ヘルパー ── */
+function getY()  { return parseInt(document.getElementById('yearSel').value); }
+function getM()  { return parseInt(document.getElementById('monthSel').value); }
+function getReq(){ return parseInt(document.getElementById('reqCount').value)||3; }
+function daysIn(y,m){ return new Date(y,m,0).getDate(); }
+function dow(y,m,d){ return new Date(y,m-1,d).getDay(); }
+
+function getDat() {
+  const y=getY(),m=getM(),k=lsKey(y,m);
+  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{}};
+  return store[k];
+}
+
+function initDat() {
+  const y=getY(),m=getM(),days=daysIn(y,m);
+  const dat=getDat();
+  staffList.forEach((_,si) => {
+    if (!dat.shifts[si]) dat.shifts[si]={};
+    if (dat.targets[si]===undefined) dat.targets[si]='';
+    for (let d=1;d<=days;d++) {
+      if (!Array.isArray(dat.shifts[si][d])) dat.shifts[si][d]=[dat.shifts[si][d]||0,0];
+      if (dat.shifts[si][d].length<2) dat.shifts[si][d]=[dat.shifts[si][d][0]||0,0];
+    }
+  });
+}
+
+function save() { saveMonth(getY(),getM()); }
+
+/* ── 初期化 ── */
+function init() {
+  loadStaff();
+
+  const now = new Date();
+  const ySel = document.getElementById('yearSel');
+  const mSel = document.getElementById('monthSel');
+
+  for (let y=now.getFullYear()-1; y<=now.getFullYear()+2; y++) {
+    const o=document.createElement('option');
+    o.value=y; o.textContent=y;
+    if (y===now.getFullYear()) o.selected=true;
+    ySel.appendChild(o);
+  }
+  for (let m=1; m<=12; m++) {
+    const o=document.createElement('option');
+    o.value=m; o.textContent=m;
+    if (m===now.getMonth()+1) o.selected=true;
+    mSel.appendChild(o);
+  }
+
+  ySel.onchange = rebuild;
+  mSel.onchange = rebuild;
+
+  loadMonth(now.getFullYear(), now.getMonth()+1);
+  initDat();
+  rebuild();
+}
+
+/* ── テーブル構築 ── */
+function rebuild() {
+  loadMonth(getY(), getM());
+  initDat();
+  const y=getY(),m=getM(),days=daysIn(y,m);
+  buildHead(y,m,days);
+  buildBody(y,m,days);
+  validate();
+}
+
+function buildHead(y,m,days) {
+  const dat=getDat();
+  const head=document.getElementById('tHead');
+  head.innerHTML='';
+
+  /* 日付行 */
+  const r1=document.createElement('tr');
+  th(r1,'','s-no'); th(r1,'名前','s-name');
+  for (let d=1;d<=days;d++) {
+    const w=dow(y,m,d), off=!!dat.hols[d];
+    const el=document.createElement('th');
+    el.className=off?'hdr-off':(w===6?'sat':w===0?'sun':'');
+    el.style.cssText='width:44px;min-width:44px;cursor:pointer;';
+    el.innerHTML='<span class="th-day">'+d+'</span><span class="th-wd">'+WD[w]+'</span>';
+    el.addEventListener('click',function(day){ return function(){ clickHol(day); }; }(d));
+    r1.appendChild(el);
+  }
+  th(r1,'目標','s-target');
+  head.appendChild(r1);
+
+  /* 備考行 */
+  const r2=document.createElement('tr');
+  r2.className='note-row';
+  tdc(r2,'','s-no'); tdc(r2,'備考','s-name');
+  for (let d=1;d<=days;d++) {
+    const td=document.createElement('td');
+    if (dat.hols[d]) { td.className='nd-off'; td.textContent='休'; }
+    else {
+      td.textContent=dat.notes[d]||'';
+      td.addEventListener('click',function(day){ return function(){ openNote(day); }; }(d));
+    }
+    r2.appendChild(td);
+  }
+  tdc(r2,'','s-target');
+  head.appendChild(r2);
+
+  /* 午前午後行 */
+  const r3=document.createElement('tr');
+  r3.className='ampm-row';
+  tdc(r3,'','s-no'); tdc(r3,'前 後','s-name');
+  for (let d=1;d<=days;d++) {
+    const td=document.createElement('td');
+    if (dat.hols[d]) td.className='ap-off';
+    else td.innerHTML='<div class="half-lbl"><span>前</span><span>後</span></div>';
+    r3.appendChild(td);
+  }
+  tdc(r3,'日数','s-target');
+  head.appendChild(r3);
+}
+
+function th(tr,txt,cls) {
+  const el=document.createElement('th');
+  el.textContent=txt; el.className=cls; tr.appendChild(el);
+}
+function tdc(tr,txt,cls) {
+  const el=document.createElement('td');
+  el.textContent=txt; el.className=cls; tr.appendChild(el);
+}
+
+function buildBody(y,m,days) {
+  const body=document.getElementById('tBody');
+  body.innerHTML='';
+  const dat=getDat();
+
+  staffList.forEach(function(name,si){
+    const tr=document.createElement('tr');
+    tr.className='data-row';
+
+    /* No */
+    const tno=document.createElement('td'); tno.className='s-no'; tno.textContent=si+1; tr.appendChild(tno);
+    /* 名前 */
+    const tnm=document.createElement('td'); tnm.className='s-name'; tnm.textContent=name; tr.appendChild(tnm);
+
+    /* 日付 */
+    for (let d=1;d<=days;d++) {
+      const td=document.createElement('td');
+      td.className='cell-day';
+      if (dat.hols[d]) {
+        td.classList.add('day-off');
+      } else {
+        const wrap=document.createElement('div');
+        wrap.className='cell-wrap';
+        [0,1].forEach(function(h){
+          const c=document.createElement('div');
+          c.className='hc '+(h===0?'am':'pm');
+          if (locked) c.classList.add('lk');
+          const s=dat.shifts[si][d][h];
+          c.dataset.s=s; c.textContent=s===0?'':SL[s];
+          (function(cell, staffIdx, day, half){
+            cell.addEventListener('click',function(){
+              if (locked) return;
+              const nx=(parseInt(cell.dataset.s)+1)%3;
+              dat.shifts[staffIdx][day][half]=nx;
+              cell.dataset.s=nx; cell.textContent=nx===0?'':SL[nx];
+              save(); validate(); updateCounts();
+            });
+          })(c, si, d, h);
+          wrap.appendChild(c);
+        });
+        td.appendChild(wrap);
+      }
+      tr.appendChild(td);
+    }
+
+    /* 目標 */
+    const tgt=document.createElement('td'); tgt.className='s-target';
+    const inp=document.createElement('input');
+    inp.type='number'; inp.min=0; inp.max=days;
+    inp.value=dat.targets[si]!==''&&dat.targets[si]!==undefined?dat.targets[si]:'';
+    inp.placeholder='日';
+    (function(staffIdx, input){
+      input.addEventListener('change',function(){ dat.targets[staffIdx]=input.value===''?'':parseInt(input.value); save(); });
+    })(si, inp);
+    tgt.appendChild(inp); tr.appendChild(tgt);
+    body.appendChild(tr);
+  });
+
+  /* 集計行 */
+  const ctr=document.createElement('tr'); ctr.className='count-row'; ctr.id='cntRow';
+  const c0=document.createElement('td'); c0.className='s-no'; ctr.appendChild(c0);
+  const c1=document.createElement('td'); c1.className='s-name'; c1.textContent='出勤可能数'; ctr.appendChild(c1);
+  for (let d=1;d<=days;d++) {
+    const td=document.createElement('td'); td.id='cnt'+d;
+    if (dat.hols[d]) td.className='cnt-off';
+    ctr.appendChild(td);
+  }
+  const cr=document.createElement('td'); cr.className='s-target'; ctr.appendChild(cr);
+  body.appendChild(ctr);
+  updateCounts();
+}
+
+function updateCounts() {
+  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
+  for (let d=1;d<=days;d++) {
+    const td=document.getElementById('cnt'+d);
+    if (!td||dat.hols[d]) continue;
+    let am=0,pm=0;
+    staffList.forEach(function(_,si){
+      if (dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][0]!==1) am++;
+      if (dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][1]!==1) pm++;
+    });
+    td.innerHTML='<div class="cnt-wrap">'
+      +'<span class="cc '+(am===0?'cc-idle':am>=req?'cc-ok':'cc-warn')+'">前:'+am+'</span>'
+      +'<span class="cc '+(pm===0?'cc-idle':pm>=req?'cc-ok':'cc-warn')+'">後:'+pm+'</span>'
+      +'</div>';
+  }
+}
+
+/* ── バリデーション ── */
+function validate() {
+  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
+  const el=document.getElementById('valBox'); const errs=[];
+  for (let d=1;d<=days;d++) {
+    if (dat.hols[d]) continue;
+    let am=0,pm=0;
+    staffList.forEach(function(_,si){
+      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][0]!==1)am++;
+      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][1]!==1)pm++;
+    });
+    const l=d+'日('+WD[dow(y,m,d)]+')';
+    if (am<req) errs.push(l+'午前'+am+'人');
+    if (pm<req) errs.push(l+'午後'+pm+'人');
+  }
+  if (errs.length===0) { el.className='ok'; el.textContent='✅ 全日程、必要人数を充足しています。'; }
+  else if (errs.length<=8) { el.className='err'; el.innerHTML='⚠️ 人数不足：'+errs.join('　'); }
+  else { el.className='err'; el.innerHTML='⚠️ '+errs.length+'件で人数不足があります。'; }
+}
+
+/* ── ロック ── */
+function toggleLock() {
+  locked=!locked;
+  const b=document.getElementById('lockBtn');
+  b.textContent=locked?'🔒 ロック中':'🔓 編集中';
+  b.className=locked?'lock-btn on':'lock-btn';
+  document.querySelectorAll('.hc').forEach(function(c){ locked?c.classList.add('lk'):c.classList.remove('lk'); });
+  showToast(locked?'🔒 ロック中：セルを変更できません':'🔓 ロック解除しました');
+}
+
+/* ── 休業日 ── */
+function toggleHolMode() {
+  holMode=!holMode;
+  const b=document.getElementById('holBtn');
+  b.style.background=holMode?'#c0392b':'';
+  b.textContent=holMode?'✅ 休業日設定終了':'🏖 休業日設定';
+  showToast(holMode?'日付をクリックして休業日を設定/解除してください':'休業日設定を終了しました');
+}
+function clickHol(d) {
+  if (!holMode) return;
+  const dat=getDat();
+  dat.hols[d]=!dat.hols[d];
+  if (dat.hols[d]) staffList.forEach(function(_,si){ dat.shifts[si][d]=[0,0]; });
+  save(); rebuild();
+}
+
+/* ── 備考 ── */
+function openNote(d) {
+  noteDay=d;
+  const dat=getDat();
+  document.getElementById('noteModalTitle').textContent='備考編集：'+getM()+'月'+d+'日';
+  document.getElementById('noteInput').value=dat.notes[d]||'';
+  document.getElementById('noteModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('noteInput').focus(); },80);
+}
+function closeNoteModal() { document.getElementById('noteModal').classList.remove('open'); noteDay=null; }
+function saveNote() {
+  if (noteDay===null) return;
+  getDat().notes[noteDay]=document.getElementById('noteInput').value.trim();
+  save(); closeNoteModal(); rebuild();
+}
+
+function openAllNotes() {
+  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat();
+  const list=document.getElementById('allNotesList'); list.innerHTML='';
+  for (let d=1;d<=days;d++) {
+    if (dat.hols[d]) continue;
+    const row=document.createElement('div'); row.className='note-all-row';
+    const lbl=document.createElement('label'); lbl.textContent=d+'日('+WD[dow(y,m,d)]+')'; row.appendChild(lbl);
+    const inp=document.createElement('input'); inp.type='text'; inp.value=dat.notes[d]||'';
+    (function(day,input){ input.addEventListener('input',function(){ dat.notes[day]=input.value; save(); }); })(d,inp);
+    row.appendChild(inp); list.appendChild(row);
+  }
+  document.getElementById('allModal').classList.add('open');
+}
+function closeAllNotes() { document.getElementById('allModal').classList.remove('open'); rebuild(); }
+
+/* ── 自動割り当て ── */
+function autoAssign() {
+  if (!confirm('自動割り当てを実行します。\n×の希望は守り、目標日数に合わせて空欄を補充します。実行しますか？')) return;
+  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
+  function countO(si){ let c=0; for(let d=1;d<=days;d++){if(dat.hols[d])continue;if(dat.shifts[si][d][0]===2)c++;if(dat.shifts[si][d][1]===2)c++;} return c; }
+  for (let d=1;d<=days;d++) {
+    if (dat.hols[d]) continue;
+    [0,1].forEach(function(h){
+      const fixed=staffList.map(function(_,si){ return si; }).filter(function(si){ return dat.shifts[si][d][h]===2; });
+      const flex=staffList.map(function(_,si){ return si; }).filter(function(si){ return dat.shifts[si][d][h]===0; });
+      const need=req-fixed.length; if (need<=0) return;
+      flex.sort(function(a,b){
+        const ta=dat.targets[a]!==''&&dat.targets[a]!==undefined?parseInt(dat.targets[a]):999;
+        const tb=dat.targets[b]!==''&&dat.targets[b]!==undefined?parseInt(dat.targets[b]):999;
+        return (tb-countO(b))-(ta-countO(a));
+      });
+      flex.slice(0,need).forEach(function(si){ dat.shifts[si][d][h]=2; });
+    });
+  }
+  save(); rebuild(); showToast('✨ 自動割り当てが完了しました');
+}
+
+/* ── リセット ── */
+function resetMonth() {
+  if (!confirm('この月のシフト（○×・休業日・備考）をリセットしますか？\n目標日数は保持されます。')) return;
+  const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={};
+  initDat(); save(); rebuild(); showToast('リセットしました');
+}
+
+/* ── CSV出力 ── */
+function exportCSV() {
+  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat();
+  const rows=[];
+  const t=['','',y+'年　'+m+'月シフト希望表'];
+  for(let i=0;i<days*2-1;i++)t.push(''); t.push(''); rows.push(t);
+  const dr=['',''];
+  for(let d=1;d<=days;d++){dr.push(d,'');} dr.push('目標日数'); rows.push(dr);
+  const wr=['',''];
+  for(let d=1;d<=days;d++){wr.push(WD[dow(y,m,d)],'');} wr.push(''); rows.push(wr);
+  const nr=['','備考'];
+  for(let d=1;d<=days;d++){
+    if(dat.hols[d]){nr.push('休','');}else{nr.push(dat.notes[d]||'','');}
+  } nr.push(''); rows.push(nr);
+  const ar=['',''];
+  for(let d=1;d<=days;d++){
+    if(dat.hols[d]){ar.push('','');}else{ar.push('午前','午後');}
+  } ar.push(''); rows.push(ar);
+  staffList.forEach(function(name,si){
+    const r=[si+1,name];
+    for(let d=1;d<=days;d++){
+      if(dat.hols[d]){r.push('','');}
+      else{var am=dat.shifts[si]&&dat.shifts[si][d]?dat.shifts[si][d][0]||0:0;
+           var pm=dat.shifts[si]&&dat.shifts[si][d]?dat.shifts[si][d][1]||0:0;
+           r.push(am===0?'':SL[am],pm===0?'':SL[pm]);}
+    }
+    const tg=dat.targets[si]; r.push(tg!==undefined&&tg!==''?tg:''); rows.push(r);
+  });
+  const cam=['','午前出勤可能数'], cpm=['','午後出勤可能数'];
+  for(let d=1;d<=days;d++){
+    if(dat.hols[d]){cam.push('休','');cpm.push('休','');continue;}
+    let am=0,pm=0;
+    staffList.forEach(function(_,si){
+      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][0]!==1)am++;
+      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][1]!==1)pm++;
+    });
+    cam.push(am,''); cpm.push(pm,'');
+  }
+  cam.push(''); cpm.push('');
+  rows.push(cam); rows.push(cpm);
+
+  const bom='\uFEFF';
+  const csv=rows.map(function(r){ return r.map(function(v){ const s=String(v!=null?v:''); return s.indexOf(',')>=0||s.indexOf('"')>=0?'"'+s.replace(/"/g,'""')+'"':s; }).join(','); }).join('\n');
+  const blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='シフト希望表_'+y+'年'+m+'月.csv'; a.click(); URL.revokeObjectURL(url);
+  showToast('📥 CSVを出力しました');
+}
+
+/* ── Excel出力（写真の手書き帳票レイアウトを再現） ──
+   ルール：
+   - 各日は「午前」「午後」の2列を持つ
+   - 午前と午後の希望が同じ（○○・××・空欄空欄）なら1セルに結合して1つだけ表示
+   - 午前と午後が異なる場合は2列に分けてそれぞれ表示（ラベルなし）
+   - 休業日は2列結合してグレー表示
+*/
+async function exportXLSX() {
+  if (typeof ExcelJS === 'undefined') {
+    showToast('⚠️ Excel出力ライブラリの読み込みに失敗しました（通信環境をご確認ください）');
+    return;
+  }
+  const y=getY(), m=getM(), days=daysIn(y,m), dat=getDat(), req=getReq();
+
+  const FILL = { 1:'FFFDE8E8', 2:'FFD5F0E0' };
+  const FONT_COLOR = { 1:'FFC0392B', 2:'FF1A7A40' };
+  const HOL_FILL = 'FFD0CECE';
+  const NOTE_FILL = 'FFF0F4FF';
+  const NOTE_HOL_FILL = 'FFBFBDBD';
+  const AMPM_FILL = 'FFE8ECF5';
+  const AMPM_HOL_FILL = 'FFB8B6B6';
+  const HEADER_NAVY = 'FF2C3E6B';
+  const HEADER_DARKBLUE = 'FF1E2D50';
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet(y+'年'+m+'月', { views:[{ showGridLines:false }] });
+
+  const NAME_COL = 2, FIRST_DAY_COL = 3;
+  const dcol = (d) => FIRST_DAY_COL + (d-1)*2;
+  const targetCol = dcol(days+1);
+
+  ws.getColumn(1).width = 4.5;
+  ws.getColumn(2).width = 14;
+  for (let d=1; d<=days; d++) {
+    ws.getColumn(dcol(d)).width = 3.4;
+    ws.getColumn(dcol(d)+1).width = 3.4;
+  }
+  ws.getColumn(targetCol).width = 7.5;
+
+  const thin = { style:'thin', color:{argb:'FFB0B8CC'} };
+  const border = { top:thin, bottom:thin, left:thin, right:thin };
+  const center = { horizontal:'center', vertical:'middle' };
+
+  /* 行1：年・月見出し */
+  ws.mergeCells(1, NAME_COL, 1, FIRST_DAY_COL+1);
+  const yCell = ws.getCell(1, NAME_COL);
+  yCell.value = y+'年'; yCell.font = { name:'Meiryo', size:16, bold:true }; yCell.alignment = center;
+  const titleEndCol = Math.min(dcol(8), targetCol-1);
+  ws.mergeCells(1, FIRST_DAY_COL+2, 1, titleEndCol);
+  const tCell = ws.getCell(1, FIRST_DAY_COL+2);
+  tCell.value = m+'月シフト希望表'; tCell.font = { name:'Meiryo', size:22, bold:true, underline:true }; tCell.alignment = center;
+  ws.getRow(1).height = 30;
+
+  const ROW_DAY=2, ROW_WD=3, ROW_NOTE=4, ROW_AMPM=5, DATA_START=6;
+
+  for (let d=1; d<=days; d++) {
+    const c0 = dcol(d);
+    const isHol = !!dat.hols[d];
+
+    ws.mergeCells(ROW_DAY, c0, ROW_DAY, c0+1);
+    const dn = ws.getCell(ROW_DAY, c0);
+    dn.value = d; dn.alignment = center;
+    dn.font = { name:'Meiryo', size:11, bold:true, color:{argb: isHol?'FF666666':HEADER_DARKBLUE} };
+    if (isHol) dn.fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
+
+    ws.mergeCells(ROW_WD, c0, ROW_WD, c0+1);
+    const wdc = ws.getCell(ROW_WD, c0);
+    wdc.value = WD[dow(y,m,d)]; wdc.alignment = center;
+    wdc.font = { name:'Meiryo', size:9, bold:true, color:{argb: isHol?'FF666666':HEADER_DARKBLUE} };
+    if (isHol) wdc.fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
+
+    ws.mergeCells(ROW_NOTE, c0, ROW_NOTE, c0+1);
+    const nt = ws.getCell(ROW_NOTE, c0);
+    nt.value = isHol ? '休' : (dat.notes[d]||'');
+    nt.alignment = center;
+    nt.font = { name:'Meiryo', size:7, color:{argb:'FF555555'} };
+    nt.fill = { type:'pattern', pattern:'solid', fgColor:{argb: isHol?NOTE_HOL_FILL:NOTE_FILL} };
+
+    if (isHol) {
+      ws.mergeCells(ROW_AMPM, c0, ROW_AMPM, c0+1);
+      ws.getCell(ROW_AMPM, c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:AMPM_HOL_FILL} };
+    } else {
+      const ac = ws.getCell(ROW_AMPM, c0), pc = ws.getCell(ROW_AMPM, c0+1);
+      ac.value = '前'; pc.value = '後';
+      [ac,pc].forEach(function(cell){
+        cell.font = { name:'Meiryo', size:6, color:{argb:'FF777777'} };
+        cell.alignment = center;
+        cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:AMPM_FILL} };
+      });
+    }
+  }
+  ws.getRow(ROW_DAY).height = 18;
+  ws.getRow(ROW_WD).height = 18;
+  ws.getRow(ROW_NOTE).height = 13;
+  ws.getRow(ROW_AMPM).height = 11;
+
+  /* 名前・No見出し */
+  ws.mergeCells(ROW_DAY, 1, ROW_AMPM, 1);
+  const noH = ws.getCell(ROW_DAY,1); noH.value=''; noH.fill={type:'pattern',pattern:'solid',fgColor:{argb:HEADER_NAVY}};
+  ws.mergeCells(ROW_DAY, 2, ROW_AMPM, 2);
+  const nameH = ws.getCell(ROW_DAY,2); nameH.value='名前'; nameH.alignment=center;
+  nameH.font={name:'Meiryo',size:10,bold:true,color:{argb:'FFFFFFFF'}};
+  nameH.fill={type:'pattern',pattern:'solid',fgColor:{argb:HEADER_NAVY}};
+
+  /* 目標列見出し */
+  ws.mergeCells(ROW_DAY, targetCol, ROW_AMPM, targetCol);
+  const tgtH = ws.getCell(ROW_DAY, targetCol);
+  tgtH.value = '目標\n日数'; tgtH.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
+  tgtH.font = { name:'Meiryo', size:9, bold:true, color:{argb:'FFFFFFFF'} };
+  tgtH.fill = { type:'pattern', pattern:'solid', fgColor:{argb:HEADER_NAVY} };
+
+  /* スタッフ行 */
+  staffList.forEach(function(name, si) {
+    const r = DATA_START + si;
+    const noC = ws.getCell(r,1); noC.value=si+1; noC.alignment=center; noC.font={name:'Meiryo',size:9};
+    const nmC = ws.getCell(r,2); nmC.value=name; nmC.font={name:'Meiryo',size:10,bold:true}; nmC.alignment={vertical:'middle'};
+
+    for (let d=1; d<=days; d++) {
+      const c0 = dcol(d);
+      if (dat.hols[d]) {
+        ws.mergeCells(r, c0, r, c0+1);
+        ws.getCell(r,c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
+        continue;
+      }
+      const am = dat.shifts[si][d][0], pm = dat.shifts[si][d][1];
+      if (am === pm) {
+        ws.mergeCells(r, c0, r, c0+1);
+        const cell = ws.getCell(r, c0);
+        cell.value = SL[am]; cell.alignment = center;
+        cell.font = { name:'Meiryo', size:12, bold:true, color:{argb: FONT_COLOR[am]||'FF000000'} };
+        if (FILL[am]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[am]} };
+      } else {
+        [[c0,am],[c0+1,pm]].forEach(function(pair){
+          const cell = ws.getCell(r, pair[0]);
+          cell.value = SL[pair[1]]; cell.alignment = center;
+          cell.font = { name:'Meiryo', size:10, bold:true, color:{argb: FONT_COLOR[pair[1]]||'FF000000'} };
+          if (FILL[pair[1]]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[pair[1]]} };
+        });
+      }
+    }
+    const tg = dat.targets[si];
+    const tgC = ws.getCell(r, targetCol);
+    tgC.value = (tg!==undefined && tg!=='') ? tg+'日' : '';
+    tgC.alignment = center; tgC.font = { name:'Meiryo', size:10, bold:true };
+
+    for (let c=1; c<=targetCol; c++) ws.getCell(r,c).border = border;
+    ws.getRow(r).height = 20;
+  });
+
+  /* 出勤可能数集計行（午前・午後それぞれ表示、結合なし） */
+  const cntRow = DATA_START + staffList.length;
+  ws.mergeCells(cntRow, 1, cntRow, 2);
+  const cntLbl = ws.getCell(cntRow, 1);
+  cntLbl.value = '出勤可能数'; cntLbl.alignment = center;
+  cntLbl.font = { name:'Meiryo', size:9, bold:true };
+  cntLbl.fill = { type:'pattern', pattern:'solid', fgColor:{argb:'FFE0E4F0'} };
+
+  for (let d=1; d<=days; d++) {
+    const c0 = dcol(d);
+    if (dat.hols[d]) {
+      ws.mergeCells(cntRow, c0, cntRow, c0+1);
+      ws.getCell(cntRow, c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
+      continue;
+    }
+    let am=0, pm=0;
+    staffList.forEach(function(_, si){
+      if (dat.shifts[si][d][0] !== 1) am++;
+      if (dat.shifts[si][d][1] !== 1) pm++;
+    });
+    [[c0,am],[c0+1,pm]].forEach(function(pair){
+      const cell = ws.getCell(cntRow, pair[0]);
+      cell.value = pair[1]; cell.alignment = center;
+      cell.font = { name:'Meiryo', size:9, bold:true, color:{argb: pair[1]>=req?'FF155724':(pair[1]===0?'FF555555':'FF721C24')} };
+      cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: pair[1]===0?'FFE2E3E5':(pair[1]>=req?'FFC3E6CB':'FFF8D7DA')} };
+    });
+  }
+  for (let c=1; c<=targetCol; c++) ws.getCell(cntRow,c).border = border;
+  ws.getRow(cntRow).height = 18;
+
+  /* 表示・印刷設定 */
+  ws.views = [{ state:'frozen', xSplit:2, ySplit:ROW_AMPM, showGridLines:false }];
+  ws.pageSetup = { orientation:'landscape', fitToPage:true, fitToWidth:1, fitToHeight:0 };
+
+  const buf = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'シフト希望表_'+y+'年'+m+'月.xlsx'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('📊 Excelを出力しました');
+}
+
+/* ── トースト ── */
+var toastT=null;
+function showToast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  if(toastT) clearTimeout(toastT);
+  toastT=setTimeout(function(){ el.classList.remove('show'); },2800);
+}
+
+/* ── キーボード ── */
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&document.getElementById('noteModal').classList.contains('open'))saveNote();
+  if(e.key==='Escape'){closeNoteModal();closeAllNotes();}
+});
+
+/* ── 起動 ── */
+init();
+</script>
+</body>
+</html>
