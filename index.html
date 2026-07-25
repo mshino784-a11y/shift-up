@@ -13,6 +13,10 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
 .hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto;}
 .hdr-right select{padding:6px 8px;border-radius:5px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
 #saveStatus{font-size:.72rem;opacity:.85;white-space:nowrap;color:#adf;}
+.saveBtn{padding:6px 12px;border:none;border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer;background:#3d5080;color:#fff;white-space:nowrap;transition:background .15s;}
+.saveBtn:hover{opacity:.85;}
+.saveBtn.has-unsaved{background:#e07a20;}
+#saveStatus.has-unsaved{color:#ffb066;}
 .save-status-mobile{display:none;font-size:.75rem;color:#3d8a5c;white-space:nowrap;}
 .menuToggle{display:none;background:#3d5080;color:#fff;border:none;border-radius:5px;padding:6px 10px;font-size:.95rem;cursor:pointer;line-height:1;}
 
@@ -50,7 +54,6 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
   .hdr-right{width:100%;justify-content:space-between;margin-left:0;gap:6px;}
   .hdr-right select{padding:6px 6px;font-size:.82rem;}
   #saveStatus{display:none;}
-  .save-status-mobile{display:inline;}
   .menuToggle{display:inline-flex;align-items:center;gap:4px;margin-left:auto;}
   .toolbar{max-height:0;overflow:hidden;padding:0 12px;border-bottom:none;transition:max-height .25s ease,padding .25s ease;flex-direction:column;align-items:stretch;gap:10px;}
   .toolbar.open{max-height:70vh;padding:12px;border-bottom:2px solid #d0d4e0;overflow-y:auto;}
@@ -99,9 +102,9 @@ table{border-collapse:separate;border-spacing:0;table-layout:fixed;}
 #tHead tr.ampm-row td{top:0;z-index:101;}
 
 thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
-th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
-th.s-name{position:sticky;left:26px;z-index:30;background:#1e2d50;width:96px;min-width:96px;}
-th.s-target{position:sticky;right:0;z-index:30;background:#1e2d50;width:54px;min-width:54px;}
+th.s-no{position:sticky;left:0;z-index:130;background:#1e2d50;width:26px;min-width:26px;}
+th.s-name{position:sticky;left:26px;z-index:130;background:#1e2d50;width:96px;min-width:96px;}
+th.s-target{position:sticky;right:0;z-index:130;background:#1e2d50;width:54px;min-width:54px;}
 th.sat{background:#1e3f7a!important;}
 th.sun{background:#7a1c1c!important;}
 th.hdr-off{background:#7a7878!important;color:#ddd!important;}
@@ -109,16 +112,16 @@ th.hdr-off{background:#7a7878!important;color:#ddd!important;}
 .th-wd{font-size:.68rem;display:block;opacity:.85;}
 
 tr.note-row td{background:#f0f4ff;font-size:.62rem;color:#444;text-align:center;padding:1px;border:1px solid #d0d4e0;height:14px;overflow:hidden;white-space:nowrap;cursor:pointer;}
-tr.note-row td.s-no,tr.note-row td.s-name{position:sticky;background:#e4e8f4;font-weight:700;z-index:10;cursor:default;}
+tr.note-row td.s-no,tr.note-row td.s-name{position:sticky;background:#e4e8f4;font-weight:700;z-index:120;cursor:default;}
 tr.note-row td.s-no{left:0;}
 tr.note-row td.s-name{left:26px;}
-tr.note-row td.s-target{position:sticky;right:0;background:#e4e8f4;z-index:10;cursor:default;}
+tr.note-row td.s-target{position:sticky;right:0;background:#e4e8f4;z-index:120;cursor:default;}
 tr.note-row td.nd-off{background:#bfbdbd!important;color:#888;cursor:default;}
 
 tr.ampm-row td{background:#e8ecf5;font-size:.6rem;color:#777;text-align:center;padding:1px;border:1px solid #d0d4e0;height:13px;}
-tr.ampm-row td.s-no{position:sticky;left:0;z-index:10;background:#d8dce8;}
-tr.ampm-row td.s-name{position:sticky;left:26px;z-index:10;background:#d8dce8;}
-tr.ampm-row td.s-target{position:sticky;right:0;z-index:10;background:#d8dce8;}
+tr.ampm-row td.s-no{position:sticky;left:0;z-index:110;background:#d8dce8;}
+tr.ampm-row td.s-name{position:sticky;left:26px;z-index:110;background:#d8dce8;}
+tr.ampm-row td.s-target{position:sticky;right:0;z-index:110;background:#d8dce8;}
 tr.ampm-row td.ap-off{background:#b8b6b6!important;}
 .half-lbl{display:flex;}
 .half-lbl span{flex:1;text-align:center;}
@@ -194,19 +197,13 @@ td.cnt-off{background:#bfbdbd!important;}
   <div class="hdr-right">
     <select id="yearSel"></select>年
     <select id="monthSel"></select>月
-    <span id="saveStatus">💾 自動保存</span>
+    <button class="saveBtn" id="saveBtn" onclick="manualSave()">💾 保存</button>
+    <span id="saveStatus">保存済み</span>
     <button class="menuToggle" id="menuToggleBtn" onclick="toggleToolbar()">☰ メニュー</button>
   </div>
 </header>
 
 <div class="toolbar" id="toolbar">
-  <div class="tgroup">
-    <span class="tgroup-label">保存</span>
-    <span id="saveStatusMobile" class="save-status-mobile">💾 自動保存</span>
-  </div>
-
-  <div class="sep"></div>
-
   <div class="tgroup">
     <span class="tgroup-label">入力モード</span>
     <div class="mode-btn-group">
@@ -251,7 +248,6 @@ td.cnt-off{background:#bfbdbd!important;}
   <div class="tgroup">
     <span class="tgroup-label">出力</span>
     <button class="btn btn-dark" id="exportXlsxBtn" onclick="exportXLSX()">📊 Excel出力</button>
-    <button class="btn btn-gray" onclick="exportCSV()">📥 CSV出力</button>
   </div>
 </div>
 
@@ -344,11 +340,8 @@ function saveMonth(y,m) {
   const k = lsKey(y,m);
   try {
     storage.setItem(k, JSON.stringify(store[k]));
-    const t = '✅ ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-    const el = document.getElementById('saveStatus');
-    const elM = document.getElementById('saveStatusMobile');
-    if (el) el.textContent = t;
-    if (elM) elM.textContent = t;
+    unsaved = false;
+    updateSaveButtons();
   } catch(e) { showToast('⚠️ 保存に失敗しました（容量不足の可能性）'); }
 }
 
@@ -411,7 +404,27 @@ function initDat() {
   });
 }
 
-function save() { saveMonth(getY(),getM()); }
+/* 保存は自動では行わず、「保存」ボタンを押した時だけ実行する。
+   編集操作のたびに呼ばれるsave()は、メモリ上のデータはそのまま保持しつつ
+   「未保存の変更がある」ことを画面に示すだけにとどめる。 */
+let unsaved = false;
+function save() {
+  unsaved = true;
+  updateSaveButtons();
+}
+function manualSave() {
+  saveMonth(getY(),getM());
+  showToast('💾 保存しました');
+}
+function updateSaveButtons() {
+  const el = document.getElementById('saveStatus');
+  const btn = document.getElementById('saveBtn');
+  const label = unsaved
+    ? '● 未保存の変更があります'
+    : '✅ 保存済み ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+  if (el) { el.textContent = label; el.classList.toggle('has-unsaved', unsaved); }
+  if (btn) btn.classList.toggle('has-unsaved', unsaved);
+}
 
 /* その日の午前/午後の出勤可能人数と◐(未確定)人数を集計する共通関数 */
 function countDay(dat, si_list, d) {
@@ -423,6 +436,18 @@ function countDay(dat, si_list, d) {
     if (sh && sh[1]!==1) pm++;
   });
   return {am:am, pm:pm, half:half};
+}
+
+/* Excel出力の「出勤人数」欄用：○（入りたい、確定済み）の人数だけを数える。
+   countDayは×以外（空欄も含む）を数えるためExcel出力の用途とは異なる。 */
+function countOK(dat, si_list, d) {
+  let am=0, pm=0;
+  si_list.forEach(function(si){
+    const sh = dat.shifts[si] && dat.shifts[si][d];
+    if (sh && sh[0]===2) am++;
+    if (sh && sh[1]===2) pm++;
+  });
+  return {am:am, pm:pm};
 }
 
 /* スタッフのインデックス配列 [0,1,2,...] を返す共通ヘルパー */
@@ -489,12 +514,19 @@ function init() {
     mSel.appendChild(o);
   }
 
-  ySel.onchange = rebuild;
-  mSel.onchange = rebuild;
+  ySel.onchange = function(){ warnIfUnsavedOnSwitch(); rebuild(); };
+  mSel.onchange = function(){ warnIfUnsavedOnSwitch(); rebuild(); };
 
   loadMonth(now.getFullYear(), now.getMonth()+1);
   initDat();
   rebuild();
+}
+
+/* 年月を切り替える前に、今表示中の月に未保存の変更があれば軽く知らせる。
+   データ自体はstore（メモリ）に残るため切り替えても消えないが、
+   保存ボタンを押さない限りlocalStorageには反映されないことを伝える。 */
+function warnIfUnsavedOnSwitch() {
+  if (unsaved) showToast('⚠️ 前の月に未保存の変更があります（保存ボタンを押してください）');
 }
 
 /* ── テーブル構築 ── */
@@ -514,7 +546,7 @@ function buildHead(y,m,days) {
 
   /* 日付行 */
   const r1=document.createElement('tr');
-  th(r1,'','s-no'); th(r1,'名前','s-name');
+  th(r1,'','s-no'); th(r1,'','s-name');
   for (let d=1;d<=days;d++) {
     const w=dow(y,m,d), off=!!dat.hols[d];
     const el=document.createElement('th');
@@ -1020,52 +1052,6 @@ function resetMonth() {
   initDat(); save(); rebuild(); showToast('リセットしました');
 }
 
-/* ── CSV出力 ── */
-function exportCSV() {
-  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat();
-  const rows=[];
-  const t=['','',y+'年　'+m+'月シフト希望表'];
-  for(let i=0;i<days*2-1;i++)t.push(''); t.push(''); rows.push(t);
-  const dr=['',''];
-  for(let d=1;d<=days;d++){dr.push(d,'');} dr.push('目標日数'); rows.push(dr);
-  const wr=['',''];
-  for(let d=1;d<=days;d++){wr.push(WD[dow(y,m,d)],'');} wr.push(''); rows.push(wr);
-  const nr=['','備考'];
-  for(let d=1;d<=days;d++){
-    if(dat.hols[d]){nr.push('休','');}else{nr.push(dat.notes[d]||'','');}
-  } nr.push(''); rows.push(nr);
-  const ar=['',''];
-  for(let d=1;d<=days;d++){
-    if(dat.hols[d]){ar.push('','');}else{ar.push('午前','午後');}
-  } ar.push(''); rows.push(ar);
-  staffList.forEach(function(name,si){
-    const r=[si+1,name];
-    for(let d=1;d<=days;d++){
-      if(dat.hols[d]){r.push('','');}
-      else if(dat.half[si]&&dat.half[si][d]){r.push('◐','◐');}
-      else{var am=dat.shifts[si]&&dat.shifts[si][d]?dat.shifts[si][d][0]||0:0;
-           var pm=dat.shifts[si]&&dat.shifts[si][d]?dat.shifts[si][d][1]||0:0;
-           r.push(am===0?'':SL[am],pm===0?'':SL[pm]);}
-    }
-    const tg=dat.targets[si]; r.push(tg!==undefined&&tg!==''?tg:''); rows.push(r);
-  });
-  const cam=['','午前出勤可能数'], cpm=['','午後出勤可能数'], chalf=['','◐未確定数'];
-  const idxsCsv = staffIdxs();
-  for(let d=1;d<=days;d++){
-    if(dat.hols[d]){cam.push('休','');cpm.push('休','');chalf.push('休','');continue;}
-    const c = countDay(dat, idxsCsv, d);
-    cam.push(c.am,''); cpm.push(c.pm,''); chalf.push(c.half,'');
-  }
-  cam.push(''); cpm.push(''); chalf.push('');
-  rows.push(cam); rows.push(cpm); rows.push(chalf);
-
-  const bom='\uFEFF';
-  const csv=rows.map(function(r){ return r.map(function(v){ const s=String(v!=null?v:''); return s.indexOf(',')>=0||s.indexOf('"')>=0?'"'+s.replace(/"/g,'""')+'"':s; }).join(','); }).join('\n');
-  const blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
-  downloadBlob(blob, 'シフト希望表_'+y+'年'+m+'月.csv');
-  showToast('📥 CSVを出力しました');
-}
-
 /* ── Excel出力（写真の手書き帳票レイアウトを再現） ──
    ルール：
    - 各日は「午前」「午後」の2列を持つ
@@ -1083,6 +1069,8 @@ async function exportXLSX() {
 
   const FILL = { 1:'FFFDE8E8', 2:'FFD5F0E0' };
   const FONT_COLOR = { 1:'FFC0392B', 2:'FF1A7A40' };
+  /* Excel出力では×は表示せず空欄にし、○のみ表示する */
+  const SL_XLSX = ['','','○'];
   const HOL_FILL = 'FFD0CECE';
   const HALF_FILL = 'FFFDF0D5';
   const HALF_FONT = 'FFA5680C';
@@ -1190,25 +1178,21 @@ async function exportXLSX() {
       }
       if (dat.half[si] && dat.half[si][d]) {
         ws.mergeCells(r, c0, r, c0+1);
-        const hCell = ws.getCell(r, c0);
-        hCell.value = '◐'; hCell.alignment = center;
-        hCell.font = { name:'Meiryo', size:12, bold:true, color:{argb: HALF_FONT} };
-        hCell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: HALF_FILL} };
         continue;
       }
       const am = dat.shifts[si][d][0], pm = dat.shifts[si][d][1];
       if (am === pm) {
         ws.mergeCells(r, c0, r, c0+1);
         const cell = ws.getCell(r, c0);
-        cell.value = SL[am]; cell.alignment = center;
+        cell.value = SL_XLSX[am]; cell.alignment = center;
         cell.font = { name:'Meiryo', size:12, bold:true, color:{argb: FONT_COLOR[am]||'FF000000'} };
-        if (FILL[am]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[am]} };
+        if (am===2 && FILL[am]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[am]} };
       } else {
         [[c0,am],[c0+1,pm]].forEach(function(pair){
           const cell = ws.getCell(r, pair[0]);
-          cell.value = SL[pair[1]]; cell.alignment = center;
+          cell.value = SL_XLSX[pair[1]]; cell.alignment = center;
           cell.font = { name:'Meiryo', size:10, bold:true, color:{argb: FONT_COLOR[pair[1]]||'FF000000'} };
-          if (FILL[pair[1]]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[pair[1]]} };
+          if (pair[1]===2 && FILL[pair[1]]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[pair[1]]} };
         });
       }
     }
@@ -1221,12 +1205,12 @@ async function exportXLSX() {
     ws.getRow(r).height = 20;
   });
 
-  /* 出勤可能数集計行（午前・午後それぞれ表示、結合なし） */
+  /* 出勤人数集計行：○（確定した出勤希望）の人数のみを午前・午後それぞれ表示 */
   const idxsXlsx = staffIdxs();
   const cntRow = DATA_START + staffList.length;
   ws.mergeCells(cntRow, 1, cntRow, 2);
   const cntLbl = ws.getCell(cntRow, 1);
-  cntLbl.value = '出勤可能数'; cntLbl.alignment = center;
+  cntLbl.value = '出勤人数'; cntLbl.alignment = center;
   cntLbl.font = { name:'Meiryo', size:9, bold:true };
   cntLbl.fill = { type:'pattern', pattern:'solid', fgColor:{argb:'FFE0E4F0'} };
 
@@ -1237,10 +1221,10 @@ async function exportXLSX() {
       ws.getCell(cntRow, c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
       continue;
     }
-    const c = countDay(dat, idxsXlsx, d);
+    const c = countOK(dat, idxsXlsx, d);
     [[c0,c.am],[c0+1,c.pm]].forEach(function(pair){
       const cell = ws.getCell(cntRow, pair[0]);
-      cell.value = c.half>0 ? pair[1]+'(+◐'+c.half+')' : pair[1];
+      cell.value = pair[1];
       cell.alignment = center;
       cell.font = { name:'Meiryo', size:9, bold:true, color:{argb: pair[1]>=req?'FF155724':(pair[1]===0?'FF555555':'FF721C24')} };
       cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: pair[1]===0?'FFE2E3E5':(pair[1]>=req?'FFC3E6CB':'FFF8D7DA')} };
@@ -1282,6 +1266,11 @@ window.addEventListener('resize', function(){
     if (tb) tb.classList.remove('open');
     if (btn) btn.textContent = '☰ メニュー';
   }
+});
+
+/* ── ページ離脱時に未保存の変更があれば警告 ── */
+window.addEventListener('beforeunload', function(e){
+  if (unsaved) { e.preventDefault(); e.returnValue=''; }
 });
 
 /* ── 起動 ── */
