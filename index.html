@@ -84,11 +84,15 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
 #valBox .vb-tag{background:#fff;border:1px solid #f0c896;border-radius:5px;padding:3px 8px;font-size:.75rem;color:#8a4a00;white-space:nowrap;}
 #valBox .vb-pending{margin-top:6px;font-size:.76rem;color:#5a6a8a;width:100%;}
 
-.table-outer{overflow:auto;padding:12px 14px 40px;-webkit-overflow-scrolling:touch;}
+.table-outer{overflow:auto;padding:12px 14px 40px;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 230px);}
 .table-wrap{display:inline-block;min-width:100%;background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12);overflow:hidden;}
 table{border-collapse:collapse;table-layout:fixed;}
 .scroll-hint{display:none;font-size:.72rem;color:#888;padding:0 14px;margin-top:-6px;margin-bottom:4px;}
-@media (max-width:760px){ .scroll-hint{display:block;} }
+@media (max-width:760px){ .scroll-hint{display:block;} .table-outer{max-height:calc(100vh - 165px);} }
+
+/* 見出し（日付・備考・午前午後の3行）をテーブル内スクロール時も上部に固定する。
+   これにより、下にスクロールしてもツールバーのボタンや日付・氏名が常に見える。 */
+#tHead{position:sticky;top:0;z-index:40;}
 
 thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
 th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
@@ -117,7 +121,14 @@ tr.ampm-row td.ap-off{background:#b8b6b6!important;}
 
 tr.data-row td{border:1px solid #d0d4e0;vertical-align:middle;padding:0;}
 td.s-no{position:sticky;left:0;z-index:5;background:#f0f2f8;text-align:center;font-weight:700;font-size:.78rem;color:#555;padding:2px;border-right:1px solid #b0b8cc;}
-td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left;font-weight:600;font-size:.8rem;padding:3px 5px;border-right:2px solid #a0a8c0;white-space:nowrap;}
+td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left;font-weight:600;font-size:.8rem;padding:3px 5px;border-right:2px solid #a0a8c0;white-space:nowrap;display:flex;align-items:center;gap:3px;}
+.row-lock-btn{border:none;background:transparent;cursor:pointer;font-size:.82rem;padding:1px 2px;line-height:1;flex-shrink:0;border-radius:4px;}
+.row-lock-btn:hover{background:#e4e6f5;}
+.row-lock-btn.on{background:#fde8e8;}
+.row-lock-btn.on:hover{background:#f9cfcf;}
+.row-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+tr.data-row.row-locked td.s-name{background:#efe4e4;}
+tr.data-row.row-locked td.s-no{background:#eee0e0;}
 td.s-target{position:sticky;right:0;z-index:5;background:#fffbe6;padding:2px;text-align:center;border-left:2px solid #a0a8c0;}
 td.s-target input{width:42px;padding:3px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.85rem;font-weight:700;background:transparent;}
 td.s-target input:focus{outline:none;border-color:#4a7fda;}
@@ -185,8 +196,7 @@ td.cnt-off{background:#bfbdbd!important;}
 
 <div class="toolbar" id="toolbar">
   <div class="tgroup">
-    <span class="tgroup-label">状態</span>
-    <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 編集中</button>
+    <span class="tgroup-label">保存</span>
     <span id="saveStatusMobile" class="save-status-mobile">💾 自動保存</span>
   </div>
 
@@ -247,6 +257,7 @@ td.cnt-off{background:#bfbdbd!important;}
   <div class="leg-item"><div class="leg-dot leg-bl"></div>どちらでも</div>
   <div class="leg-item"><div class="leg-dot leg-off">休</div>休業日</div>
   <div class="leg-item"><div class="leg-dot leg-h">◐</div>片方OK（未確定）</div>
+  <div class="leg-item">🔓/🔒 氏名横のアイコンでその人だけタップ操作を禁止できます</div>
   <span style="color:#aaa;margin-left:8px" id="modeHint">クリック：空欄⇔× ／ 左＝午前・右＝午後</span>
 </div>
 
@@ -300,7 +311,6 @@ const SL = ['','×','○'];
 
 /* ── 状態 ── */
 let staffList = [];
-let locked = false;
 let holMode = false;
 let noteDay = null;
 let store = {};
@@ -342,9 +352,9 @@ function loadMonth(y,m) {
   if (store[k]) return store[k];
   try {
     const v = storage.getItem(k);
-    store[k] = v ? JSON.parse(v) : {shifts:{},hols:{},notes:{},targets:{},half:{}};
+    store[k] = v ? JSON.parse(v) : {shifts:{},hols:{},notes:{},targets:{},half:{},locks:{}};
   } catch(e) {
-    store[k] = {shifts:{},hols:{},notes:{},targets:{},half:{}};
+    store[k] = {shifts:{},hols:{},notes:{},targets:{},half:{},locks:{}};
   }
   return store[k];
 }
@@ -374,8 +384,9 @@ function dow(y,m,d){ return new Date(y,m-1,d).getDay(); }
 
 function getDat() {
   const y=getY(),m=getM(),k=lsKey(y,m);
-  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{},half:{}};
+  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{},half:{},locks:{}};
   if (!store[k].half) store[k].half={};
+  if (!store[k].locks) store[k].locks={};
   return store[k];
 }
 
@@ -386,6 +397,7 @@ function initDat() {
     if (!dat.shifts[si]) dat.shifts[si]={};
     if (!dat.half[si]) dat.half[si]={};
     if (dat.targets[si]===undefined) dat.targets[si]='';
+    if (dat.locks[si]===undefined) dat.locks[si]=false;
     for (let d=1;d<=days;d++) {
       if (!Array.isArray(dat.shifts[si][d])) dat.shifts[si][d]=[dat.shifts[si][d]||0,0];
       if (dat.shifts[si][d].length<2) dat.shifts[si][d]=[dat.shifts[si][d][0]||0,0];
@@ -556,12 +568,33 @@ function buildBody(y,m,days) {
 
   staffList.forEach(function(name,si){
     const tr=document.createElement('tr');
-    tr.className='data-row';
+    tr.className='data-row'+(dat.locks[si]?' row-locked':'');
 
     /* No */
     const tno=document.createElement('td'); tno.className='s-no'; tno.textContent=si+1; tr.appendChild(tno);
-    /* 名前 */
-    const tnm=document.createElement('td'); tnm.className='s-name'; tnm.textContent=name; tr.appendChild(tnm);
+    /* 名前（＋個別ロックアイコン） */
+    const tnm=document.createElement('td'); tnm.className='s-name';
+    const isLocked = !!dat.locks[si];
+    const lockBtn=document.createElement('button');
+    lockBtn.type='button';
+    lockBtn.className='row-lock-btn'+(isLocked?' on':'');
+    lockBtn.textContent=isLocked?'🔒':'🔓';
+    lockBtn.title=isLocked?(name+'：ロック中（タップで解除）'):(name+'：タップでロック（この人だけ入力不可に）');
+    (function(staffIdx, btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        dat.locks[staffIdx]=!dat.locks[staffIdx];
+        save();
+        showToast(dat.locks[staffIdx] ? '🔒 '+staffList[staffIdx]+' をロックしました' : '🔓 '+staffList[staffIdx]+' のロックを解除しました');
+        rebuild();
+      });
+    })(si, lockBtn);
+    tnm.appendChild(lockBtn);
+    const nameSpan=document.createElement('span');
+    nameSpan.className='row-name-text';
+    nameSpan.textContent=name;
+    tnm.appendChild(nameSpan);
+    tr.appendChild(tnm);
 
     /* 日付 */
     for (let d=1;d<=days;d++) {
@@ -573,13 +606,13 @@ function buildBody(y,m,days) {
         /* 統合セル（片方OK・未確定） */
         const hcEl=document.createElement('div');
         hcEl.className='half-cell';
-        if (locked) hcEl.classList.add('lk');
+        if (isLocked) hcEl.classList.add('lk');
         if (selectMode && selected.has(si+'-'+d)) hcEl.classList.add('selected');
         if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) hcEl.classList.add('sel-anchor');
         hcEl.textContent='◐';
         (function(cell, staffIdx, day){
           cell.addEventListener('click',function(){
-            if (locked) return;
+            if (dat.locks[staffIdx]) return;
             if (selectMode) { handleSelectClick(staffIdx, day); return; }
             /* どのモードでクリックしても統合解除して通常セル（空欄）に戻す */
             dat.half[staffIdx][day]=false;
@@ -594,14 +627,14 @@ function buildBody(y,m,days) {
         [0,1].forEach(function(h){
           const c=document.createElement('div');
           c.className='hc '+(h===0?'am':'pm');
-          if (locked) c.classList.add('lk');
+          if (isLocked) c.classList.add('lk');
           if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
           if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
           const s=dat.shifts[si][d][h];
           c.dataset.s=s; c.textContent=s===0?'':SL[s];
           (function(cell, staffIdx, day, half){
             cell.addEventListener('click',function(){
-              if (locked) return;
+              if (dat.locks[staffIdx]) return;
               if (selectMode) { handleSelectClick(staffIdx, day); return; }
               if (clickMode==='h') {
                 /* 片方OKモード：このセルを統合セル（◐）に変換。
@@ -723,16 +756,6 @@ function toggleValBox() {
   if (label) label.textContent = valBoxOpen ? '閉じる ▲' : '詳細を見る ▼';
 }
 
-/* ── ロック ── */
-function toggleLock() {
-  locked=!locked;
-  const b=document.getElementById('lockBtn');
-  b.textContent=locked?'🔒 ロック中':'🔓 編集中';
-  b.className=locked?'lock-btn on':'lock-btn';
-  document.querySelectorAll('.hc, .half-cell').forEach(function(c){ locked?c.classList.add('lk'):c.classList.remove('lk'); });
-  showToast(locked?'🔒 ロック中：セルを変更できません':'🔓 ロック解除しました');
-}
-
 /* ── 複数選択モード（矩形選択：始点タップ→終点タップ） ── */
 function toggleSelectMode() {
   selectMode=!selectMode;
@@ -825,7 +848,6 @@ function toggleHolMode() {
 }
 function clickHol(d) {
   if (!holMode) return;
-  if (locked) { showToast('🔒 ロック中は休業日を変更できません'); return; }
   const dat=getDat();
   dat.hols[d]=!dat.hols[d];
   if (dat.hols[d]) staffList.forEach(function(_,si){ dat.shifts[si][d]=[0,0]; if (dat.half[si]) dat.half[si][d]=false; });
@@ -865,51 +887,8 @@ function closeAllNotes() { document.getElementById('allModal').classList.remove(
 
 /* ── 自動割り当て ── */
 function autoAssign() {
-  if (!confirm('自動割り当てを実行します。\n×の希望は守り、◐（片方OK）は不足している方に自動確定し、目標日数にできるだけ近づけて空欄を補充します（午前のみ・午後のみの勤務は0.5日として計算／人数不足の場合は目標を多少超過してでも必要人数を優先します）。実行しますか？')) return;
+  if (!confirm('自動割り当てを実行します。\n×の希望は守り、◐（片方OK）は基本的には空欄と同じ扱いのまま、人数が不足する枠だけ片方に自動確定します（不要なら◐のまま残ります）。目標日数にできるだけ近づけて空欄を補充します（午前のみ・午後のみの勤務は0.5日として計算／人数不足の場合は目標を多少超過してでも必要人数を優先します）。実行しますか？')) return;
   const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
-
-  /* ステップ1：◐（片方OK）セルを解決する。
-     不足している方（人数が少ない方）にそのスタッフを○として確定し、
-     もう一方は自動割当の対象外（0のまま・触らない）とする。 */
-  for (let d=1;d<=days;d++) {
-    if (dat.hols[d]) continue;
-    const halfStaff = staffIdxs().filter(function(si){ return dat.half[si] && dat.half[si][d]; });
-    if (halfStaff.length===0) continue;
-
-    /* 現時点で「○として確定済み」の午前・午後の人数を数える。
-       （空欄＝まだ入れるかどうか未定の人はここでは数えない。
-       　◐を「不足している方」に振り分けるには、確定済みの人数だけを比較する必要がある） */
-    function fixedCount(h){
-      let c=0;
-      staffList.forEach(function(_,si){
-        if (dat.shifts[si][d][h]===2) c++;
-      });
-      return c;
-    }
-
-    halfStaff.forEach(function(si){
-      const amCount=fixedCount(0), pmCount=fixedCount(1);
-      /* 確定人数が少ない方（不足している方）にこのスタッフを割り当てる。同数なら午前を優先 */
-      const assignHalf = (pmCount<amCount) ? 1 : 0;
-      dat.shifts[si][d]=[0,0];
-      dat.shifts[si][d][assignHalf]=2;
-      dat.half[si][d]=false; /* 統合状態を解除し、通常の2分割セルに戻す（確定表示のため） */
-      /* このスタッフの確定がfixedCountに反映されるので、次の◐スタッフの判定に自然に影響する */
-    });
-  }
-
-  /* ステップ2：残りの空欄（0）を、月全体を通して目標日数にできるだけ近づくように補充する。
-     方針：
-       ・「残り必要日数＝目標日数－現在の確定済み日数」をスタッフごとに追跡し、
-         割り当てるたびに減らしていくことで、月全体を通じた過不足の偏りを抑える。
-         ※ここでの「日数」は、午前のみ／午後のみの片方勤務を0.5日として換算する
-         　（午前＋午後の両方が埋まった日を1日とカウント）。これにより「目標5日」の人が
-         　半日勤務ばかりで実質2.5日しか働いていないのに「達成」と誤判定されるのを防ぐ。
-       ・埋まりにくい枠（不足人数が多い枠）を先に処理し、特定の枠だけ人が集まらない事態を避ける。
-       ・候補者は「残り必要日数が多い人」を優先。目標に届いた人は自然と優先度が下がる。
-       ・それでも候補が足りない（目標達成者しか残っていない）場合は、
-         目標を超えてでも必要人数の確保を優先し、残り必要日数が少ない人から順に動員する。
-  */
   const idxsAll = staffIdxs();
 
   /* 目標日数（未設定なら999＝実質無制限として扱う） */
@@ -918,7 +897,8 @@ function autoAssign() {
     return (t!==''&&t!==undefined) ? parseInt(t) : 999;
   }
 
-  /* 現在すでに確定している日数（◐解決後・ステップ2前の時点）をスタッフごとに「日」単位で数える。
+  /* 現在すでに確定している日数をスタッフごとに「日」単位で数える。
+     ◐（未確定）はまだ確定していないのでここではカウントしない。
      午前・午後どちらか片方だけの○は0.5日、両方○の日は1日としてカウントする。 */
   const assignedDays = {};
   idxsAll.forEach(function(si){
@@ -936,7 +916,9 @@ function autoAssign() {
   /* 「残り必要日数」＝目標－現在の確定日数。負の値は「すでに目標超過」を意味する。 */
   function remaining(si){ return targetOf(si) - assignedDays[si]; }
 
-  /* 全ての未確定枠（日×午前/午後）を洗い出し、不足数が大きい順に並べる */
+  /* 全ての未確定枠（日×午前/午後）を洗い出し、不足数が大きい順に並べる。
+     ※◐の人はshifts値が[0,0]のままなので、この時点では空欄と見分けがつかない
+     　（＝意図的に「空欄と同じ判定」にしている）。 */
   const slots = [];
   for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
@@ -949,10 +931,21 @@ function autoAssign() {
   }
   slots.sort(function(a,b){ return b.need - a.need; }); /* 不足が大きい枠を先に処理 */
 
+  /* ◐（片方OK）の人は「片方だけ」しか働けないので、同じ日に両方の枠へ
+     二重に割り当てられないよう、この回で使用済みの (staffIdx-day) を記録する。 */
+  const halfUsedInRun = new Set();
+
   slots.forEach(function(slot){
     const d=slot.d, h=slot.h;
-    /* この枠に入れる候補（空欄=0のまま残っている人） */
-    let flex = idxsAll.filter(function(si){ return dat.shifts[si][d][h]===0; });
+
+    /* この枠に入れる候補：空欄のまま残っている人（◐で未確定な人も含む）。
+       ただし、元◐だった人がこの日ですでに片方の枠で使われていれば
+       （変換後はdat.halfがfalseになるため）halfUsedInRunで除外する。 */
+    let flex = idxsAll.filter(function(si){
+      if (dat.shifts[si][d][h]!==0) return false;
+      if (halfUsedInRun.has(si+'-'+d)) return false;
+      return true;
+    });
     if (flex.length===0) return;
 
     /* 残り必要日数が多い人を優先。同数なら現在の確定日数が少ない人を優先（さらに公平化） */
@@ -967,6 +960,12 @@ function autoAssign() {
     flex.slice(0, need).forEach(function(si){
       dat.shifts[si][d][h]=2;
       assignedDays[si]+=0.5;
+      if (dat.half[si] && dat.half[si][d]) {
+        /* ◐だった人を実際に確定した場合のみ、片方だけ働く形に変換する。
+           不足がなければここには来ないため、◐は空欄同様「基本入れない」まま残る。 */
+        dat.half[si][d]=false;
+        halfUsedInRun.add(si+'-'+d);
+      }
     });
   });
 
@@ -977,9 +976,13 @@ function autoAssign() {
     const t = dat.targets[si];
     return (t!==''&&t!==undefined) && assignedDays[si] > parseInt(t);
   }).length;
+  const stillPending = idxsAll.some(function(si){
+    for (let d=1;d<=days;d++){ if (dat.half[si] && dat.half[si][d]) return true; }
+    return false;
+  });
   showToast(overCount>0
     ? '✨ 自動割り当てが完了しました（人数確保のため目標超過が'+overCount+'名発生）'
-    : '✨ 自動割り当てが完了しました（全員、目標日数の範囲内）');
+    : '✨ 自動割り当てが完了しました'+(stillPending?'（不足のない◐は未確定のまま残しています）':'（全員、目標日数の範囲内）'));
 }
 
 /* ── リセット ── */
