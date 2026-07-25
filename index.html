@@ -8,25 +8,61 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
 
-header{background:#2c3e6b;color:#fff;padding:10px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3);}
-header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em;white-space:nowrap;}
-.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto;}
-.hdr-right select{padding:5px 9px;border-radius:5px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
-#saveStatus{font-size:.75rem;opacity:.8;white-space:nowrap;color:#adf;}
+header{background:#2c3e6b;color:#fff;padding:9px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap;}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.hdr-right select{padding:6px 8px;border-radius:5px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
+#saveStatus{font-size:.72rem;opacity:.85;white-space:nowrap;color:#adf;}
+.save-status-mobile{display:none;font-size:.75rem;color:#3d8a5c;white-space:nowrap;}
+.menuToggle{display:none;background:#3d5080;color:#fff;border:none;border-radius:5px;padding:6px 10px;font-size:.95rem;cursor:pointer;line-height:1;}
 
-.toolbar{background:#fff;border-bottom:2px solid #d0d4e0;padding:7px 14px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
-.btn{padding:5px 13px;border:none;border-radius:5px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+/* ── ツールバー：機能グループごとに区切る ── */
+.toolbar{background:#fff;border-bottom:2px solid #d0d4e0;padding:8px 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.tgroup{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:3px 10px;border-radius:8px;background:#f6f7fb;}
+.tgroup-label{font-size:.66rem;font-weight:700;color:#8a92aa;letter-spacing:.02em;margin-right:2px;white-space:nowrap;}
+
+.btn{padding:6px 13px;border:none;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
 .btn:hover{opacity:.85;} .btn:active{transform:scale(.97);}
 .btn-blue{background:#4a7fda;color:#fff;}
 .btn-teal{background:#2a9d8f;color:#fff;}
 .btn-gray{background:#8a94a8;color:#fff;}
 .btn-dark{background:#2c3e6b;color:#fff;}
 .btn-orange{background:#e07a20;color:#fff;}
-.lock-btn{padding:5px 12px;border-radius:5px;font-size:.8rem;font-weight:700;cursor:pointer;border:1.5px solid #4caf7d;background:#e8f4e8;color:#1a6636;}
+.btn-sm{padding:5px 9px;font-size:.74rem;}
+.lock-btn{padding:6px 12px;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;border:1.5px solid #4caf7d;background:#e8f4e8;color:#1a6636;}
 .lock-btn.on{background:#fde8e8;color:#c0392b;border-color:#e74c3c;}
-.sep{width:1px;height:22px;background:#d0d4e0;margin:0 2px;}
+.sep{width:1px;height:24px;background:#d0d4e0;margin:0 1px;}
 .req-wrap{display:flex;align-items:center;gap:5px;font-size:.8rem;color:#555;}
-.req-wrap input{width:44px;padding:3px 5px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.82rem;}
+.req-wrap input{width:44px;padding:4px 5px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.82rem;}
+
+.mode-btn-group{display:flex;border-radius:6px;overflow:hidden;border:1.5px solid #ccc;}
+.mode-btn{padding:6px 11px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;background:#fff;color:#666;}
+.mode-btn:not(:last-child){border-right:1px solid #ccc;}
+.mode-btn.active-x{background:#fde8e8;color:#c0392b;}
+.mode-btn.active-o{background:#d5f0e0;color:#1a7a40;}
+.mode-btn.active-h{background:#fdf0d5;color:#a5680c;}
+.mode-btn.active-b{background:#e4e6f5;color:#3d5080;}
+
+/* ── モバイル：ツールバーをアコーディオン化 ── */
+@media (max-width:760px){
+  header{padding:8px 12px;gap:6px 10px;}
+  header h1{font-size:.9rem;flex:1 1 auto;}
+  .hdr-right{width:100%;justify-content:space-between;margin-left:0;gap:6px;}
+  .hdr-right select{padding:6px 6px;font-size:.82rem;}
+  #saveStatus{display:none;}
+  .save-status-mobile{display:inline;}
+  .menuToggle{display:inline-flex;align-items:center;gap:4px;margin-left:auto;}
+  .toolbar{max-height:0;overflow:hidden;padding:0 12px;border-bottom:none;transition:max-height .25s ease,padding .25s ease;flex-direction:column;align-items:stretch;gap:10px;}
+  .toolbar.open{max-height:70vh;padding:12px;border-bottom:2px solid #d0d4e0;overflow-y:auto;}
+  .tgroup{width:100%;justify-content:flex-start;}
+  .mode-btn-group{width:100%;}
+  .mode-btn{flex:1;padding:8px 6px;}
+  .req-wrap{width:100%;justify-content:space-between;}
+  .sep{display:none;}
+  .tgroup{border-top:1px solid #e8eaf2;}
+  .tgroup:first-child{border-top:none;}
+  .tgroup{padding:8px 10px;}
+}
 
 .legend{background:#f8f9fc;border-bottom:1px solid #d8dce8;padding:5px 14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:.76rem;color:#555;}
 .leg-item{display:flex;align-items:center;gap:4px;}
@@ -35,14 +71,24 @@ header h1{font-size:1.05rem;font-weight:700;letter-spacing:.06em;white-space:now
 .leg-o{background:#d5f0e0;color:#1a7a40;}
 .leg-bl{background:#f7f8fb;color:#bbb;border:1px solid #ddd;}
 .leg-off{background:#d0cece;color:#777;}
+.leg-h{background:#fdf0d5;color:#a5680c;}
 
-#valBox{margin:6px 14px;padding:7px 12px;border-radius:6px;font-size:.8rem;display:none;}
+#valBox{margin:8px 14px;padding:9px 13px;border-radius:8px;font-size:.8rem;display:none;}
 #valBox.ok{background:#e6f9ee;border:1px solid #4caf7d;color:#1a6636;display:block;}
-#valBox.err{background:#fff0f0;border:1px solid #e55;color:#b00020;display:block;}
+#valBox.err{background:#fff6f0;border:1px solid #e8a34a;color:#8a4a00;display:block;}
+#valBox .vb-head{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-weight:700;}
+#valBox .vb-head .vb-toggle{font-size:.7rem;font-weight:700;color:#a05a00;white-space:nowrap;flex-shrink:0;}
+#valBox.ok .vb-head{cursor:default;}
+#valBox .vb-detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #f0d9b8;flex-wrap:wrap;gap:6px 10px;}
+#valBox .vb-detail.open{display:flex;}
+#valBox .vb-tag{background:#fff;border:1px solid #f0c896;border-radius:5px;padding:3px 8px;font-size:.75rem;color:#8a4a00;white-space:nowrap;}
+#valBox .vb-pending{margin-top:6px;font-size:.76rem;color:#5a6a8a;width:100%;}
 
-.table-outer{overflow:auto;padding:12px 14px 40px;}
+.table-outer{overflow:auto;padding:12px 14px 40px;-webkit-overflow-scrolling:touch;}
 .table-wrap{display:inline-block;min-width:100%;background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12);overflow:hidden;}
 table{border-collapse:collapse;table-layout:fixed;}
+.scroll-hint{display:none;font-size:.72rem;color:#888;padding:0 14px;margin-top:-6px;margin-bottom:4px;}
+@media (max-width:760px){ .scroll-hint{display:block;} }
 
 thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
 th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
@@ -89,6 +135,14 @@ td.cell-day.day-off{background:#d0cece!important;}
 .hc[data-s="1"]:hover:not(.lk){background:#f9cfcf;}
 .hc[data-s="2"]:hover:not(.lk){background:#bde8d0;}
 .hc.lk{cursor:default!important;}
+.hc.selected{box-shadow:inset 0 0 0 2px #4a7fda;}
+.hc.sel-anchor{box-shadow:inset 0 0 0 3px #e07a20;}
+.half-cell.sel-anchor{box-shadow:inset 0 0 0 3px #e07a20;}
+
+.half-cell{display:flex;align-items:center;justify-content:center;height:42px;cursor:pointer;font-size:1.1rem;font-weight:700;user-select:none;background:#fdf0d5;color:#a5680c;transition:background .1s;}
+.half-cell:hover:not(.lk){background:#fbe3b5;}
+.half-cell.lk{cursor:default!important;}
+.half-cell.selected{box-shadow:inset 0 0 0 2px #4a7fda;}
 
 tr.count-row td{background:#eef1f8;text-align:center;font-size:.68rem;padding:2px 1px;border:1px solid #cdd0de;color:#444;}
 tr.count-row td.s-no{position:sticky;left:0;z-index:10;background:#e0e4f0;font-weight:700;}
@@ -125,24 +179,64 @@ td.cnt-off{background:#bfbdbd!important;}
     <select id="yearSel"></select>年
     <select id="monthSel"></select>月
     <span id="saveStatus">💾 自動保存</span>
+    <button class="menuToggle" id="menuToggleBtn" onclick="toggleToolbar()">☰ メニュー</button>
   </div>
 </header>
 
-<div class="toolbar">
-  <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 編集中</button>
+<div class="toolbar" id="toolbar">
+  <div class="tgroup">
+    <span class="tgroup-label">状態</span>
+    <button class="lock-btn" id="lockBtn" onclick="toggleLock()">🔓 編集中</button>
+    <span id="saveStatusMobile" class="save-status-mobile">💾 自動保存</span>
+  </div>
+
   <div class="sep"></div>
-  <button class="btn btn-orange" id="holBtn" onclick="toggleHolMode()">🏖 休業日設定</button>
-  <button class="btn btn-blue" onclick="openAllNotes()">📝 備考編集</button>
+
+  <div class="tgroup">
+    <span class="tgroup-label">入力モード</span>
+    <div class="mode-btn-group">
+      <button class="mode-btn active-x" id="modeXBtn" onclick="setClickMode('x')">❌ ×</button>
+      <button class="mode-btn" id="modeOBtn" onclick="setClickMode('o')">⭕ ○</button>
+      <button class="mode-btn" id="modeHBtn" onclick="setClickMode('h')">◐ 片方OK</button>
+      <button class="mode-btn" id="modeBBtn" onclick="setClickMode('b')">⬜ 空欄</button>
+    </div>
+  </div>
+
   <div class="sep"></div>
-  <button class="btn btn-teal" onclick="autoAssign()">✨ 自動割り当て</button>
-  <button class="btn btn-gray" onclick="resetMonth()">↩ リセット</button>
+
+  <div class="tgroup">
+    <span class="tgroup-label">選択・編集</span>
+    <button class="lock-btn" id="selBtn" onclick="toggleSelectMode()">🔲 複数選択</button>
+    <button class="btn btn-teal" id="applySelBtn" onclick="applyToSelection()" style="display:none;">✅ 選択範囲に適用</button>
+    <button class="btn btn-gray" id="clearSelBtn" onclick="clearSelection()" style="display:none;">✕ 選択解除</button>
+    <button class="btn btn-orange" id="holBtn" onclick="toggleHolMode()">🏖 休業日設定</button>
+    <button class="btn btn-blue" onclick="openAllNotes()">📝 備考編集</button>
+  </div>
+
   <div class="sep"></div>
-  <button class="btn btn-dark" id="exportXlsxBtn" onclick="exportXLSX()">📊 Excel出力</button>
-  <button class="btn btn-gray" onclick="exportCSV()">📥 CSV出力</button>
+
+  <div class="tgroup">
+    <span class="tgroup-label">必要人数</span>
+    <div class="req-wrap">
+      <input type="number" id="reqCount" value="3" min="1" max="20" onchange="validate();updateCounts();">
+      <span>人</span>
+    </div>
+  </div>
+
   <div class="sep"></div>
-  <div class="req-wrap">
-    <label>必要人数:</label>
-    <input type="number" id="reqCount" value="3" min="1" max="20" onchange="validate();updateCounts();">
+
+  <div class="tgroup">
+    <span class="tgroup-label">自動化</span>
+    <button class="btn btn-teal" onclick="autoAssign()">✨ 自動割り当て</button>
+    <button class="btn btn-gray" onclick="resetMonth()">↩ リセット</button>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="tgroup">
+    <span class="tgroup-label">出力</span>
+    <button class="btn btn-dark" id="exportXlsxBtn" onclick="exportXLSX()">📊 Excel出力</button>
+    <button class="btn btn-gray" onclick="exportCSV()">📥 CSV出力</button>
   </div>
 </div>
 
@@ -152,10 +246,12 @@ td.cnt-off{background:#bfbdbd!important;}
   <div class="leg-item"><div class="leg-dot leg-o">○</div>入りたい</div>
   <div class="leg-item"><div class="leg-dot leg-bl"></div>どちらでも</div>
   <div class="leg-item"><div class="leg-dot leg-off">休</div>休業日</div>
-  <span style="color:#aaa;margin-left:8px">クリック：空欄→×→○ ／ 左＝午前・右＝午後</span>
+  <div class="leg-item"><div class="leg-dot leg-h">◐</div>片方OK（未確定）</div>
+  <span style="color:#aaa;margin-left:8px" id="modeHint">クリック：空欄⇔× ／ 左＝午前・右＝午後</span>
 </div>
 
 <div id="valBox"></div>
+<div class="scroll-hint">👉 横にスワイプすると日付を確認できます</div>
 
 <div class="table-outer">
   <div class="table-wrap">
@@ -208,6 +304,10 @@ let locked = false;
 let holMode = false;
 let noteDay = null;
 let store = {};
+let clickMode = 'x'; /* 'x' = ×モード（空欄⇔×トグル）, 'o' = ○モード（空欄⇔○トグル）, 'h' = 片方OKモード（空欄⇔◐トグル） */
+let selectMode = false;
+let selected = new Set(); /* keys of 'si-d' currently selected */
+let selAnchor = null; /* {si, d} の始点。nullなら次のタップが始点になる */
 
 /* ── storageラッパー（localStorage が使えない環境に対応） ── */
 const memStore = {};
@@ -223,13 +323,17 @@ const storage = {
 /* ── localStorage ラッパー ── */
 function lsKey(y,m)  { return 'sft_' + y + '_' + String(m).padStart(2,'0'); }
 function lsStaff()   { return 'sft_staff_v2'; }
+function lsMode()    { return 'sft_click_mode'; }
 
 function saveMonth(y,m) {
   const k = lsKey(y,m);
   try {
     storage.setItem(k, JSON.stringify(store[k]));
+    const t = '✅ ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
     const el = document.getElementById('saveStatus');
-    if (el) el.textContent = '✅ ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+    const elM = document.getElementById('saveStatusMobile');
+    if (el) el.textContent = t;
+    if (elM) elM.textContent = t;
   } catch(e) { showToast('⚠️ 保存に失敗しました（容量不足の可能性）'); }
 }
 
@@ -238,9 +342,9 @@ function loadMonth(y,m) {
   if (store[k]) return store[k];
   try {
     const v = storage.getItem(k);
-    store[k] = v ? JSON.parse(v) : {shifts:{},hols:{},notes:{},targets:{}};
+    store[k] = v ? JSON.parse(v) : {shifts:{},hols:{},notes:{},targets:{},half:{}};
   } catch(e) {
-    store[k] = {shifts:{},hols:{},notes:{},targets:{}};
+    store[k] = {shifts:{},hols:{},notes:{},targets:{},half:{}};
   }
   return store[k];
 }
@@ -253,6 +357,14 @@ function loadStaff() {
   staffList = [...STAFF_DEF];
 }
 
+function saveClickMode() {
+  try { storage.setItem(lsMode(), clickMode); } catch(e){}
+}
+function loadClickMode() {
+  try { const v = storage.getItem(lsMode()); if (v==='x'||v==='o'||v==='h'||v==='b') { clickMode = v; return; } } catch(e){}
+  clickMode = 'x';
+}
+
 /* ── ヘルパー ── */
 function getY()  { return parseInt(document.getElementById('yearSel').value); }
 function getM()  { return parseInt(document.getElementById('monthSel').value); }
@@ -262,7 +374,8 @@ function dow(y,m,d){ return new Date(y,m-1,d).getDay(); }
 
 function getDat() {
   const y=getY(),m=getM(),k=lsKey(y,m);
-  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{}};
+  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{},half:{}};
+  if (!store[k].half) store[k].half={};
   return store[k];
 }
 
@@ -271,19 +384,76 @@ function initDat() {
   const dat=getDat();
   staffList.forEach((_,si) => {
     if (!dat.shifts[si]) dat.shifts[si]={};
+    if (!dat.half[si]) dat.half[si]={};
     if (dat.targets[si]===undefined) dat.targets[si]='';
     for (let d=1;d<=days;d++) {
       if (!Array.isArray(dat.shifts[si][d])) dat.shifts[si][d]=[dat.shifts[si][d]||0,0];
       if (dat.shifts[si][d].length<2) dat.shifts[si][d]=[dat.shifts[si][d][0]||0,0];
+      if (dat.half[si][d]===undefined) dat.half[si][d]=false;
     }
   });
 }
 
 function save() { saveMonth(getY(),getM()); }
 
+/* その日の午前/午後の出勤可能人数と◐(未確定)人数を集計する共通関数 */
+function countDay(dat, si_list, d) {
+  let am=0, pm=0, half=0;
+  si_list.forEach(function(si){
+    if (dat.half[si] && dat.half[si][d]) { half++; return; }
+    const sh = dat.shifts[si] && dat.shifts[si][d];
+    if (sh && sh[0]!==1) am++;
+    if (sh && sh[1]!==1) pm++;
+  });
+  return {am:am, pm:pm, half:half};
+}
+
+/* スタッフのインデックス配列 [0,1,2,...] を返す共通ヘルパー */
+function staffIdxs() { return staffList.map(function(_,si){ return si; }); }
+
+/* Blobをファイルとしてダウンロードする共通ヘルパー */
+function downloadBlob(blob, filename) {
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* クリックモードの定義（ヒント文言・トースト文言をここに集約） */
+const CLICK_MODES = {
+  x: { hint:'クリック：空欄⇔× ／ 左＝午前・右＝午後', toast:'❌ ×モードに切り替えました' },
+  o: { hint:'クリック：空欄⇔○ ／ 左＝午前・右＝午後', toast:'⭕ ○モードに切り替えました' },
+  h: { hint:'クリック：空欄⇔◐（片方OK・未確定）／ 1日1マスに統合されます', toast:'◐ 片方OKモードに切り替えました' },
+  b: { hint:'クリック：セルを空欄に戻します（複数選択での一括クリアに便利）', toast:'⬜ 空欄モードに切り替えました' }
+};
+
+/* ── モバイル用ツールバー開閉 ── */
+function toggleToolbar() {
+  const tb = document.getElementById('toolbar');
+  const btn = document.getElementById('menuToggleBtn');
+  const open = tb.classList.toggle('open');
+  btn.textContent = open ? '✕ 閉じる' : '☰ メニュー';
+}
+
+/* ── クリックモード切替 ── */
+function setClickMode(mode) {
+  clickMode = mode;
+  saveClickMode();
+  const xb=document.getElementById('modeXBtn'), ob=document.getElementById('modeOBtn'), hb=document.getElementById('modeHBtn'), bb=document.getElementById('modeBBtn');
+  xb.classList.toggle('active-x', mode==='x');
+  ob.classList.toggle('active-o', mode==='o');
+  hb.classList.toggle('active-h', mode==='h');
+  bb.classList.toggle('active-b', mode==='b');
+  document.getElementById('modeHint').textContent = CLICK_MODES[mode].hint;
+  showToast(CLICK_MODES[mode].toast);
+  if (document.getElementById('tBody').innerHTML) rebuild();
+}
+
 /* ── 初期化 ── */
 function init() {
   loadStaff();
+  loadClickMode();
+  setClickMode(clickMode);
 
   const now = new Date();
   const ySel = document.getElementById('yearSel');
@@ -399,6 +569,25 @@ function buildBody(y,m,days) {
       td.className='cell-day';
       if (dat.hols[d]) {
         td.classList.add('day-off');
+      } else if (dat.half[si][d]) {
+        /* 統合セル（片方OK・未確定） */
+        const hcEl=document.createElement('div');
+        hcEl.className='half-cell';
+        if (locked) hcEl.classList.add('lk');
+        if (selectMode && selected.has(si+'-'+d)) hcEl.classList.add('selected');
+        if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) hcEl.classList.add('sel-anchor');
+        hcEl.textContent='◐';
+        (function(cell, staffIdx, day){
+          cell.addEventListener('click',function(){
+            if (locked) return;
+            if (selectMode) { handleSelectClick(staffIdx, day); return; }
+            /* どのモードでクリックしても統合解除して通常セル（空欄）に戻す */
+            dat.half[staffIdx][day]=false;
+            dat.shifts[staffIdx][day]=[0,0];
+            save(); rebuild();
+          });
+        })(hcEl, si, d);
+        td.appendChild(hcEl);
       } else {
         const wrap=document.createElement('div');
         wrap.className='cell-wrap';
@@ -406,12 +595,33 @@ function buildBody(y,m,days) {
           const c=document.createElement('div');
           c.className='hc '+(h===0?'am':'pm');
           if (locked) c.classList.add('lk');
+          if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
+          if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
           const s=dat.shifts[si][d][h];
           c.dataset.s=s; c.textContent=s===0?'':SL[s];
           (function(cell, staffIdx, day, half){
             cell.addEventListener('click',function(){
               if (locked) return;
-              const nx=(parseInt(cell.dataset.s)+1)%3;
+              if (selectMode) { handleSelectClick(staffIdx, day); return; }
+              if (clickMode==='h') {
+                /* 片方OKモード：このセルを統合セル（◐）に変換。
+                   既存の午前/午後の希望は◐（未確定）に置き換わるためクリアする */
+                dat.half[staffIdx][day]=true;
+                dat.shifts[staffIdx][day]=[0,0];
+                save(); rebuild();
+                return;
+              }
+              if (clickMode==='b') {
+                /* 空欄モード：常に空欄にする */
+                dat.shifts[staffIdx][day][half]=0;
+                cell.dataset.s=0; cell.textContent='';
+                save(); validate(); updateCounts();
+                return;
+              }
+              const cur=parseInt(cell.dataset.s);
+              /* ×モード：空欄⇔× をトグル（○の場合は×に上書き）。○モード：空欄⇔○ をトグル（×の場合は○に上書き） */
+              const target = clickMode==='x' ? 1 : 2;
+              const nx = (cur===target) ? 0 : target;
               dat.shifts[staffIdx][day][half]=nx;
               cell.dataset.s=nx; cell.textContent=nx===0?'':SL[nx];
               save(); validate(); updateCounts();
@@ -452,40 +662,65 @@ function buildBody(y,m,days) {
 }
 
 function updateCounts() {
-  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
+  const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq(),idxs=staffIdxs();
   for (let d=1;d<=days;d++) {
     const td=document.getElementById('cnt'+d);
     if (!td||dat.hols[d]) continue;
-    let am=0,pm=0;
-    staffList.forEach(function(_,si){
-      if (dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][0]!==1) am++;
-      if (dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][1]!==1) pm++;
-    });
+    const c = countDay(dat, idxs, d);
+    const amShort = req-c.am, pmShort = req-c.pm;
     td.innerHTML='<div class="cnt-wrap">'
-      +'<span class="cc '+(am===0?'cc-idle':am>=req?'cc-ok':'cc-warn')+'">前:'+am+'</span>'
-      +'<span class="cc '+(pm===0?'cc-idle':pm>=req?'cc-ok':'cc-warn')+'">後:'+pm+'</span>'
+      +'<span class="cc '+(c.am===0?'cc-idle':c.am>=req?'cc-ok':'cc-warn')+'" title="午前 必要'+req+'人">前:'+c.am+(amShort>0?'(-'+amShort+')':'')+'</span>'
+      +'<span class="cc '+(c.pm===0?'cc-idle':c.pm>=req?'cc-ok':'cc-warn')+'" title="午後 必要'+req+'人">後:'+c.pm+(pmShort>0?'(-'+pmShort+')':'')+'</span>'
+      +(c.half>0?'<span class="cc cc-idle">◐:'+c.half+'</span>':'')
       +'</div>';
   }
 }
 
-/* ── バリデーション ── */
+/* ── バリデーション ──
+   人数不足は「件数の見出し＋折りたたみ詳細」で表示し、
+   長文の羅列で読みにくくならないようにする。 */
+let valBoxOpen = false;
 function validate() {
   const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
-  const el=document.getElementById('valBox'); const errs=[];
+  const el=document.getElementById('valBox'); const errs=[]; let pendingDays=0;
+  const idxs = staffIdxs();
   for (let d=1;d<=days;d++) {
     if (dat.hols[d]) continue;
-    let am=0,pm=0;
-    staffList.forEach(function(_,si){
-      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][0]!==1)am++;
-      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][1]!==1)pm++;
-    });
+    const c = countDay(dat, idxs, d);
+    if (c.half>0) pendingDays++;
     const l=d+'日('+WD[dow(y,m,d)]+')';
-    if (am<req) errs.push(l+'午前'+am+'人');
-    if (pm<req) errs.push(l+'午後'+pm+'人');
+    if (c.am<req) errs.push({label:l+' 午前', count:c.am, half:c.half});
+    if (c.pm<req) errs.push({label:l+' 午後', count:c.pm, half:c.half});
   }
-  if (errs.length===0) { el.className='ok'; el.textContent='✅ 全日程、必要人数を充足しています。'; }
-  else if (errs.length<=8) { el.className='err'; el.innerHTML='⚠️ 人数不足：'+errs.join('　'); }
-  else { el.className='err'; el.innerHTML='⚠️ '+errs.length+'件で人数不足があります。'; }
+  const pendingHtml = pendingDays>0
+    ? '<div class="vb-pending">◐ 未確定：'+pendingDays+'日（自動割り当てで確定できます）</div>' : '';
+
+  if (errs.length===0) {
+    el.className='ok';
+    el.innerHTML='<div class="vb-head"><span>✅ 全日程、必要人数（'+req+'人）を充足しています。</span></div>'+pendingHtml;
+    valBoxOpen=false;
+    return;
+  }
+
+  const tags = errs.map(function(e){
+    return '<span class="vb-tag">'+e.label+' '+e.count+'人'+(e.half>0?'（+◐'+e.half+'）':'')+'</span>';
+  }).join('');
+
+  el.className='err';
+  el.innerHTML =
+    '<div class="vb-head" onclick="toggleValBox()">'
+      +'<span>⚠️ 人数不足：'+errs.length+'件（必要人数 '+req+'人・◐は目安）</span>'
+      +'<span class="vb-toggle" id="vbToggleLabel">'+(valBoxOpen?'閉じる ▲':'詳細を見る ▼')+'</span>'
+    +'</div>'
+    +'<div class="vb-detail'+(valBoxOpen?' open':'')+'" id="vbDetail">'+tags+'</div>'
+    +pendingHtml;
+}
+function toggleValBox() {
+  valBoxOpen = !valBoxOpen;
+  const detail = document.getElementById('vbDetail');
+  const label = document.getElementById('vbToggleLabel');
+  if (detail) detail.classList.toggle('open', valBoxOpen);
+  if (label) label.textContent = valBoxOpen ? '閉じる ▲' : '詳細を見る ▼';
 }
 
 /* ── ロック ── */
@@ -494,8 +729,90 @@ function toggleLock() {
   const b=document.getElementById('lockBtn');
   b.textContent=locked?'🔒 ロック中':'🔓 編集中';
   b.className=locked?'lock-btn on':'lock-btn';
-  document.querySelectorAll('.hc').forEach(function(c){ locked?c.classList.add('lk'):c.classList.remove('lk'); });
+  document.querySelectorAll('.hc, .half-cell').forEach(function(c){ locked?c.classList.add('lk'):c.classList.remove('lk'); });
   showToast(locked?'🔒 ロック中：セルを変更できません':'🔓 ロック解除しました');
+}
+
+/* ── 複数選択モード（矩形選択：始点タップ→終点タップ） ── */
+function toggleSelectMode() {
+  selectMode=!selectMode;
+  selected.clear();
+  selAnchor=null;
+  const b=document.getElementById('selBtn');
+  const ab=document.getElementById('applySelBtn');
+  const cb=document.getElementById('clearSelBtn');
+  b.textContent=selectMode?'🔲 選択モード終了':'🔲 複数選択';
+  b.className=selectMode?'lock-btn on':'lock-btn';
+  ab.style.display=selectMode?'':'none';
+  cb.style.display=selectMode?'':'none';
+  showToast(selectMode?'始点のセルをタップしてください':'複数選択モードを終了しました');
+  rebuild();
+}
+
+function handleSelectClick(si, d) {
+  if (!selAnchor) {
+    /* 1回目のタップ：始点を設定 */
+    selAnchor = {si:si, d:d};
+    selected.clear();
+    selected.add(si+'-'+d);
+    showToast('終点のセルをタップしてください（同じセルをもう一度タップで解除）');
+    rebuild();
+    return;
+  }
+  if (selAnchor.si===si && selAnchor.d===d) {
+    /* 始点を再タップ→選択解除してやり直し */
+    selAnchor = null;
+    selected.clear();
+    showToast('選択を解除しました');
+    rebuild();
+    return;
+  }
+  /* 2回目のタップ：終点として矩形範囲を確定 */
+  const siMin=Math.min(selAnchor.si,si), siMax=Math.max(selAnchor.si,si);
+  const dMin=Math.min(selAnchor.d,d), dMax=Math.max(selAnchor.d,d);
+  const dat=getDat();
+  selected.clear();
+  for (let s=siMin; s<=siMax; s++) {
+    for (let dd=dMin; dd<=dMax; dd++) {
+      if (dat.hols[dd]) continue; /* 休業日は選択対象外 */
+      selected.add(s+'-'+dd);
+    }
+  }
+  selAnchor = null;
+  showToast('📐 '+selected.size+'件のセルを範囲選択しました');
+  rebuild();
+}
+
+function clearSelection() {
+  selected.clear();
+  selAnchor = null;
+  rebuild();
+}
+
+function applyToSelection() {
+  if (selected.size===0) { showToast('セルが選択されていません'); return; }
+  const dat=getDat();
+  selected.forEach(function(key){
+    const parts=key.split('-'); const si=parseInt(parts[0]), d=parseInt(parts[1]);
+    if (dat.hols[d]) return;
+    if (clickMode==='h') {
+      dat.half[si][d]=true;
+      dat.shifts[si][d]=[0,0];
+    } else if (clickMode==='b') {
+      dat.half[si][d]=false;
+      dat.shifts[si][d]=[0,0];
+    } else {
+      dat.half[si][d]=false;
+      const val = clickMode==='x' ? 1 : 2;
+      dat.shifts[si][d]=[val,val];
+    }
+  });
+  save();
+  const n=selected.size;
+  selected.clear();
+  selAnchor=null;
+  rebuild();
+  showToast((clickMode==='b'?'⬜ ':'✅ ')+n+'件のセルに適用しました');
 }
 
 /* ── 休業日 ── */
@@ -508,9 +825,10 @@ function toggleHolMode() {
 }
 function clickHol(d) {
   if (!holMode) return;
+  if (locked) { showToast('🔒 ロック中は休業日を変更できません'); return; }
   const dat=getDat();
   dat.hols[d]=!dat.hols[d];
-  if (dat.hols[d]) staffList.forEach(function(_,si){ dat.shifts[si][d]=[0,0]; });
+  if (dat.hols[d]) staffList.forEach(function(_,si){ dat.shifts[si][d]=[0,0]; if (dat.half[si]) dat.half[si][d]=false; });
   save(); rebuild();
 }
 
@@ -547,14 +865,44 @@ function closeAllNotes() { document.getElementById('allModal').classList.remove(
 
 /* ── 自動割り当て ── */
 function autoAssign() {
-  if (!confirm('自動割り当てを実行します。\n×の希望は守り、目標日数に合わせて空欄を補充します。実行しますか？')) return;
+  if (!confirm('自動割り当てを実行します。\n×の希望は守り、◐（片方OK）は不足している方に自動確定し、目標日数に合わせて空欄を補充します。実行しますか？')) return;
   const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
   function countO(si){ let c=0; for(let d=1;d<=days;d++){if(dat.hols[d])continue;if(dat.shifts[si][d][0]===2)c++;if(dat.shifts[si][d][1]===2)c++;} return c; }
+
+  /* ステップ1：◐（片方OK）セルを解決する。
+     不足している方（人数が少ない方）にそのスタッフを○として確定し、
+     もう一方は自動割当の対象外（0のまま・触らない）とする。 */
+  for (let d=1;d<=days;d++) {
+    if (dat.hols[d]) continue;
+    const halfStaff = staffIdxs().filter(function(si){ return dat.half[si] && dat.half[si][d]; });
+    if (halfStaff.length===0) continue;
+
+    /* 現時点（◐を除く）での午前・午後の出勤可能人数を数える */
+    function currentCount(h){
+      let c=0;
+      staffList.forEach(function(_,si){
+        if (dat.half[si] && dat.half[si][d]) return;
+        if (dat.shifts[si][d][h]!==1) c++;
+      });
+      return c;
+    }
+
+    halfStaff.forEach(function(si){
+      const amCount=currentCount(0), pmCount=currentCount(1);
+      /* 人数が少ない方（不足している方）にこのスタッフを割り当てる。同数なら午前を優先 */
+      const assignHalf = (pmCount<amCount) ? 1 : 0;
+      dat.shifts[si][d]=[0,0];
+      dat.shifts[si][d][assignHalf]=2;
+      dat.half[si][d]=false; /* 統合状態を解除し、通常の2分割セルに戻す（確定表示のため） */
+    });
+  }
+
+  /* ステップ2：残りの空欄（0）を目標日数に応じて通常どおり補充 */
   for (let d=1;d<=days;d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
-      const fixed=staffList.map(function(_,si){ return si; }).filter(function(si){ return dat.shifts[si][d][h]===2; });
-      const flex=staffList.map(function(_,si){ return si; }).filter(function(si){ return dat.shifts[si][d][h]===0; });
+      const fixed=staffIdxs().filter(function(si){ return dat.shifts[si][d][h]===2; });
+      const flex=staffIdxs().filter(function(si){ return dat.shifts[si][d][h]===0; });
       const need=req-fixed.length; if (need<=0) return;
       flex.sort(function(a,b){
         const ta=dat.targets[a]!==''&&dat.targets[a]!==undefined?parseInt(dat.targets[a]):999;
@@ -564,13 +912,15 @@ function autoAssign() {
       flex.slice(0,need).forEach(function(si){ dat.shifts[si][d][h]=2; });
     });
   }
-  save(); rebuild(); showToast('✨ 自動割り当てが完了しました');
+  save(); rebuild(); showToast('✨ 自動割り当てが完了しました（◐は不足側に確定）');
 }
 
 /* ── リセット ── */
 function resetMonth() {
-  if (!confirm('この月のシフト（○×・休業日・備考）をリセットしますか？\n目標日数は保持されます。')) return;
-  const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={};
+  if (!confirm('この月のシフト（○×・◐・休業日・備考）をリセットしますか？\n目標日数は保持されます。')) return;
+  const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={}; dat.half={};
+  selected.clear();
+  selAnchor=null;
   initDat(); save(); rebuild(); showToast('リセットしました');
 }
 
@@ -596,30 +946,27 @@ function exportCSV() {
     const r=[si+1,name];
     for(let d=1;d<=days;d++){
       if(dat.hols[d]){r.push('','');}
+      else if(dat.half[si]&&dat.half[si][d]){r.push('◐','◐');}
       else{var am=dat.shifts[si]&&dat.shifts[si][d]?dat.shifts[si][d][0]||0:0;
            var pm=dat.shifts[si]&&dat.shifts[si][d]?dat.shifts[si][d][1]||0:0;
            r.push(am===0?'':SL[am],pm===0?'':SL[pm]);}
     }
     const tg=dat.targets[si]; r.push(tg!==undefined&&tg!==''?tg:''); rows.push(r);
   });
-  const cam=['','午前出勤可能数'], cpm=['','午後出勤可能数'];
+  const cam=['','午前出勤可能数'], cpm=['','午後出勤可能数'], chalf=['','◐未確定数'];
+  const idxsCsv = staffIdxs();
   for(let d=1;d<=days;d++){
-    if(dat.hols[d]){cam.push('休','');cpm.push('休','');continue;}
-    let am=0,pm=0;
-    staffList.forEach(function(_,si){
-      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][0]!==1)am++;
-      if(dat.shifts[si]&&dat.shifts[si][d]&&dat.shifts[si][d][1]!==1)pm++;
-    });
-    cam.push(am,''); cpm.push(pm,'');
+    if(dat.hols[d]){cam.push('休','');cpm.push('休','');chalf.push('休','');continue;}
+    const c = countDay(dat, idxsCsv, d);
+    cam.push(c.am,''); cpm.push(c.pm,''); chalf.push(c.half,'');
   }
-  cam.push(''); cpm.push('');
-  rows.push(cam); rows.push(cpm);
+  cam.push(''); cpm.push(''); chalf.push('');
+  rows.push(cam); rows.push(cpm); rows.push(chalf);
 
   const bom='\uFEFF';
   const csv=rows.map(function(r){ return r.map(function(v){ const s=String(v!=null?v:''); return s.indexOf(',')>=0||s.indexOf('"')>=0?'"'+s.replace(/"/g,'""')+'"':s; }).join(','); }).join('\n');
   const blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a');
-  a.href=url; a.download='シフト希望表_'+y+'年'+m+'月.csv'; a.click(); URL.revokeObjectURL(url);
+  downloadBlob(blob, 'シフト希望表_'+y+'年'+m+'月.csv');
   showToast('📥 CSVを出力しました');
 }
 
@@ -635,11 +982,14 @@ async function exportXLSX() {
     showToast('⚠️ Excel出力ライブラリの読み込みに失敗しました（通信環境をご確認ください）');
     return;
   }
+  initDat();
   const y=getY(), m=getM(), days=daysIn(y,m), dat=getDat(), req=getReq();
 
   const FILL = { 1:'FFFDE8E8', 2:'FFD5F0E0' };
   const FONT_COLOR = { 1:'FFC0392B', 2:'FF1A7A40' };
   const HOL_FILL = 'FFD0CECE';
+  const HALF_FILL = 'FFFDF0D5';
+  const HALF_FONT = 'FFA5680C';
   const NOTE_FILL = 'FFF0F4FF';
   const NOTE_HOL_FILL = 'FFBFBDBD';
   const AMPM_FILL = 'FFE8ECF5';
@@ -678,28 +1028,23 @@ async function exportXLSX() {
 
   const ROW_DAY=2, ROW_WD=3, ROW_NOTE=4, ROW_AMPM=5, DATA_START=6;
 
+  /* row(固定行)のc0〜c0+1をマージし、値・中央寄せ・フォントを設定する共通ヘルパー */
+  function setMergedCell(row, c0, value, font, fillArgb) {
+    ws.mergeCells(row, c0, row, c0+1);
+    const cell = ws.getCell(row, c0);
+    cell.value = value; cell.alignment = center; cell.font = font;
+    if (fillArgb) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:fillArgb} };
+    return cell;
+  }
+
   for (let d=1; d<=days; d++) {
     const c0 = dcol(d);
     const isHol = !!dat.hols[d];
+    const hdrColor = isHol ? 'FF666666' : HEADER_DARKBLUE;
 
-    ws.mergeCells(ROW_DAY, c0, ROW_DAY, c0+1);
-    const dn = ws.getCell(ROW_DAY, c0);
-    dn.value = d; dn.alignment = center;
-    dn.font = { name:'Meiryo', size:11, bold:true, color:{argb: isHol?'FF666666':HEADER_DARKBLUE} };
-    if (isHol) dn.fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
-
-    ws.mergeCells(ROW_WD, c0, ROW_WD, c0+1);
-    const wdc = ws.getCell(ROW_WD, c0);
-    wdc.value = WD[dow(y,m,d)]; wdc.alignment = center;
-    wdc.font = { name:'Meiryo', size:9, bold:true, color:{argb: isHol?'FF666666':HEADER_DARKBLUE} };
-    if (isHol) wdc.fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
-
-    ws.mergeCells(ROW_NOTE, c0, ROW_NOTE, c0+1);
-    const nt = ws.getCell(ROW_NOTE, c0);
-    nt.value = isHol ? '休' : (dat.notes[d]||'');
-    nt.alignment = center;
-    nt.font = { name:'Meiryo', size:7, color:{argb:'FF555555'} };
-    nt.fill = { type:'pattern', pattern:'solid', fgColor:{argb: isHol?NOTE_HOL_FILL:NOTE_FILL} };
+    setMergedCell(ROW_DAY, c0, d, { name:'Meiryo', size:11, bold:true, color:{argb:hdrColor} }, isHol?HOL_FILL:null);
+    setMergedCell(ROW_WD, c0, WD[dow(y,m,d)], { name:'Meiryo', size:9, bold:true, color:{argb:hdrColor} }, isHol?HOL_FILL:null);
+    setMergedCell(ROW_NOTE, c0, isHol?'休':(dat.notes[d]||''), { name:'Meiryo', size:7, color:{argb:'FF555555'} }, isHol?NOTE_HOL_FILL:NOTE_FILL);
 
     if (isHol) {
       ws.mergeCells(ROW_AMPM, c0, ROW_AMPM, c0+1);
@@ -747,6 +1092,14 @@ async function exportXLSX() {
         ws.getCell(r,c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
         continue;
       }
+      if (dat.half[si] && dat.half[si][d]) {
+        ws.mergeCells(r, c0, r, c0+1);
+        const hCell = ws.getCell(r, c0);
+        hCell.value = '◐'; hCell.alignment = center;
+        hCell.font = { name:'Meiryo', size:12, bold:true, color:{argb: HALF_FONT} };
+        hCell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: HALF_FILL} };
+        continue;
+      }
       const am = dat.shifts[si][d][0], pm = dat.shifts[si][d][1];
       if (am === pm) {
         ws.mergeCells(r, c0, r, c0+1);
@@ -773,6 +1126,7 @@ async function exportXLSX() {
   });
 
   /* 出勤可能数集計行（午前・午後それぞれ表示、結合なし） */
+  const idxsXlsx = staffIdxs();
   const cntRow = DATA_START + staffList.length;
   ws.mergeCells(cntRow, 1, cntRow, 2);
   const cntLbl = ws.getCell(cntRow, 1);
@@ -787,14 +1141,11 @@ async function exportXLSX() {
       ws.getCell(cntRow, c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
       continue;
     }
-    let am=0, pm=0;
-    staffList.forEach(function(_, si){
-      if (dat.shifts[si][d][0] !== 1) am++;
-      if (dat.shifts[si][d][1] !== 1) pm++;
-    });
-    [[c0,am],[c0+1,pm]].forEach(function(pair){
+    const c = countDay(dat, idxsXlsx, d);
+    [[c0,c.am],[c0+1,c.pm]].forEach(function(pair){
       const cell = ws.getCell(cntRow, pair[0]);
-      cell.value = pair[1]; cell.alignment = center;
+      cell.value = c.half>0 ? pair[1]+'(+◐'+c.half+')' : pair[1];
+      cell.alignment = center;
       cell.font = { name:'Meiryo', size:9, bold:true, color:{argb: pair[1]>=req?'FF155724':(pair[1]===0?'FF555555':'FF721C24')} };
       cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: pair[1]===0?'FFE2E3E5':(pair[1]>=req?'FFC3E6CB':'FFF8D7DA')} };
     });
@@ -808,10 +1159,7 @@ async function exportXLSX() {
 
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'シフト希望表_'+y+'年'+m+'月.xlsx'; a.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(blob, 'シフト希望表_'+y+'年'+m+'月.xlsx');
   showToast('📊 Excelを出力しました');
 }
 
@@ -828,6 +1176,16 @@ function showToast(msg) {
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('noteModal').classList.contains('open'))saveNote();
   if(e.key==='Escape'){closeNoteModal();closeAllNotes();}
+});
+
+/* ── PC幅に戻った時、モバイル用の開閉状態をリセット ── */
+window.addEventListener('resize', function(){
+  if (window.innerWidth > 760) {
+    const tb = document.getElementById('toolbar');
+    const btn = document.getElementById('menuToggleBtn');
+    if (tb) tb.classList.remove('open');
+    if (btn) btn.textContent = '☰ メニュー';
+  }
 });
 
 /* ── 起動 ── */
