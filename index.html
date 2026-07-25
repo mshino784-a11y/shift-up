@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表</title>
+<title>シフト希望表 ver.5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -85,14 +85,18 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
 #valBox .vb-pending{margin-top:6px;font-size:.76rem;color:#5a6a8a;width:100%;}
 
 .table-outer{overflow:auto;padding:12px 14px 40px;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 230px);}
-.table-wrap{display:inline-block;min-width:100%;background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12);overflow:hidden;}
-table{border-collapse:collapse;table-layout:fixed;}
+.table-wrap{display:inline-block;min-width:100%;background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12);}
+table{border-collapse:separate;border-spacing:0;table-layout:fixed;}
 .scroll-hint{display:none;font-size:.72rem;color:#888;padding:0 14px;margin-top:-6px;margin-bottom:4px;}
 @media (max-width:760px){ .scroll-hint{display:block;} .table-outer{max-height:calc(100vh - 165px);} }
 
 /* 見出し（日付・備考・午前午後の3行）をテーブル内スクロール時も上部に固定する。
-   これにより、下にスクロールしてもツールバーのボタンや日付・氏名が常に見える。 */
-#tHead{position:sticky;top:0;z-index:40;}
+   theadという要素自体にposition:stickyを付けるのはブラウザによって挙動が不安定なため、
+   内部の各th/tdセルに直接position:sticky+topを付与する（動作実績のある方式）。 */
+#tHead th, #tHead td{position:sticky;}
+#tHead tr:nth-child(1) th{top:0;z-index:103;}
+#tHead tr.note-row td{top:0;z-index:102;}
+#tHead tr.ampm-row td{top:0;z-index:101;}
 
 thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
 th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
@@ -121,12 +125,13 @@ tr.ampm-row td.ap-off{background:#b8b6b6!important;}
 
 tr.data-row td{border:1px solid #d0d4e0;vertical-align:middle;padding:0;}
 td.s-no{position:sticky;left:0;z-index:5;background:#f0f2f8;text-align:center;font-weight:700;font-size:.78rem;color:#555;padding:2px;border-right:1px solid #b0b8cc;}
-td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left;font-weight:600;font-size:.8rem;padding:3px 5px;border-right:2px solid #a0a8c0;white-space:nowrap;display:flex;align-items:center;gap:3px;}
+td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left;font-weight:600;font-size:.8rem;padding:3px 5px;border-right:2px solid #a0a8c0;white-space:nowrap;}
+.s-name-inner{display:flex;align-items:center;gap:3px;}
 .row-lock-btn{border:none;background:transparent;cursor:pointer;font-size:.82rem;padding:1px 2px;line-height:1;flex-shrink:0;border-radius:4px;}
 .row-lock-btn:hover{background:#e4e6f5;}
 .row-lock-btn.on{background:#fde8e8;}
 .row-lock-btn.on:hover{background:#f9cfcf;}
-.row-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
 tr.data-row.row-locked td.s-name{background:#efe4e4;}
 tr.data-row.row-locked td.s-no{background:#eee0e0;}
 td.s-target{position:sticky;right:0;z-index:5;background:#fffbe6;padding:2px;text-align:center;border-left:2px solid #a0a8c0;}
@@ -185,7 +190,7 @@ td.cnt-off{background:#bfbdbd!important;}
 <body>
 
 <header>
-  <h1>📅 シフト希望表</h1>
+  <h1>📅 シフト希望表 ver.5</h1>
   <div class="hdr-right">
     <select id="yearSel"></select>年
     <select id="monthSel"></select>月
@@ -550,6 +555,24 @@ function buildHead(y,m,days) {
   }
   tdc(r3,'日数','s-target');
   head.appendChild(r3);
+
+  setHeadStickyOffsets();
+}
+
+/* 見出し3行（日付・備考・午前午後）はそれぞれ高さが異なるため、
+   実際に描画された行の高さを測って2行目・3行目のtop位置をセル単位で設定する。 */
+function setHeadStickyOffsets() {
+  requestAnimationFrame(function(){
+    const head = document.getElementById('tHead');
+    const rows = head.querySelectorAll('tr');
+    if (rows.length < 3) return;
+    const r1h = rows[0].getBoundingClientRect().height;
+    const r2h = rows[1].getBoundingClientRect().height;
+    const row2Top = r1h + 'px';
+    const row3Top = (r1h + r2h) + 'px';
+    rows[1].querySelectorAll('th,td').forEach(function(cell){ cell.style.top = row2Top; });
+    rows[2].querySelectorAll('th,td').forEach(function(cell){ cell.style.top = row3Top; });
+  });
 }
 
 function th(tr,txt,cls) {
@@ -574,6 +597,8 @@ function buildBody(y,m,days) {
     const tno=document.createElement('td'); tno.className='s-no'; tno.textContent=si+1; tr.appendChild(tno);
     /* 名前（＋個別ロックアイコン） */
     const tnm=document.createElement('td'); tnm.className='s-name';
+    const nameInner=document.createElement('div');
+    nameInner.className='s-name-inner';
     const isLocked = !!dat.locks[si];
     const lockBtn=document.createElement('button');
     lockBtn.type='button';
@@ -589,11 +614,12 @@ function buildBody(y,m,days) {
         rebuild();
       });
     })(si, lockBtn);
-    tnm.appendChild(lockBtn);
+    nameInner.appendChild(lockBtn);
     const nameSpan=document.createElement('span');
     nameSpan.className='row-name-text';
     nameSpan.textContent=name;
-    tnm.appendChild(nameSpan);
+    nameInner.appendChild(nameSpan);
+    tnm.appendChild(nameInner);
     tr.appendChild(tnm);
 
     /* 日付 */
