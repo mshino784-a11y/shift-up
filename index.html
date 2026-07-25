@@ -865,9 +865,8 @@ function closeAllNotes() { document.getElementById('allModal').classList.remove(
 
 /* ── 自動割り当て ── */
 function autoAssign() {
-  if (!confirm('自動割り当てを実行します。\n×の希望は守り、◐（片方OK）は不足している方に自動確定し、目標日数に合わせて空欄を補充します。実行しますか？')) return;
+  if (!confirm('自動割り当てを実行します。\n×の希望は守り、◐（片方OK）は不足している方に自動確定し、目標日数にできるだけ近づけて空欄を補充します（午前のみ・午後のみの勤務は0.5日として計算／人数不足の場合は目標を多少超過してでも必要人数を優先します）。実行しますか？')) return;
   const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
-  function countO(si){ let c=0; for(let d=1;d<=days;d++){if(dat.hols[d])continue;if(dat.shifts[si][d][0]===2)c++;if(dat.shifts[si][d][1]===2)c++;} return c; }
 
   /* ステップ1：◐（片方OK）セルを解決する。
      不足している方（人数が少ない方）にそのスタッフを○として確定し、
@@ -877,42 +876,110 @@ function autoAssign() {
     const halfStaff = staffIdxs().filter(function(si){ return dat.half[si] && dat.half[si][d]; });
     if (halfStaff.length===0) continue;
 
-    /* 現時点（◐を除く）での午前・午後の出勤可能人数を数える */
-    function currentCount(h){
+    /* 現時点で「○として確定済み」の午前・午後の人数を数える。
+       （空欄＝まだ入れるかどうか未定の人はここでは数えない。
+       　◐を「不足している方」に振り分けるには、確定済みの人数だけを比較する必要がある） */
+    function fixedCount(h){
       let c=0;
       staffList.forEach(function(_,si){
-        if (dat.half[si] && dat.half[si][d]) return;
-        if (dat.shifts[si][d][h]!==1) c++;
+        if (dat.shifts[si][d][h]===2) c++;
       });
       return c;
     }
 
     halfStaff.forEach(function(si){
-      const amCount=currentCount(0), pmCount=currentCount(1);
-      /* 人数が少ない方（不足している方）にこのスタッフを割り当てる。同数なら午前を優先 */
+      const amCount=fixedCount(0), pmCount=fixedCount(1);
+      /* 確定人数が少ない方（不足している方）にこのスタッフを割り当てる。同数なら午前を優先 */
       const assignHalf = (pmCount<amCount) ? 1 : 0;
       dat.shifts[si][d]=[0,0];
       dat.shifts[si][d][assignHalf]=2;
       dat.half[si][d]=false; /* 統合状態を解除し、通常の2分割セルに戻す（確定表示のため） */
+      /* このスタッフの確定がfixedCountに反映されるので、次の◐スタッフの判定に自然に影響する */
     });
   }
 
-  /* ステップ2：残りの空欄（0）を目標日数に応じて通常どおり補充 */
-  for (let d=1;d<=days;d++) {
+  /* ステップ2：残りの空欄（0）を、月全体を通して目標日数にできるだけ近づくように補充する。
+     方針：
+       ・「残り必要日数＝目標日数－現在の確定済み日数」をスタッフごとに追跡し、
+         割り当てるたびに減らしていくことで、月全体を通じた過不足の偏りを抑える。
+         ※ここでの「日数」は、午前のみ／午後のみの片方勤務を0.5日として換算する
+         　（午前＋午後の両方が埋まった日を1日とカウント）。これにより「目標5日」の人が
+         　半日勤務ばかりで実質2.5日しか働いていないのに「達成」と誤判定されるのを防ぐ。
+       ・埋まりにくい枠（不足人数が多い枠）を先に処理し、特定の枠だけ人が集まらない事態を避ける。
+       ・候補者は「残り必要日数が多い人」を優先。目標に届いた人は自然と優先度が下がる。
+       ・それでも候補が足りない（目標達成者しか残っていない）場合は、
+         目標を超えてでも必要人数の確保を優先し、残り必要日数が少ない人から順に動員する。
+  */
+  const idxsAll = staffIdxs();
+
+  /* 目標日数（未設定なら999＝実質無制限として扱う） */
+  function targetOf(si) {
+    const t = dat.targets[si];
+    return (t!==''&&t!==undefined) ? parseInt(t) : 999;
+  }
+
+  /* 現在すでに確定している日数（◐解決後・ステップ2前の時点）をスタッフごとに「日」単位で数える。
+     午前・午後どちらか片方だけの○は0.5日、両方○の日は1日としてカウントする。 */
+  const assignedDays = {};
+  idxsAll.forEach(function(si){
+    let c=0;
+    for (let d=1;d<=days;d++){
+      if (dat.hols[d]) continue;
+      const am = dat.shifts[si][d][0]===2;
+      const pm = dat.shifts[si][d][1]===2;
+      if (am) c+=0.5;
+      if (pm) c+=0.5;
+    }
+    assignedDays[si]=c;
+  });
+
+  /* 「残り必要日数」＝目標－現在の確定日数。負の値は「すでに目標超過」を意味する。 */
+  function remaining(si){ return targetOf(si) - assignedDays[si]; }
+
+  /* 全ての未確定枠（日×午前/午後）を洗い出し、不足数が大きい順に並べる */
+  const slots = [];
+  for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
-      const fixed=staffIdxs().filter(function(si){ return dat.shifts[si][d][h]===2; });
-      const flex=staffIdxs().filter(function(si){ return dat.shifts[si][d][h]===0; });
-      const need=req-fixed.length; if (need<=0) return;
-      flex.sort(function(a,b){
-        const ta=dat.targets[a]!==''&&dat.targets[a]!==undefined?parseInt(dat.targets[a]):999;
-        const tb=dat.targets[b]!==''&&dat.targets[b]!==undefined?parseInt(dat.targets[b]):999;
-        return (tb-countO(b))-(ta-countO(a));
-      });
-      flex.slice(0,need).forEach(function(si){ dat.shifts[si][d][h]=2; });
+      const fixedCount = idxsAll.filter(function(si){ return dat.shifts[si][d][h]===2; }).length;
+      const need = req - fixedCount;
+      if (need<=0) return;
+      slots.push({ d:d, h:h, need:need });
     });
   }
-  save(); rebuild(); showToast('✨ 自動割り当てが完了しました（◐は不足側に確定）');
+  slots.sort(function(a,b){ return b.need - a.need; }); /* 不足が大きい枠を先に処理 */
+
+  slots.forEach(function(slot){
+    const d=slot.d, h=slot.h;
+    /* この枠に入れる候補（空欄=0のまま残っている人） */
+    let flex = idxsAll.filter(function(si){ return dat.shifts[si][d][h]===0; });
+    if (flex.length===0) return;
+
+    /* 残り必要日数が多い人を優先。同数なら現在の確定日数が少ない人を優先（さらに公平化） */
+    flex.sort(function(a,b){
+      const diff = remaining(b) - remaining(a);
+      if (diff!==0) return diff;
+      return assignedDays[a] - assignedDays[b];
+    });
+
+    const need = req - idxsAll.filter(function(si){ return dat.shifts[si][d][h]===2; }).length;
+    if (need<=0) return;
+    flex.slice(0, need).forEach(function(si){
+      dat.shifts[si][d][h]=2;
+      assignedDays[si]+=0.5;
+    });
+  });
+
+  save(); rebuild();
+
+  /* 目標超過が発生したスタッフがいれば件数を伝える（気づきやすくするため） */
+  const overCount = idxsAll.filter(function(si){
+    const t = dat.targets[si];
+    return (t!==''&&t!==undefined) && assignedDays[si] > parseInt(t);
+  }).length;
+  showToast(overCount>0
+    ? '✨ 自動割り当てが完了しました（人数確保のため目標超過が'+overCount+'名発生）'
+    : '✨ 自動割り当てが完了しました（全員、目標日数の範囲内）');
 }
 
 /* ── リセット ── */
