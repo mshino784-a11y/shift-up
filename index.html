@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.19</title>
+<title>シフト希望表 ver.6.22</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -128,17 +128,23 @@ td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left
 .s-name-inner{display:flex;align-items:center;gap:3px;}
 .row-lock-btn{border:none;background:transparent;cursor:pointer;font-size:.82rem;padding:1px 2px;line-height:1;flex-shrink:0;border-radius:4px;}
 .row-lock-btn:hover{background:#e4e6f5;}
-.row-lock-btn.on{background:#fde8e8;}
-.row-lock-btn.on:hover{background:#f9cfcf;}
+.row-lock-btn.on{background:#dff2e4;}
+.row-lock-btn.on:hover{background:#c8e8d2;}
 .pace-sel{display:block;width:100%;margin-top:2px;padding:0 1px;height:16px;font-size:.62rem;border:1px solid #ccd;border-radius:3px;background:#fff;color:#888;}
 .pace-sel.on{background:#fdf0d5;color:#a5680c;border-color:#e0a050;font-weight:700;}
 .row-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
-tr.data-row.row-locked td.s-name{background:#efe4e4;}
-tr.data-row.row-locked td.s-no{background:#eee0e0;}
+
 td.s-target{position:sticky;right:0;z-index:5;background:#fffbe6;padding:2px;text-align:center;border-left:2px solid #a0a8c0;}
 td.s-target input{width:42px;padding:3px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.85rem;font-weight:700;background:transparent;}
 td.s-target input:focus{outline:none;border-color:#4a7fda;}
 tr.data-row:nth-child(even) td.s-name{background:#f2f4fc;}
+/* ロック中は行全体を緑の線で囲んでハイライト（名前だけでなくシフト欄・目標欄も） */
+tr.data-row.row-locked td{border-top:2px solid #1e9e50;border-bottom:2px solid #1e9e50;}
+tr.data-row.row-locked td.s-name{background:#d9efdd;}
+tr.data-row.row-locked td.s-no{background:#d2e8d8;border-left:4px solid #1e9e50;}
+tr.data-row.row-locked td.s-target{background:#e0f0e4;border-right:4px solid #1e9e50;}
+tr.data-row.row-locked .hc[data-s="0"]{background:#e2f2e6;}
+tr.data-row.row-locked .half-cell{background:#e8f0d8;}
 
 td.cell-day{min-width:44px;width:44px;padding:0;}
 td.cell-day.day-off{background:#d0cece!important;}
@@ -191,7 +197,7 @@ td.cnt-off{background:#bfbdbd!important;}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2c3e6b;color:#fff;padding:9px 20px;border-radius:7px;font-size:.84rem;z-index:600;box-shadow:0 4px 16px rgba(0,0,0,.22);pointer-events:none;opacity:0;transition:opacity .3s;}
 #toast.show{opacity:1;}
 
-/* ── ホーム画面 ver.6.19 ── */
+/* ── ホーム画面 ver.6.22 ── */
 body.home-mode .hdr-ym{display:none;}
 .home-view{max-width:920px;margin:0 auto;padding:22px 16px 40px;}
 .home-title{text-align:center;font-size:1.6rem;font-weight:800;color:#2c3e6b;margin:6px 0 18px;letter-spacing:.06em;}
@@ -218,12 +224,15 @@ body.home-mode .hdr-ym{display:none;}
 .home-add input:focus{outline:none;border-color:#4a7fda;}
 .home-add-row2{display:flex;gap:8px;margin-top:8px;}
 .home-empty{color:#888;font-size:.82rem;padding:8px 2px;line-height:1.7;}
+.home-roster{width:100%;padding:16px;font-size:1.05rem;}
+.roster-view{max-width:920px;margin:0 auto;padding:22px 16px 40px;}
+.roster-head{margin-bottom:4px;}
 
-/* ── デモバナー ver.6.19 ── */
+/* ── デモバナー ver.6.22 ── */
 .demo-banner{display:none;background:#e07a20;color:#fff;padding:8px 14px;font-size:.85rem;font-weight:700;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
 .demo-banner.on{display:flex;}
 
-/* ── 確認画面 ver.6.19 ── */
+/* ── 確認画面 ver.6.22 ── */
 .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
 .confirm-overlay.on{display:flex;}
 .confirm-box{background:#fff;border-radius:12px;padding:22px 22px 18px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.35);}
@@ -237,7 +246,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>📅 シフト希望表 ver.6.19</h1>
+  <h1>📅 シフト希望表 ver.6.22</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="showHome()">🏠 ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -252,15 +261,9 @@ body.home-mode .hdr-ym{display:none;}
   <div class="home-title">シフト作成</div>
   <div class="home-grid">
     <div class="home-card">
-      <h2>👥 人 <span id="homeStaffCount"></span></h2>
-      <div id="homeStaffList"></div>
-      <div class="home-add">
-        <input type="text" id="homeNameInput" placeholder="名前を入力" maxlength="20">
-      </div>
-      <div class="home-add-row2">
-        <button class="btn btn-blue" style="flex:1;padding:10px;" onclick="addHomeStaff()">確定</button>
-      </div>
-      <div class="home-note">↑↓で並び替えができます。並び替えても、その人のシフト・目標は一緒に移動します。<br>×で削除すると、その人の全ての月のシフトも一緒に削除されます。</div>
+      <h2>👥 名簿</h2>
+      <button class="btn btn-dark home-roster" onclick="showRoster()">👥 名簿を見る・編集する <span id="homeStaffCount"></span></button>
+      <div class="home-note">人の追加・削除・並び替えは名簿ページで行います。</div>
     </div>
     <div class="home-card">
       <h2>📅 作る月</h2>
@@ -272,6 +275,24 @@ body.home-mode .hdr-ym{display:none;}
       <button class="btn btn-orange home-demo" onclick="loadDemo()">▶ デモ</button>
       <div class="home-note">デモは、2026年12月の表を別物として開きます。デモの内容は実際の12月とは別の場所に保存され、実際の12月のデータには触れません。保存のタイミングは通常と同じです。デモを終えるとデモの保存は消えて、次回は写真の状態から始まります。</div>
     </div>
+  </div>
+</div>
+
+<div class="roster-view" id="rosterView" style="display:none;">
+  <div class="roster-head">
+    <button class="btn btn-dark" onclick="showHome()">← ホームに戻る</button>
+  </div>
+  <div class="home-title">👥 名簿</div>
+  <div class="home-card">
+    <h2>👥 人 <span id="rosterStaffCount"></span></h2>
+    <div id="homeStaffList"></div>
+    <div class="home-add">
+      <input type="text" id="homeNameInput" placeholder="名前を入力" maxlength="20">
+    </div>
+    <div class="home-add-row2">
+      <button class="btn btn-blue" style="flex:1;padding:10px;" onclick="addHomeStaff()">確定</button>
+    </div>
+    <div class="home-note">↑↓で並び替えができます。並び替えても、その人のシフト・目標は一緒に移動します。<br>×で削除すると、その人の全ての月のシフトも一緒に削除されます。</div>
   </div>
 </div>
 
@@ -404,7 +425,7 @@ let noteDay = null;
 let store = {};
 let clickMode = 'x'; /* 'x' = ×モード（空欄⇔×トグル）, 'o' = ○モード（空欄⇔○トグル）, 'h' = 片方OKモード（空欄⇔◐トグル） */
 let selectMode = false;
-let currentView = 'home'; /* 'home' = ホーム画面, 'table' = シフト表 */
+let currentView = 'home'; /* 'home' = ホーム画面, 'roster' = 名簿ページ, 'table' = シフト表 */
 let demoMode = false; /* デモ中は通常と同じタイミングで、デモ専用の場所に保存する */
 let demoPrevYM = null; /* デモに入る前に選んでいた年月 */
 let demoSavedStaff = null; /* デモに入る前の人リスト（メモリ上で復元するため） */
@@ -656,7 +677,7 @@ const CLICK_MODES = {
   b: { hint:'クリック：セルを空欄に戻します（複数選択での一括クリアに便利）', toast:'⬜ 空欄モードに切り替えました' }
 };
 
-/* ── ホーム画面 ver.6.19 ── */
+/* ── ホーム画面 ver.6.22 ── */
 function syncHomeYM() {
   const hy=document.getElementById('homeYearSel'), hm=document.getElementById('homeMonthSel');
   if (hy) hy.value = document.getElementById('yearSel').value;
@@ -671,6 +692,7 @@ function showHome() {
   currentView = 'home';
   document.body.classList.add('home-mode');
   document.getElementById('homeView').style.display = 'block';
+  document.getElementById('rosterView').style.display = 'none';
   document.getElementById('toolbar').style.display = 'none';
   document.querySelector('.legend').style.display = 'none';
   document.querySelector('.scroll-hint').style.display = 'none';
@@ -679,10 +701,24 @@ function showHome() {
   renderHomeStaff();
   window.scrollTo(0,0);
 }
+function showRoster() {
+  if (demoMode) exitDemo();
+  currentView = 'roster';
+  document.body.classList.add('home-mode');
+  document.getElementById('homeView').style.display = 'none';
+  document.getElementById('rosterView').style.display = 'block';
+  document.getElementById('toolbar').style.display = 'none';
+  document.querySelector('.legend').style.display = 'none';
+  document.querySelector('.scroll-hint').style.display = 'none';
+  document.querySelector('.table-outer').style.display = 'none';
+  renderHomeStaff();
+  window.scrollTo(0,0);
+}
 function showTableView() {
   currentView = 'table';
   document.body.classList.remove('home-mode');
   document.getElementById('homeView').style.display = 'none';
+  document.getElementById('rosterView').style.display = 'none';
   document.getElementById('toolbar').style.display = '';
   document.querySelector('.legend').style.display = '';
   document.querySelector('.scroll-hint').style.display = '';
@@ -706,9 +742,11 @@ function goToTable() {
 function renderHomeStaff() {
   const list = document.getElementById('homeStaffList');
   const cnt = document.getElementById('homeStaffCount');
+  const cnt2 = document.getElementById('rosterStaffCount');
   if (!list) return;
   list.innerHTML = '';
   if (cnt) cnt.textContent = '（' + staffList.length + '名）';
+  if (cnt2) cnt2.textContent = '（' + staffList.length + '名）';
   if (staffList.length === 0) {
     const d = document.createElement('div');
     d.className = 'home-empty';
