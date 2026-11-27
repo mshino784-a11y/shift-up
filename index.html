@@ -86,9 +86,8 @@ body.settings-open #mainTable{pointer-events:none;}
   .req-wrap{width:100%;justify-content:space-between;}
   .sep{display:none;}
   #toolbarSettings{grid-template-columns:1fr;}
-  .tgroup{border-top:1px solid #e8eaf2;}
+  .tgroup{border-top:1px solid #e8eaf2;padding:8px 10px;}
   .tgroup:first-child{border-top:none;}
-  .tgroup{padding:8px 10px;}
 }
 
 .legend{background:#f8f9fc;border-bottom:1px solid #d8dce8;padding:5px 14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:.76rem;color:#555;}
@@ -300,12 +299,12 @@ body.home-mode .hdr-ym{display:none;}
 </header>
 
 <div class="home-view" id="homeView">
-  <div class="home-title">シフト作成</div>
+  <div class="home-title" id="homeTitle">シフト作成</div>
   <div class="home-grid">
     <div class="home-card">
       <h2>名簿</h2>
       <button class="btn btn-dark home-roster" onclick="showRoster()">名簿を見る・編集する <span id="homeStaffCount"></span></button>
-      <div class="home-note">追加・削除・並び替えができます。</div>
+      <div class="home-note" id="homeRosterNote">追加・削除・並び替えができます。</div>
     </div>
     <div class="home-card">
       <h2>作る月</h2>
@@ -314,29 +313,9 @@ body.home-mode .hdr-ym{display:none;}
         <select id="homeMonthSel"></select>月
       </div>
       <button class="btn btn-dark home-decide" onclick="goToTable()">シフト表へ</button>
-      <button class="btn btn-dark home-demo" onclick="loadDemo()">▶ デモ</button>
-      <div class="home-note">デモは2026年12月の表を別に開きます。実際のデータには触れず、終了すると消えます。</div>
-    </div>
-  </div>
-</div>
-
-<div class="home-view" id="demoHomeView" style="display:none;">
-  <div class="home-title">シフト作成（デモ）</div>
-  <div class="home-grid">
-    <div class="home-card">
-      <h2>名簿</h2>
-      <button class="btn btn-dark home-roster" onclick="showRoster()">名簿を見る・編集する <span id="demoHomeStaffCount"></span></button>
-      <div class="home-note">デモ中の変更は実際の名簿には反映されません。</div>
-    </div>
-    <div class="home-card">
-      <h2>作る月</h2>
-      <div class="home-month">
-        <select id="demoHomeYearSel" disabled></select>年
-        <select id="demoHomeMonthSel" disabled></select>月
-      </div>
-      <button class="btn btn-dark home-decide" onclick="goToDemoTable()">シフト表へ</button>
-      <button class="btn btn-dark home-demo" onclick="exitDemoAndHome()">デモを終了</button>
-      <button class="btn btn-gray home-demo" onclick="resetDemo()">デモを最初に戻す</button>
+      <button class="btn btn-dark home-demo" id="homeDemoStartBtn" onclick="loadDemo()">▶ デモ</button>
+      <button class="btn btn-dark home-demo" id="homeDemoExitBtn" onclick="exitDemoAndHome()" style="display:none;">デモを終了</button>
+      <button class="btn btn-gray home-demo" id="homeDemoResetBtn" onclick="resetDemo()" style="display:none;">デモを最初に戻す</button>
       <div class="home-note">デモは2026年12月の表を別に開きます。実際のデータには触れず、終了すると消えます。</div>
     </div>
   </div>
@@ -462,7 +441,7 @@ body.home-mode .hdr-ym{display:none;}
 </div>
 
 <!-- 備考1日編集モーダル -->
-<div class="modal-bg" id="noteModal">
+<div class="modal-bg" id="noteModal" onclick="if(event.target===this)closeNoteModal()">
   <div class="modal">
     <h3 id="noteModalTitle">備考編集</h3>
     <input type="text" id="noteInput" placeholder="例：会議、おはなし会など">
@@ -474,7 +453,7 @@ body.home-mode .hdr-ym{display:none;}
 </div>
 
 <!-- 備考一括編集モーダル -->
-<div class="modal-bg" id="allModal">
+<div class="modal-bg" id="allModal" onclick="if(event.target===this)closeAllNotes()">
   <div class="modal" style="min-width:480px;">
     <h3>備考一括編集</h3>
     <div id="allNotesList"></div>
@@ -491,7 +470,7 @@ body.home-mode .hdr-ym{display:none;}
     <div class="confirm-title" id="confirmTitle">確認</div>
     <div class="confirm-msg" id="confirmMsg"></div>
     <div class="confirm-btns">
-      <button class="btn btn-gray" onclick="closeConfirm()">やめる</button>
+      <button class="btn btn-gray" id="confirmCancelBtn" onclick="closeConfirm()">やめる</button>
       <button class="btn btn-red" id="confirmOkBtn" onclick="confirmOk()">削除する</button>
     </div>
   </div>
@@ -532,8 +511,30 @@ const storage = {
   },
   removeItem(k) {
     try { localStorage.removeItem(k); } catch(e) { delete memStore[k]; }
+  },
+  keys() {
+    try {
+      const ks = [];
+      for (let i = 0; i < localStorage.length; i++) ks.push(localStorage.key(i));
+      return ks;
+    } catch(e) {
+      return Object.keys(memStore);
+    }
   }
 };
+
+function loadSetting(key, fallback) {
+  try {
+    const v = storage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  } catch(e) {
+    return fallback;
+  }
+}
+function saveSetting(key, val) {
+  if (demoMode) return;
+  try { storage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
 
 /* ── localStorage ラッパー ── */
 function lsKey(y,m)  { return 'sft_' + y + '_' + String(m).padStart(2,'0'); }
@@ -573,13 +574,10 @@ function loadMonth(y,m) {
   return store[k];
 }
 
-function saveStaff() {
-  if (demoMode) return; /* デモ中の名簿変更は通常に引き継がない */
-  try { storage.setItem(lsStaff(), JSON.stringify(staffList)); } catch(e){}
-}
+function saveStaff() { saveSetting(lsStaff(), staffList); }
 function loadStaff() {
-  try { const v = storage.getItem(lsStaff()); if (v) { staffList = JSON.parse(v); return; } } catch(e){}
-  staffList = [...STAFF_DEF];
+  const v = loadSetting(lsStaff(), null);
+  staffList = Array.isArray(v) ? v : [...STAFF_DEF];
 }
 
 /* ── 出勤ペース（人ごとの上限） ──
@@ -596,62 +594,43 @@ const PACES = {
 };
 let paces = {}; /* {スタッフ名: ペースコード}（月をまたいで保持） */
 function lsPace() { return 'sft_pace_v1'; }
-function loadPaces() {
-  try { const v = storage.getItem(lsPace()); if (v) { paces = JSON.parse(v) || {}; return; } } catch(e){}
-  paces = {};
-}
-function savePaces() {
-  if (demoMode) return; /* デモ中のペース変更は通常に引き継がない */
-  try { storage.setItem(lsPace(), JSON.stringify(paces)); } catch(e){}
-}
+function loadPaces() { paces = loadSetting(lsPace(), {}) || {}; }
+function savePaces() { saveSetting(lsPace(), paces); }
 
 /* 終日のみ（半日勤務なし）：名簿のボタンで設定する人ごとの指定。自動割り当てで半日勤務を割り当てない */
 let noHalf = {}; /* {スタッフ名: true}（月をまたいで保持） */
 function lsNoHalf() { return 'sft_nohalf_v1'; }
-function loadNoHalf() {
-  try { const v = storage.getItem(lsNoHalf()); if (v) { noHalf = JSON.parse(v) || {}; return; } } catch(e){}
-  noHalf = {};
-}
-function saveNoHalf() {
-  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
-  try { storage.setItem(lsNoHalf(), JSON.stringify(noHalf)); } catch(e){}
-}
+function loadNoHalf() { noHalf = loadSetting(lsNoHalf(), {}) || {}; }
+function saveNoHalf() { saveSetting(lsNoHalf(), noHalf); }
+
 /* 目標日数の許容幅：名簿のセレクトで設定する人ごとの指定（0=目標厳守、0.5）。未設定は±1（月をまたいで保持） */
 let targetTol = {}; /* {スタッフ名: 0 | 0.5} */
 function lsTol() { return 'sft_tol_v1'; }
 function tolOf(name) { const v = targetTol[name]; return (v === 0 || v === 0.5) ? v : 1; }
 function loadTol() {
-  try { const v = storage.getItem(lsTol()); if (v) { targetTol = JSON.parse(v) || {}; return; } } catch(e){}
+  const v = loadSetting(lsTol(), null);
+  if (v) { targetTol = v; return; }
   targetTol = {};
   /* 旧「目標厳守」指定（sft_exact_v1）から引き継ぐ */
-  try { const old = storage.getItem('sft_exact_v1'); if (old) { const ex = JSON.parse(old) || {}; Object.keys(ex).forEach(function(nm){ if (ex[nm]) targetTol[nm] = 0; }); saveTol(); } } catch(e){}
+  const ex = loadSetting('sft_exact_v1', null);
+  if (ex) { Object.keys(ex).forEach(function(nm){ if (ex[nm]) targetTol[nm] = 0; }); saveTol(); }
 }
-function saveTol() {
-  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
-  try { storage.setItem(lsTol(), JSON.stringify(targetTol)); } catch(e){}
-}
+function saveTol() { saveSetting(lsTol(), targetTol); }
+
 /* 連勤制限：名簿のボタンで設定する人ごとの指定。ONの人は終日の2連勤と3日以上の連勤を割り当てない（半日の2連勤は可） */
 let noRun = {}; /* {スタッフ名: true}（月をまたいで保持） */
 function lsNoRun() { return 'sft_norun_v1'; }
-function loadNoRun() {
-  try { const v = storage.getItem(lsNoRun()); if (v) { noRun = JSON.parse(v) || {}; return; } } catch(e){}
-  noRun = {};
-}
-function saveNoRun() {
-  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
-  try { storage.setItem(lsNoRun(), JSON.stringify(noRun)); } catch(e){}
-}
+function loadNoRun() { noRun = loadSetting(lsNoRun(), {}) || {}; }
+function saveNoRun() { saveSetting(lsNoRun(), noRun); }
+
 /* 一緒に勤務しない組み合わせ：名簿で設定する2人の組。自動割り当てで同じ時間帯に入れない */
 let conflictPairs = []; /* [[名前A, 名前B], ...]（月をまたいで保持） */
 function lsConflict() { return 'sft_conflict_v1'; }
 function loadConflicts() {
-  try { const v = storage.getItem(lsConflict()); if (v) { conflictPairs = JSON.parse(v) || []; return; } } catch(e){}
-  conflictPairs = [];
+  const v = loadSetting(lsConflict(), []);
+  conflictPairs = Array.isArray(v) ? v : [];
 }
-function saveConflicts() {
-  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
-  try { storage.setItem(lsConflict(), JSON.stringify(conflictPairs)); } catch(e){}
-}
+function saveConflicts() { saveSetting(lsConflict(), conflictPairs); }
 function paceInfo(si) { return PACES[paces[staffList[si]] || ''] || PACES['']; }
 function weekIdx(y,m,d) {
   const off1 = (dow(y,m,1) - WEEK_START + 7) % 7;
@@ -676,6 +655,34 @@ function setPick(dat, si, d, h, v) {
 }
 function clearPickDay(dat, si, d) { const p = dat.picks && dat.picks[si]; if (p && p.s) delete p.s[d]; }
 function clearPicks(dat, si) { if (dat.picks) delete dat.picks[si]; }
+/* 指定した日の補助状態（◐・候補☆・1日選択確定・📌確定・picks）をまとめて消す */
+function clearCellMeta(dat, si, d, opts) {
+  opts = opts || {};
+  if (!opts.keepHalf && dat.half && dat.half[si]) dat.half[si][d] = false;
+  if (!opts.keepCand && dat.cand && dat.cand[si]) delete dat.cand[si][d];
+  if (!opts.keepSel1 && dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
+  if (!opts.keepFixed && dat.fixed && dat.fixed[si]) delete dat.fixed[si][d];
+  clearPickDay(dat, si, d);
+}
+/* ペース変更等で clearPicks したあと、📌確定と1日選択確定の picks を復元する */
+function restoreFixedPicks(dat, si) {
+  if (!paceInfo(si).cap) return;
+  const sd = dat.sel1 && dat.sel1[si];
+  if (sd && !dat.hols[sd] && dat.shifts[si] && dat.shifts[si][sd]) {
+    if (dat.shifts[si][sd][0] === 2) setPick(dat, si, sd, 0, true);
+    if (dat.shifts[si][sd][1] === 2) setPick(dat, si, sd, 1, true);
+  }
+  const fx = dat.fixed && dat.fixed[si];
+  if (!fx) return;
+  Object.keys(fx).forEach(function(ds) {
+    const d = Number(ds);
+    if (dat.hols[d]) return;
+    const fh = fixedHalves(dat, si, d);
+    [0, 1].forEach(function(h) {
+      if (fh[h] && dat.shifts[si] && dat.shifts[si][d] && dat.shifts[si][d][h] === 2) setPick(dat, si, d, h, true);
+    });
+  });
+}
 /* ── 確定（📌）：半日ごとに指定できる。dat.fixed[si][d] は [午前,午後] の配列で持つ。
    昔の保存形式（日単位の true）は両方確定として読み替える ── */
 function fixedHalves(dat, si, d) {
@@ -721,8 +728,8 @@ function paceUsage(dat, si, y, m, days) {
     const n = (isFirm(dat,si,d,0)?1:0) + (isFirm(dat,si,d,1)?1:0);
     if (!n) continue;
     const k = periodKey(pi,y,m,d);
-    if (!u[k]) u[k] = {halves:0, days:new Set(), first:d, last:d};
-    u[k].halves += n; u[k].days.add(d); u[k].last = d;
+    if (!u[k]) u[k] = {halves:0};
+    u[k].halves += n;
   }
   return u;
 }
@@ -853,17 +860,30 @@ function syncHeaderYM() {
   document.getElementById('yearSel').value = document.getElementById('homeYearSel').value;
   document.getElementById('monthSel').value = document.getElementById('homeMonthSel').value;
 }
+function updateHomeViewMode() {
+  document.getElementById('homeTitle').textContent = demoMode ? 'シフト作成（デモ）' : 'シフト作成';
+  document.getElementById('homeRosterNote').textContent = demoMode ? 'デモ中の変更は実際の名簿には反映されません。' : '追加・削除・並び替えができます。';
+  document.getElementById('homeYearSel').disabled = demoMode;
+  document.getElementById('homeMonthSel').disabled = demoMode;
+  document.getElementById('homeDemoStartBtn').style.display = demoMode ? 'none' : '';
+  document.getElementById('homeDemoExitBtn').style.display = demoMode ? '' : 'none';
+  document.getElementById('homeDemoResetBtn').style.display = demoMode ? '' : 'none';
+}
+function setTableVisible(visible) {
+  const disp = visible ? '' : 'none';
+  document.getElementById('toolbar').style.display = disp;
+  document.querySelector('.legend').style.display = disp;
+  document.querySelector('.scroll-hint').style.display = disp;
+  document.querySelector('.table-outer').style.display = disp;
+}
 function showHome() {
   if (demoMode) exitDemo();
   currentView = 'home';
   document.body.classList.add('home-mode');
+  updateHomeViewMode();
   document.getElementById('homeView').style.display = 'block';
-  document.getElementById('demoHomeView').style.display = 'none';
   document.getElementById('rosterView').style.display = 'none';
-  document.getElementById('toolbar').style.display = 'none';
-  document.querySelector('.legend').style.display = 'none';
-  document.querySelector('.scroll-hint').style.display = 'none';
-  document.querySelector('.table-outer').style.display = 'none';
+  setTableVisible(false);
   syncHomeYM();
   renderHomeStaff();
   window.scrollTo(0,0);
@@ -872,12 +892,8 @@ function showRoster() {
   currentView = 'roster';
   document.body.classList.add('home-mode');
   document.getElementById('homeView').style.display = 'none';
-  document.getElementById('demoHomeView').style.display = 'none';
   document.getElementById('rosterView').style.display = 'block';
-  document.getElementById('toolbar').style.display = 'none';
-  document.querySelector('.legend').style.display = 'none';
-  document.querySelector('.scroll-hint').style.display = 'none';
-  document.querySelector('.table-outer').style.display = 'none';
+  setTableVisible(false);
   renderHomeStaff();
   window.scrollTo(0,0);
 }
@@ -889,19 +905,17 @@ function goHome() {
   if (demoMode) { showDemoHome(); return; }
   showHome();
 }
-/* デモ用ホーム画面（通常のホームと同じ基本構造） */
+/* デモ用ホーム画面（通常のホームと共通UIで表示切替） */
 function showDemoHome() {
   if (!demoMode) return;
   currentView = 'demoHome';
   document.body.classList.add('home-mode');
-  document.getElementById('homeView').style.display = 'none';
-  document.getElementById('demoHomeView').style.display = 'block';
+  updateHomeViewMode();
+  document.getElementById('homeView').style.display = 'block';
   document.getElementById('rosterView').style.display = 'none';
-  document.getElementById('toolbar').style.display = 'none';
-  document.querySelector('.legend').style.display = 'none';
-  document.querySelector('.scroll-hint').style.display = 'none';
-  document.querySelector('.table-outer').style.display = 'none';
+  setTableVisible(false);
   document.getElementById('demoBanner').classList.remove('on');
+  syncHomeYM();
   renderHomeStaff();
   window.scrollTo(0,0);
 }
@@ -915,19 +929,15 @@ function showTableView() {
   currentView = 'table';
   document.body.classList.remove('home-mode');
   document.getElementById('homeView').style.display = 'none';
-  document.getElementById('demoHomeView').style.display = 'none';
   document.getElementById('rosterView').style.display = 'none';
-  document.getElementById('toolbar').style.display = '';
-  document.querySelector('.legend').style.display = '';
-  document.querySelector('.scroll-hint').style.display = '';
-  document.querySelector('.table-outer').style.display = '';
+  setTableVisible(true);
   document.getElementById('yearSel').disabled = demoMode;
   document.getElementById('monthSel').disabled = demoMode;
   document.getElementById('homeNavBtn').style.display = '';
   document.getElementById('demoBanner').classList.toggle('on', demoMode);
 }
 function goToTable() {
-  if (demoMode) exitDemo();
+  if (demoMode) { goToDemoTable(); return; }
   syncHeaderYM();
   loadMonth(getY(), getM());
   initDat();
@@ -941,12 +951,10 @@ function renderHomeStaff() {
   const list = document.getElementById('homeStaffList');
   const cnt = document.getElementById('homeStaffCount');
   const cnt2 = document.getElementById('rosterStaffCount');
-  const cnt3 = document.getElementById('demoHomeStaffCount');
   if (!list) return;
   list.innerHTML = '';
   if (cnt) cnt.textContent = '（' + staffList.length + '名）';
   if (cnt2) cnt2.textContent = '（' + staffList.length + '名）';
-  if (cnt3) cnt3.textContent = '（' + staffList.length + '名）';
   if (staffList.length === 0) {
     const d = document.createElement('div');
     d.className = 'home-empty';
@@ -977,17 +985,15 @@ function renderHomeStaff() {
       if ((paces[name]||'')===code) o.selected = true;
       paceSel.appendChild(o);
     });
-    (function(staffName, staffIdx, sel){
-      sel.addEventListener('change', function(){
-        if (sel.value) paces[staffName]=sel.value; else delete paces[staffName];
-        savePaces();
-        forEachStoredMonth(function(d){ clearPicks(d, staffIdx); }); /* ペースを変えたら選択はやり直し（○は全部候補に戻る） */
-        save();
-        showToast(sel.value ? staffName+'：'+PACES[sel.value].label : staffName+'：通常に戻しました');
-        renderHomeStaff();
-        if (currentView === 'table') rebuild();
-      });
-    })(name, si, paceSel);
+    paceSel.addEventListener('change', function(){
+      if (paceSel.value) paces[name]=paceSel.value; else delete paces[name];
+      savePaces();
+      forEachStoredMonth(function(d){ clearPicks(d, si); restoreFixedPicks(d, si); }); /* ペースを変えたら選択はやり直し（📌確定・1日選択確定は維持） */
+      save();
+      showToast(paceSel.value ? name+'：'+PACES[paceSel.value].label : name+'：通常に戻しました');
+      renderHomeStaff();
+      if (currentView === 'table') rebuild();
+    });
     row.appendChild(paceSel);
     const nh = document.createElement('button');
     nh.type = 'button';
@@ -996,7 +1002,7 @@ function renderHomeStaff() {
     nh.title = noHalf[name] ? '終日のみ（タップで解除）' : 'タップで終日のみに';
     nh.addEventListener('click', function(){
       if (!noHalf[name] && tolOf(name) === 0 && hasHalfTarget(si)) {
-        alert(name + ' さんは「目標厳守」で0.5日単位の目標が設定されているため、「終日のみ」にできません。\n先に目標日数を整数に変更するか、許容幅を±0.5/±1にしてください。');
+        openAlert('設定できません', name + ' さんは「目標厳守」で0.5日単位の目標が設定されているため、「終日のみ」にできません。\n先に目標日数を整数に変更するか、許容幅を±0.5/±1にしてください。');
         return;
       }
       if (noHalf[name]) delete noHalf[name]; else noHalf[name] = true;
@@ -1013,23 +1019,21 @@ function renderHomeStaff() {
       tolSel.appendChild(o);
     });
     tolSel.value = String(tolOf(name));
-    (function(staffName, staffIdx, sel){
-      sel.addEventListener('change', function(){
-        const v = parseFloat(sel.value);
-        if (v === 0 && noHalf[staffName] && hasHalfTarget(staffIdx)) {
-          alert(staffName + ' さんは「終日のみ」で0.5日単位の目標が設定されているため、「目標厳守」にできません。\n先に目標日数を整数に変更してください。');
-          sel.value = String(tolOf(staffName));
-          return;
-        }
-        if (v === 1) delete targetTol[staffName]; else targetTol[staffName] = v;
-        saveTol();
-        forEachStoredMonth(function(d2){ clearPicks(d2, staffIdx); }); /* 許容幅を変えたら選択はやり直し（ペース変更と同じ） */
-        save();
-        showToast(staffName + '：' + (v === 0 ? '目標厳守' : '目標±' + v) + 'にしました');
-        renderHomeStaff();
-        if (currentView === 'table') rebuild();
-      });
-    })(name, si, tolSel);
+    tolSel.addEventListener('change', function(){
+      const v = parseFloat(tolSel.value);
+      if (v === 0 && noHalf[name] && hasHalfTarget(si)) {
+        openAlert('設定できません', name + ' さんは「終日のみ」で0.5日単位の目標が設定されているため、「目標厳守」にできません。\n先に目標日数を整数に変更してください。');
+        tolSel.value = String(tolOf(name));
+        return;
+      }
+      if (v === 1) delete targetTol[name]; else targetTol[name] = v;
+      saveTol();
+      forEachStoredMonth(function(d2){ clearPicks(d2, si); restoreFixedPicks(d2, si); }); /* 許容幅を変えたら選択はやり直し（📌確定・1日選択確定は維持） */
+      save();
+      showToast(name + '：' + (v === 0 ? '目標厳守' : '目標±' + v) + 'にしました');
+      renderHomeStaff();
+      if (currentView === 'table') rebuild();
+    });
     row.appendChild(tolSel);
     const nr = document.createElement('button');
     nr.type = 'button';
@@ -1121,6 +1125,9 @@ function addHomeStaff() {
   inp.focus();
 }
 
+const DAT_STAFF_KEYS = ['shifts', 'half', 'targets', 'locks', 'picks', 'cand', 'sel1', 'fixed'];
+const BEFORE_STAFF_KEYS = ['shifts', 'half', 'picks', 'cand', 'sel1'];
+
 /* 月データの中で、スタッフ2人の入れ替えを行う共通処理 */
 function swapKey(obj, a, b) {
   if (!obj) return;
@@ -1132,11 +1139,9 @@ function swapStaffInDat(dat, a, b) {
   if (!dat) return;
   const bs = dat.beforeAssign; /* 「割り当て前に戻す」用のデータも同じ並びにする */
   const wasClean = !!(dat.assigned && bs && bs.afterSig === assignSig(dat));
-  swapKey(dat.shifts, a, b); swapKey(dat.half, a, b);
-  swapKey(dat.targets, a, b); swapKey(dat.locks, a, b); swapKey(dat.picks, a, b);
-  swapKey(dat.cand, a, b); swapKey(dat.sel1, a, b); swapKey(dat.fixed, a, b);
+  DAT_STAFF_KEYS.forEach(function(k){ swapKey(dat[k], a, b); });
   if (bs) {
-    swapKey(bs.shifts, a, b); swapKey(bs.half, a, b); swapKey(bs.picks, a, b); swapKey(bs.cand, a, b); swapKey(bs.sel1, a, b);
+    BEFORE_STAFF_KEYS.forEach(function(k){ swapKey(bs[k], a, b); });
     if (wasClean) bs.afterSig = assignSig(dat);
   }
 }
@@ -1162,18 +1167,15 @@ function forEachStoredMonth(fn) {
     fn(store[k]);
     if (storage.getItem(k) !== null) { try { storage.setItem(k, JSON.stringify(store[k])); } catch(e){} }
   });
-  /* localStorage に保存済みの月データ（まだ読み込んでいない月も対象） */
-  try {
-    const keys = [];
-    for (let i=0; i<localStorage.length; i++) keys.push(localStorage.key(i));
-    keys.filter(function(k){ return /^sft_\d{4}_\d{2}$/.test(k); }).forEach(function(k){
-      if (store[k]) return; /* メモリ側ですでに処理済み */
-      try {
-        const dat = JSON.parse(localStorage.getItem(k));
-        if (dat) { fn(dat); localStorage.setItem(k, JSON.stringify(dat)); }
-      } catch(e){}
-    });
-  } catch(e){}
+  /* ストレージに保存済みの月データ（まだ読み込んでいない月も対象） */
+  storage.keys().filter(function(k){ return /^sft_\d{4}_\d{2}$/.test(k); }).forEach(function(k){
+    if (store[k]) return; /* メモリ側ですでに処理済み */
+    try {
+      const raw = storage.getItem(k);
+      const dat = raw ? JSON.parse(raw) : null;
+      if (dat) { fn(dat); storage.setItem(k, JSON.stringify(dat)); }
+    } catch(e){}
+  });
 }
 
 /* 人を並び替える（↑↓）。シフト・目標・ロック・選択も一緒に移動する */
@@ -1201,21 +1203,32 @@ function removeStaffFromDat(dat, si) {
       obj[k-1] = obj[k]; delete obj[k];
     });
   }
-  shiftDown(dat.shifts); shiftDown(dat.half);
-  shiftDown(dat.targets); shiftDown(dat.locks); shiftDown(dat.picks);
-  shiftDown(dat.cand); shiftDown(dat.sel1); shiftDown(dat.fixed);
+  DAT_STAFF_KEYS.forEach(function(k){ shiftDown(dat[k]); });
   if (bs) {
-    shiftDown(bs.shifts); shiftDown(bs.half); shiftDown(bs.picks); shiftDown(bs.cand); shiftDown(bs.sel1);
+    BEFORE_STAFF_KEYS.forEach(function(k){ shiftDown(bs[k]); });
     if (wasClean) bs.afterSig = assignSig(dat);
   }
 }
-/* ── 確認画面（×ボタンなど、取り消せない操作の前に表示） ── */
+/* ── 確認・通知画面（取り消せない操作の確認やエラー表示） ── */
 let confirmAction = null;
-function openConfirm(title, msg, okLabel, fn) {
+function openConfirm(title, msg, okLabel, fn, isDanger) {
   document.getElementById('confirmTitle').textContent = title;
   document.getElementById('confirmMsg').textContent = msg;
-  document.getElementById('confirmOkBtn').textContent = okLabel;
+  document.getElementById('confirmCancelBtn').style.display = '';
+  const okBtn = document.getElementById('confirmOkBtn');
+  okBtn.textContent = okLabel;
+  okBtn.className = 'btn ' + (isDanger === false ? 'btn-dark' : 'btn-red');
   confirmAction = fn;
+  document.getElementById('confirmOverlay').classList.add('on');
+}
+function openAlert(title, msg) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmCancelBtn').style.display = 'none';
+  const okBtn = document.getElementById('confirmOkBtn');
+  okBtn.textContent = 'OK';
+  okBtn.className = 'btn btn-dark';
+  confirmAction = null;
   document.getElementById('confirmOverlay').classList.add('on');
 }
 function closeConfirm() {
@@ -1390,13 +1403,14 @@ function loadDemo() {
 /* デモを写真の状態に戻す */
 function resetDemo() {
   if (!demoMode) return;
-  if (!confirm('デモを最初の状態に戻します。よろしいですか？')) return;
-  applyDemoSettings();
-  fillDemoData(getDat());
-  initDat();
-  rebuild();
-  renderHomeStaff();
-  showToast('▶ デモを写真の状態に戻しました');
+  openConfirm('デモを戻す', 'デモを最初の状態に戻します。よろしいですか？', '戻す', function() {
+    applyDemoSettings();
+    fillDemoData(getDat());
+    initDat();
+    rebuild();
+    renderHomeStaff();
+    showToast('▶ デモを写真の状態に戻しました');
+  }, false);
 }
 
 /* デモを終了し、元の状態に戻す（実データは無傷） */
@@ -1476,6 +1490,10 @@ function adjustCycle(si, d, h, forceBoth) {
   const nx = (cur === 1) ? 0 : (cur === 0) ? 2 : 1; /* ×→空欄、空欄→○、○→× */
   if (both) { setHalf(0, nx); setHalf(1, nx); }
   else setHalf(h, nx);
+  /* 1日選択の確定日を変更して終日○でなくなった場合は確定枠も外す */
+  if (dat.sel1 && dat.sel1[si] === d && (dat.shifts[si][d][0] !== 2 || dat.shifts[si][d][1] !== 2)) {
+    delete dat.sel1[si];
+  }
 }
 
 /* ── 通常セル・日曜・候補日のクリック共通処理 ── */
@@ -1483,7 +1501,7 @@ function handleCellClick(cell, si, d, h, isSunCell, needRebuild) {
   const dat = getDat();
   if (dat.locks[si]) return;
   if (selectMode) { handleSelectClick(si, d); return; }
-  if (dat.assigned) { adjustCycle(si, d, h || 0, !!needRebuild); save(); rebuild(); updateCounts(); return; }
+  if (dat.assigned) { adjustCycle(si, d, h || 0, !!needRebuild); save(); rebuild(); return; }
   if (clickMode === 's') { handleOneDayClick(si, d); return; }
   if (clickMode === 'f') { handleFixedClick(si, d, h); return; }
 
@@ -1498,13 +1516,14 @@ function handleCellClick(cell, si, d, h, isSunCell, needRebuild) {
 
   if (clickMode === 'h') {
     if (dayUnit) return; /* 日曜・候補日は終日のため◐は使えない */
+    clearCellMeta(dat, si, d, { keepHalf: true, keepFixed: true });
     dat.half[si][d] = true;
     dat.shifts[si][d] = [0,0];
-    clearPickDay(dat, si, d);
     save(); rebuild();
     return;
   }
 
+  const hadOneDayMeta = !!((dat.cand && dat.cand[si] && dat.cand[si][d]) || (dat.sel1 && dat.sel1[si] === d));
   if (dayUnit) {
     if (dat.cand && dat.cand[si]) delete dat.cand[si][d];
     if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
@@ -1525,10 +1544,13 @@ function handleCellClick(cell, si, d, h, isSunCell, needRebuild) {
     dat.shifts[si][d][h] = nx;
     setPick(dat, si, d, h, false);
     if (dat.assigned && nx === 2 && paceInfo(si).cap) setPick(dat, si, d, h, true);
+    if (dat.sel1 && dat.sel1[si] === d && (dat.shifts[si][d][0] !== 2 || dat.shifts[si][d][1] !== 2)) {
+      delete dat.sel1[si];
+    }
   }
 
-  if (needRebuild) {
-    save(); rebuild(); updateCounts();
+  if (needRebuild || hadOneDayMeta) {
+    save(); rebuild();
     return;
   }
   cell.dataset.s = nx;
@@ -1565,10 +1587,16 @@ function handleOneDayClick(si, d) {
     /* 候補の日をタップ → 候補を外す */
     delete dat.cand[si][d];
   } else {
+    /* 📌確定が付いていた場合は確定を解除してから候補にする */
+    if (dat.fixed && dat.fixed[si] && dat.fixed[si][d]) {
+      delete dat.fixed[si][d];
+      dat.shifts[si][d] = [0,0];
+      setPick(dat, si, d, 0, false); setPick(dat, si, d, 1, false);
+    }
     /* 空欄・×・○の日をタップ → 候補にする（1日は自動割り当てが候補から選ぶ） */
     dat.cand[si][d] = true;
   }
-  save(); rebuild(); updateCounts();
+  save(); rebuild();
 }
 
 /* ── 確定モード：その半日を確定する（自動割り当てで必ず出勤）。もう一度タップで解除。
@@ -1614,7 +1642,7 @@ function handleFixedClick(si, d, h) {
     if (paceInfo(si).cap) setPick(dat, si, d, h, true);
     showToast(staffList[si] + ' の ' + d + '日（' + (h === 0 ? '午前' : '午後') + '）を確定しました');
   }
-  save(); rebuild(); updateCounts();
+  save(); rebuild();
 }
 
 /* ── 初期化 ── */
@@ -1637,47 +1665,27 @@ function init() {
   const hySel = document.getElementById('homeYearSel');
   const hmSel = document.getElementById('homeMonthSel');
 
-  for (let y=now.getFullYear()-1; y<=now.getFullYear()+2; y++) {
-    const o=document.createElement('option');
-    o.value=y; o.textContent=y;
-    if (y===defY) o.selected=true;
-    ySel.appendChild(o);
-    const o2=document.createElement('option');
-    o2.value=y; o2.textContent=y;
-    if (y===defY) o2.selected=true;
-    hySel.appendChild(o2);
+  function fillRangeOptions(sel, start, end, selectedVal) {
+    for (let v=start; v<=end; v++) {
+      const o=document.createElement('option');
+      o.value=v; o.textContent=v;
+      if (v===selectedVal) o.selected=true;
+      sel.appendChild(o);
+    }
   }
-  for (let m=1; m<=12; m++) {
-    const o=document.createElement('option');
-    o.value=m; o.textContent=m;
-    if (m===defM) o.selected=true;
-    mSel.appendChild(o);
-    const o2=document.createElement('option');
-    o2.value=m; o2.textContent=m;
-    if (m===defM) o2.selected=true;
-    hmSel.appendChild(o2);
-  }
+  const minY = Math.min(now.getFullYear()-1, DEMO_YEAR), maxY = Math.max(now.getFullYear()+2, DEMO_YEAR);
+  fillRangeOptions(ySel, minY, maxY, defY);
+  fillRangeOptions(hySel, minY, maxY, defY);
+  fillRangeOptions(mSel, 1, 12, defM);
+  fillRangeOptions(hmSel, 1, 12, defM);
 
-  const dhySel = document.getElementById('demoHomeYearSel');
-  const dhmSel = document.getElementById('demoHomeMonthSel');
-  const dYears = [];
-  for (let y=now.getFullYear()-1; y<=now.getFullYear()+2; y++) dYears.push(y);
-  if (dYears.indexOf(DEMO_YEAR) === -1) dYears.unshift(DEMO_YEAR);
-  dYears.forEach(function(y){
-    const o=document.createElement('option');
-    o.value=y; o.textContent=y;
-    if (y===DEMO_YEAR) o.selected=true;
-    dhySel.appendChild(o);
-  });
-  for (let m=1; m<=12; m++) {
-    const o=document.createElement('option');
-    o.value=m; o.textContent=m;
-    if (m===DEMO_MONTH) o.selected=true;
-    dhmSel.appendChild(o);
+  function onYMChange() {
+    if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; }
+    syncHomeYM(); resetTransientModes(true);
+    if (currentView==='table') rebuild();
   }
-
-  ySel.onchange = function(){ if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; } syncHomeYM(); resetTransientModes(); if (currentView==='table') rebuild(); };
-  mSel.onchange = function(){ if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; } syncHomeYM(); resetTransientModes(); if (currentView==='table') rebuild(); };
+  ySel.onchange = onYMChange;
+  mSel.onchange = onYMChange;
   hySel.onchange = syncHeaderYM;
   hmSel.onchange = syncHeaderYM;
   document.getElementById('homeNameInput').addEventListener('keydown', function(e){
@@ -1732,7 +1740,7 @@ function buildHead(y,m,days) {
     el.className=off?'hdr-off':(w===6?'sat':w===0?'sun':'');
     el.style.cssText='width:44px;min-width:44px;max-width:44px;cursor:pointer;';
     el.innerHTML='<span class="th-day">'+d+'</span><span class="th-wd">'+WD[w]+'</span>';
-    el.addEventListener('click',function(day){ return function(){ clickHol(day); }; }(d));
+    el.addEventListener('click',function(){ clickHol(d); });
     r1.appendChild(el);
   }
   th(r1,'割当','s-actual'); th(r1,'目標','s-target');
@@ -1747,7 +1755,7 @@ function buildHead(y,m,days) {
     if (dat.hols[d]) { td.className='nd-off'; td.textContent='休'; }
     else {
       td.textContent=dat.notes[d]||'';
-      td.addEventListener('click',function(day){ return function(){ openNote(day); }; }(d));
+      td.addEventListener('click',function(){ openNote(d); });
     }
     r2.appendChild(td);
   }
@@ -1802,6 +1810,11 @@ function buildBody(y,m,days) {
   const body=document.getElementById('tBody');
   body.innerHTML='';
   const dat=getDat();
+  function applyCellStateClasses(el, si, d, isLocked) {
+    if (isLocked) el.classList.add('lk');
+    if (selectMode && selected.has(si+'-'+d)) el.classList.add('selected');
+    if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) el.classList.add('sel-anchor');
+  }
 
   staffList.forEach(function(name,si){
     const tr=document.createElement('tr');
@@ -1819,15 +1832,13 @@ function buildBody(y,m,days) {
     lockBtn.className='row-lock-btn'+(isLocked?' on':'');
     lockBtn.textContent=isLocked?'🔒':'🔓';
     lockBtn.title=isLocked?(name+'：ロック中（タップで解除）'):(name+'：タップでロック（この人だけ入力不可に）');
-    (function(staffIdx, btn){
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        dat.locks[staffIdx]=!dat.locks[staffIdx];
-        save();
-        showToast(dat.locks[staffIdx] ? staffList[staffIdx]+' をロックしました' : staffList[staffIdx]+' のロックを解除しました');
-        rebuild();
-      });
-    })(si, lockBtn);
+    lockBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      dat.locks[si]=!dat.locks[si];
+      save();
+      showToast(dat.locks[si] ? staffList[si]+' をロックしました' : staffList[si]+' のロックを解除しました');
+      rebuild();
+    });
     nameInner.appendChild(lockBtn);
     const nameSpan=document.createElement('span');
     nameSpan.className='row-name-text';
@@ -1877,24 +1888,20 @@ function buildBody(y,m,days) {
         /* 統合セル（片方OK・未確定） */
         const hcEl=document.createElement('div');
         hcEl.className='half-cell';
-        if (isLocked) hcEl.classList.add('lk');
-        if (selectMode && selected.has(si+'-'+d)) hcEl.classList.add('selected');
-        if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) hcEl.classList.add('sel-anchor');
+        applyCellStateClasses(hcEl, si, d, isLocked);
         hcEl.textContent='◐';
-        (function(cell, staffIdx, day){
-          cell.addEventListener('click',function(){
-            if (dat.locks[staffIdx]) return;
-            if (selectMode) { handleSelectClick(staffIdx, day); return; }
-            if (dat.assigned) { adjustCycle(staffIdx, day, 0, true); save(); rebuild(); updateCounts(); return; } /* 割り当て後は微調整 */
-            if (clickMode==='s') { handleOneDayClick(staffIdx, day); return; }
-            if (clickMode==='f') { handleFixedClick(staffIdx, day); return; }
-            /* どのモードでクリックしても統合解除して通常セル（空欄）に戻す */
-            dat.half[staffIdx][day]=false;
-            dat.shifts[staffIdx][day]=[0,0];
-            clearPickDay(dat, staffIdx, day);
-            save(); rebuild();
-          });
-        })(hcEl, si, d);
+        hcEl.addEventListener('click',function(){
+          if (dat.locks[si]) return;
+          if (selectMode) { handleSelectClick(si, d); return; }
+          if (dat.assigned) { adjustCycle(si, d, 0, true); save(); rebuild(); return; } /* 割り当て後は微調整 */
+          if (clickMode==='s') { handleOneDayClick(si, d); return; }
+          if (clickMode==='f') { handleFixedClick(si, d); return; }
+          /* どのモードでクリックしても統合解除して通常セル（空欄）に戻す */
+          dat.half[si][d]=false;
+          dat.shifts[si][d]=[0,0];
+          clearPickDay(dat, si, d);
+          save(); rebuild();
+        });
         td.appendChild(hcEl);
       } else if (dow(y,m,d)===0) {
         /* 日曜：一日1枠（午前・午後をまとめた1つのセル） */
@@ -1902,9 +1909,7 @@ function buildBody(y,m,days) {
         wrap.className='cell-wrap';
         const c=document.createElement('div');
         c.className='hc sun';
-        if (isLocked) c.classList.add('lk');
-        if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
-        if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
+        applyCellStateClasses(c, si, d, isLocked);
         const sv=sunDayVal(dat,si,d);
         c.dataset.s=sv; c.textContent=sv===0?'':SL[sv];
         if (paceInfo(si).cap && sv===2) {
@@ -1914,11 +1919,9 @@ function buildBody(y,m,days) {
         if (dat.cand && dat.cand[si] && dat.cand[si][d]) { c.textContent='☆'; c.classList.add('one-cand'); c.title='1日選択の候補（もう一度タップで終日の出勤日に確定）'; }
         if (dat.sel1 && dat.sel1[si]===d) { c.classList.add('one-day'); c.title='1日選択で確定した出勤日（タップで候補に戻す）'; }
         if (dat.fixed && dat.fixed[si] && dat.fixed[si][d] && !dat.assigned) { c.textContent='📌'; c.classList.add('fixed'); c.title='確定（自動割り当てで必ず出勤）'; }
-        (function(cell, staffIdx, day){
-          cell.addEventListener('click',function(){
-            handleCellClick(cell, staffIdx, day, undefined, true);
-          });
-        })(c, si, d);
+        c.addEventListener('click',function(){
+          handleCellClick(c, si, d, undefined, true);
+        });
         wrap.appendChild(c);
         td.appendChild(wrap);
       } else if (dat.cand && dat.cand[si] && dat.cand[si][d]) {
@@ -1927,18 +1930,14 @@ function buildBody(y,m,days) {
         wrap.className='cell-wrap';
         const c=document.createElement('div');
         c.className='hc onecand one-cand';
-        if (isLocked) c.classList.add('lk');
-        if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
-        if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
+        applyCellStateClasses(c, si, d, isLocked);
         c.textContent='☆';
         c.title='1日選択の候補（もう一度タップで終日の出勤日に確定）';
         if (dat.sel1 && dat.sel1[si]===d) { c.classList.add('one-day'); c.title='1日選択で確定した出勤日（タップで候補に戻す）'; }
         if (dat.fixed && dat.fixed[si] && dat.fixed[si][d] && !dat.assigned) { c.textContent='📌'; c.classList.add('fixed'); c.title='確定（自動割り当てで必ず出勤）'; }
-        (function(cell, staffIdx, day){
-          cell.addEventListener('click',function(){
-            handleCellClick(cell, staffIdx, day, undefined, false, true);
-          });
-        })(c, si, d);
+        c.addEventListener('click',function(){
+          handleCellClick(c, si, d, undefined, false, true);
+        });
         wrap.appendChild(c);
         td.appendChild(wrap);
       } else {
@@ -1947,9 +1946,7 @@ function buildBody(y,m,days) {
         [0,1].forEach(function(h){
           const c=document.createElement('div');
           c.className='hc '+(h===0?'am':'pm');
-          if (isLocked) c.classList.add('lk');
-          if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
-          if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
+          applyCellStateClasses(c, si, d, isLocked);
           const s=dat.shifts[si][d][h];
           c.dataset.s=s; c.textContent=s===0?'':SL[s];
           if (paceInfo(si).cap && s===2) {
@@ -1958,11 +1955,9 @@ function buildBody(y,m,days) {
           }
           if (dat.sel1 && dat.sel1[si]===d) { c.classList.add('one-day'); c.title='1日選択で確定した出勤日（タップで候補に戻す）'; }
           if (isFixedHalf(dat, si, d, h) && !dat.assigned) { c.textContent='📌'; c.classList.add('fixed'); c.title='確定（自動割り当てで必ず出勤）'; }
-          (function(cell, staffIdx, day, half){
-            cell.addEventListener('click',function(){
-              handleCellClick(cell, staffIdx, day, half, false);
-            });
-          })(c, si, d, h);
+          c.addEventListener('click',function(){
+            handleCellClick(c, si, d, h, false);
+          });
           wrap.appendChild(c);
         });
         td.appendChild(wrap);
@@ -1981,29 +1976,31 @@ function buildBody(y,m,days) {
     inp.type='number'; inp.min=0; inp.max=days; inp.step=0.5;
     inp.value=dat.targets[si]!==''&&dat.targets[si]!==undefined?dat.targets[si]:'';
     inp.placeholder='日';
-    inp.disabled=!!dat.assigned; /* 自動割り当て後は目標日数を変更できない（割り当て前に戻すと変更可） */
-    (function(staffIdx, input){
-      input.addEventListener('change',function(){
-        const raw = input.value.trim();
-        if (raw === '') {
-          dat.targets[staffIdx] = '';
-        } else {
-          const v = parseFloat(raw);
-          if (isNaN(v)) {
-            input.value = (dat.targets[staffIdx] !== '' && dat.targets[staffIdx] !== undefined) ? dat.targets[staffIdx] : '';
-            return;
+    inp.disabled=!!dat.assigned || isLocked; /* 自動割り当て後・行ロック中は目標日数を変更できない */
+    inp.addEventListener('change',function(){
+      const raw = inp.value.trim();
+      const prev = (dat.targets[si] !== '' && dat.targets[si] !== undefined) ? dat.targets[si] : '';
+      if (raw === '') {
+        dat.targets[si] = '';
+      } else {
+        const v = parseFloat(raw);
+        if (isNaN(v) || v < 0 || v > days) {
+          if (!isNaN(v) && (v < 0 || v > days)) {
+            openAlert('入力できません', '目標日数は 0 〜 ' + days + ' の範囲で入力してください。');
           }
-          const nm = staffList[staffIdx];
-          if (noHalf[nm] && tolOf(nm) === 0 && (Math.round(v * 2) % 2 !== 0)) {
-            alert('「終日のみ」かつ「目標厳守」の人は、0.5日単位（' + v + '）を目標に設定できません。\n整数（' + Math.floor(v) + ' や ' + Math.ceil(v) + ' など）を入力してください。');
-            input.value = (dat.targets[staffIdx] !== '' && dat.targets[staffIdx] !== undefined) ? dat.targets[staffIdx] : '';
-            return;
-          }
-          dat.targets[staffIdx] = v;
+          inp.value = prev;
+          return;
         }
-        save(); updateCounts();
-      });
-    })(si, inp);
+        const nm = staffList[si];
+        if (noHalf[nm] && tolOf(nm) === 0 && (Math.round(v * 2) % 2 !== 0)) {
+          openAlert('入力できません', '「終日のみ」かつ「目標厳守」の人は、0.5日単位（' + v + '）を目標に設定できません。\n整数（' + Math.floor(v) + ' や ' + Math.ceil(v) + ' など）を入力してください。');
+          inp.value = prev;
+          return;
+        }
+        dat.targets[si] = v;
+      }
+      save(); updateCounts();
+    });
     tgt.appendChild(inp); tr.appendChild(tgt);
     body.appendChild(tr);
   });
@@ -2067,7 +2064,7 @@ function updateCounts() {
 }
 
 /* ── 複数選択モード（矩形選択：始点タップ→終点タップ） ── */
-function toggleSelectMode() {
+function toggleSelectMode(skipRebuild) {
   selectMode=!selectMode;
   selected.clear();
   selAnchor=null;
@@ -2078,8 +2075,10 @@ function toggleSelectMode() {
   b.className=selectMode?'lock-btn on':'lock-btn';
   ab.style.display=selectMode?'':'none';
   cb.style.display=selectMode?'':'none';
-  showToast(selectMode?'始点のセルをタップしてください':'複数選択モードを終了しました');
-  rebuild();
+  if (!skipRebuild) {
+    showToast(selectMode?'始点のセルをタップしてください':'複数選択モードを終了しました');
+    rebuild();
+  }
 }
 
 function handleSelectClick(si, d) {
@@ -2128,13 +2127,9 @@ function applyToSelection() {
   selected.forEach(function(key){
     const parts=key.split('-'); const si=parseInt(parts[0]), d=parseInt(parts[1]);
     if (dat.hols[d] || dat.locks[si]) return;
-    if (dat.assigned) { adjustCycle(si, d, 0, true); return; } /* 割り当て後は微調整の切り替えを適用 */
-    if (dat.fixed && dat.fixed[si] && dat.fixed[si][d]) delete dat.fixed[si][d]; /* 確定の日も他のセルと同じく適用する（確定は外れる） */
-    if (dat.cand && dat.cand[si]) delete dat.cand[si][d]; /* 候補（☆）の日も通常セルとして適用する（候補は外れる） */
-    if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
-    clearPickDay(dat, si, d);
+    if (clickMode==='h' && dow(getY(),getM(),d)===0) return; /* 日曜は一日1枠のため◐は使えない（元データを消す前に抜ける） */
+    clearCellMeta(dat, si, d);
     if (clickMode==='h') {
-      if (dow(getY(),getM(),d)===0) return; /* 日曜は一日1枠のため◐は使えない */
       dat.half[si][d]=true;
       dat.shifts[si][d]=[0,0];
     } else if (clickMode==='b') {
@@ -2163,16 +2158,20 @@ function applyToSelection() {
   const n=selected.size;
   selected.clear();
   selAnchor=null;
-  rebuild(); updateCounts();
+  rebuild();
   showToast(n+'件のセルに適用しました');
 }
 
 /* ── 休業日 ── */
 /* 月を切り替えたとき等に、複数選択・休業日モードを引き継がないためのリセット */
-function resetTransientModes() {
-  if (selectMode) toggleSelectMode();
+function resetTransientModes(skipRebuild) {
+  if (selectMode) toggleSelectMode(skipRebuild);
   selected.clear(); selAnchor = null;
-  if (holMode) toggleHolMode();
+  if (holMode) {
+    holMode = false;
+    const b = document.getElementById('holBtn');
+    if (b) { b.style.background = ''; b.textContent = '休業日設定'; }
+  }
 }
 
 function toggleHolMode() {
@@ -2190,12 +2189,10 @@ function clickHol(d) {
   /* 休業日にする→空欄／休業日を解除→初期状態（全部×）に戻す */
   staffList.forEach(function(_,si){
     dat.shifts[si][d] = dat.hols[d] ? [0,0] : [1,1];
-    if (dat.half[si]) dat.half[si][d]=false;
-    clearPickDay(dat, si, d);
-    if (dat.hols[d]) {
-      if (dat.fixed && dat.fixed[si]) delete dat.fixed[si][d];
-      if (dat.cand && dat.cand[si]) delete dat.cand[si][d];
-      if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
+    if (dat.hols[d]) clearCellMeta(dat, si, d);
+    else {
+      if (dat.half[si]) dat.half[si][d]=false;
+      clearPickDay(dat, si, d);
     }
   });
   save(); rebuild();
@@ -2225,7 +2222,7 @@ function openAllNotes() {
     const row=document.createElement('div'); row.className='note-all-row';
     const lbl=document.createElement('label'); lbl.textContent=d+'日('+WD[dow(y,m,d)]+')'; row.appendChild(lbl);
     const inp=document.createElement('input'); inp.type='text'; inp.value=dat.notes[d]||'';
-    (function(day,input){ input.addEventListener('input',function(){ dat.notes[day]=input.value; save(); }); })(d,inp);
+    inp.addEventListener('input',function(){ dat.notes[d]=inp.value; save(); });
     row.appendChild(inp); list.appendChild(row);
   }
   document.getElementById('allModal').classList.add('open');
@@ -2238,12 +2235,13 @@ function assignSig(dat) { return JSON.stringify([dat.shifts, dat.half]); }
 
 /* 自動割り当て（ボタンから呼ばれる）：確認 → 「計算中…」を表示 → 一拍置いてから計算を始める
    （表示が描かれる前に計算で画面が固まらないようにするため） */
-async function autoAssign() {
-  if (!confirm('自動割り当てを実行します。\n×は守り、人数が足りない枠だけを埋めます。\n実行後は×・◐・選ばれなかった○が消え、出勤日の○だけが残ります（「割り当て前に戻す」で戻せます）。\nよろしいですか？')) return;
-  const ov = document.getElementById('calcOverlay');
-  if (ov) ov.classList.add('on');
-  await new Promise(function(r){ setTimeout(r, 80); }); /* 「計算中…」が描かれてから計算する */
-  try { autoAssignRun(); } finally { if (ov) ov.classList.remove('on'); }
+function autoAssign() {
+  openConfirm('自動割り当て', '自動割り当てを実行します。\n×は守り、人数が足りない枠だけを埋めます。\n実行後は×・◐・選ばれなかった○が消え、出勤日の○だけが残ります（「割り当て前に戻す」で戻せます）。\nよろしいですか？', '実行する', async function() {
+    const ov = document.getElementById('calcOverlay');
+    if (ov) ov.classList.add('on');
+    await new Promise(function(r){ setTimeout(r, 80); }); /* 「計算中…」が描かれてから計算する */
+    try { autoAssignRun(); } finally { if (ov) ov.classList.remove('on'); }
+  }, false);
 }
 
 function autoAssignRun() {
@@ -2255,7 +2253,7 @@ function autoAssignRun() {
 
   /* ── 自動割り当ての流れと守るルール（メモ） ──
      流れ：1日選択の確定 → 不足枠を候補の少ない順に埋める → 自分の○を上限内で選ぶ
-           → 最後の手段（ペース超過のみ許可） → 入れ替え修復 → 局所探索で不足を減らす。
+           → 残りの不足枠を補充 → 入れ替え修復 → 局所探索で不足を減らす。
            午前・午後どちらも○の人は、可能なら終日で入れる（人数不足なら分割も可）。
      守るルール：×には入れない／ペース上限（週半日までは超過も不可）／連日（基本2日まで、
      3日は全て半日のときだけ。連勤制限の人は終日の2連勤と3日以上の連勤も不可）／
@@ -2386,8 +2384,8 @@ function autoAssignRun() {
     const pi = paceInfo(si); if (!pi.cap) return;
     const k = periodKey(pi,y,m,d);
     if (!paceUse[si]) paceUse[si] = {};
-    if (!paceUse[si][k]) paceUse[si][k] = {halves:0, days:new Set(), first:d, last:d};
-    paceUse[si][k].halves++; paceUse[si][k].days.add(d);
+    if (!paceUse[si][k]) paceUse[si][k] = {halves:0};
+    paceUse[si][k].halves++;
   }
   function paceSub(si, d) {
     const pi = paceInfo(si); if (!pi.cap || !paceUse[si]) return;
@@ -2646,7 +2644,6 @@ function autoAssignRun() {
     });
     if (scored.length === 0) return; /* どの候補日も連日ルールで入れない場合は選ばない */
     scored.sort(function(a,b){
-      if (a.paceOk !== b.paceOk) return a.paceOk ? -1 : 1;
       if (b.score !== a.score) return b.score - a.score;
       return a.d - b.d;
     });
@@ -2688,33 +2685,28 @@ function autoAssignRun() {
     return true;
   }
 
-  slots.forEach(function(slot){
-    const d=slot.d, h=slot.h;
-
-    /* この枠に入れる候補：空欄のまま残っている人（◐で未確定な人も含む） */
-    let flex = idxsAll.filter(function(si){ return canAssignToSlot(si, d, h, true); });
-    if (flex.length===0) return;
-
-    /* 残り必要日数が多い人を優先。同数なら現在の確定日数が少ない人を優先（さらに公平化） */
-    flex.sort(function(a,b){
-      /* 自分で○を付けた候補を最優先 */
-      const ca = slotVal(a,d,h)===2?1:0, cb = slotVal(b,d,h)===2?1:0;
-      if (ca!==cb) return cb - ca;
-      /* 午前・午後どちらも○の人を先に選ぶ（終日で入れやすくするため） */
-      const fa = (slotVal(a,d,0)===2 && slotVal(a,d,1)===2)?1:0, fb = (slotVal(b,d,0)===2 && slotVal(b,d,1)===2)?1:0;
-      if (fa!==fb) return fb - fa;
-      const diff = remaining(b) - remaining(a);
-      if (diff!==0) return diff;
-      return assignedDays[a] - assignedDays[b];
-    });
-
+  /* 指定した枠 (d, h) の候補リストを優先順に並べて必要人数分だけ割り当てる共通処理 */
+  function fillSlotPool(d, h, useRemainingSort) {
     const need = req - idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length;
     if (need<=0) return;
-    /* flex は割り当て前に作った一覧のため、同じ枠で先に選ばれた人と
-       組み合わせが重ならないか、割り当て時に改めて確認する */
+    const flex = idxsAll.filter(function(si){ return canAssignToSlot(si, d, h, true); });
+    if (flex.length===0) return;
+    flex.sort(function(a,b){
+      const ca = slotVal(a,d,h)===2?1:0, cb = slotVal(b,d,h)===2?1:0;
+      if (ca!==cb) return cb - ca;
+      const fa = (slotVal(a,d,0)===2 && slotVal(a,d,1)===2)?1:0, fb = (slotVal(b,d,0)===2 && slotVal(b,d,1)===2)?1:0;
+      if (fa!==fb) return fb - fa;
+      if (useRemainingSort) {
+        const diff = remaining(b) - remaining(a);
+        if (diff!==0) return diff;
+      }
+      return assignedDays[a] - assignedDays[b];
+    });
+    /* 同じ枠で先に選ばれた人によって他方の半日枠や上限が変わるため、割り当て時に再確認する */
     let assigned = 0;
     for (let fi = 0; fi < flex.length && assigned < need; fi++) {
       const si = flex[fi];
+      if (noHalfDay(si) && !isSun(d) && !halfHasRoom(si, d, 1-h)) continue;
       if (conflictBlocked(si, d, h)) continue;
       if (fullDayOnly(si, d) && !isFirm(dat, si, d, 1-h) && conflictBlocked(si, d, 1-h)) continue;
       if (!sundayOk(si, d)) continue;
@@ -2723,14 +2715,15 @@ function autoAssignRun() {
       slotAssign(si, d, h);
       tryFullDay(si, d, h); /* ○○希望の人は可能なら終日で入れる */
       if (dat.half[si] && dat.half[si][d]) {
-        /* ◐だった人を実際に確定した場合のみ、片方だけ働く形に変換する。
-           不足がなければここには来ないため、◐は空欄同様「基本入れない」まま残る。 */
+        /* ◐だった人を実際に確定した場合のみ、片方だけ働く形に変換する。 */
         dat.half[si][d]=false;
         halfUsedInRun.add(si+'-'+d);
       }
       assigned++;
     }
-  });
+  }
+
+  slots.forEach(function(slot){ fillSlotPool(slot.d, slot.h, true); });
 
   /* 上限ありの人：人数が足りている日でも、○を付けた人には上限の範囲で必ず出勤日を選ぶ。
      （人数が少なくて済む＝出勤が多すぎない枠を優先／目標日数に達していれば追加しない） */
@@ -2770,53 +2763,25 @@ function autoAssignRun() {
           const fh = fixedHalves(dat, s2, c.d);
           if (fullDayOnly(s2, c.d) ? (fh[0] || fh[1]) : fh[c.h]) return false; /* 確定は外さない */
           if (dat.sel1 && dat.sel1[s2] === c.d) return false; /* 1日選択で確定した日は外さない */
+          if (!needMirror && noHalfDay(s2) && !isSun(c.d) && isFirm(dat, s2, c.d, 1-c.h) && cover({d:c.d, h:1-c.h}) <= req) return false; /* 反対側が不足するなら外さない */
           return true;
         });
         if (donors.length===0) return;
         donors.sort(function(a,b){ return (assignedDays[b]-targetOf(b)) - (assignedDays[a]-targetOf(a)); });
         slotRemove(donors[0], c.d, c.h);
       }
-      setPick(dat, si, c.d, c.h, true);
-      assignedDays[si]+=0.5;
-      paceAdd(si, c.d);
-      if (needMirror) { setPick(dat, si, c.d, 1-c.h, true); assignedDays[si]+=0.5; paceAdd(si, c.d); }
-      else if (isSun(c.d)) { setPick(dat, si, c.d, 1, true); assignedDays[si]+=0.5; paceAdd(si, c.d); }
+      slotAssign(si, c.d, c.h);
+      if (needMirror && !isFirm(dat, si, c.d, 1-c.h)) slotAssign(si, c.d, 1-c.h);
+      else if (isSun(c.d) && !isFirm(dat, si, c.d, 1)) slotAssign(si, c.d, 1);
     });
   });
 
   /* 補充：上の順で埋まらなかった枠（候補日が出たあとに残った枠など）を改めて埋める（ペースの上限は厳格に守る） */
-  const overPacePeople = {};
   for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
       if (isSun(d) && h===1) return; /* 日曜は午前枠だけ処理し、午後はミラーする */
-      let need = req - idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length;
-      if (need<=0) return;
-      let flex = idxsAll.filter(function(si){ return canAssignToSlot(si, d, h, true); });
-      /* ○を最優先し、午前・午後どちらも○の人・現在の日数が少ない人を先に選ぶ */
-      flex.sort(function(a,b){
-        const ca = slotVal(a,d,h)===2?1:0, cb = slotVal(b,d,h)===2?1:0;
-        if (ca!==cb) return cb - ca;
-        const fa = (slotVal(a,d,0)===2 && slotVal(a,d,1)===2)?1:0, fb = (slotVal(b,d,0)===2 && slotVal(b,d,1)===2)?1:0;
-        if (fa!==fb) return fb - fa;
-        return assignedDays[a] - assignedDays[b];
-      });
-      let assigned = 0;
-      for (let fi = 0; fi < flex.length && assigned < need; fi++) {
-        const si = flex[fi];
-        if (conflictBlocked(si, d, h)) continue;
-        if (fullDayOnly(si, d) && !isFirm(dat, si, d, 1-h) && conflictBlocked(si, d, 1-h)) continue;
-        if (!sundayOk(si, d)) continue;
-        if (!targetOk(si, d, h)) continue;
-        if (!dayCapOk(si, d)) continue;
-        slotAssign(si, d, h);
-        tryFullDay(si, d, h); /* ○○希望の人は可能なら終日で入れる */
-        if (dat.half[si] && dat.half[si][d]) {
-          dat.half[si][d]=false;
-          halfUsedInRun.add(si+'-'+d);
-        }
-        assigned++;
-      }
+      fillSlotPool(d, h, false);
     });
   }
 
@@ -2897,17 +2862,37 @@ function autoAssignRun() {
             const q = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, halves[0], true); }));
             if (q !== -1) replacements = [q];
           } else {
-            const qBoth = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, 0, true) && canFill(qq, x, 1, true); }));
+            /* 午前・午後を1人で埋める場合は、両方入れた状態で全ルール（目標・ペース・連勤・競合）を満たすか確認する */
+            const qBoth = pickBest(idxsAll.filter(function(qq){
+              if (qq===p || !canFill(qq, x, 0, true)) return false;
+              const hadHalf = !!(dat.half[qq] && dat.half[qq][x]);
+              if (hadHalf) return false;
+              const prev0 = dat.shifts[qq][x][0], prev1 = dat.shifts[qq][x][1];
+              const had0 = isFirm(dat, qq, x, 0), had1 = isFirm(dat, qq, x, 1);
+              if (!had0) slotAssign(qq, x, 0);
+              const ok1 = isFirm(dat, qq, x, 1) ? true : canFill(qq, x, 1, true);
+              if (!had0) { slotRemove(qq, x, 0); dat.shifts[qq][x][0] = prev0; }
+              if (!had1) dat.shifts[qq][x][1] = prev1;
+              return ok1;
+            }));
             if (qBoth !== -1) replacements = [qBoth];
             else {
               const q0 = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, 0, true); }));
-              const q0New = (q0 !== -1) && !isFirm(dat, q0, x, 0) && !isFirm(dat, q0, x, 1);
-              const q1 = pickBest(idxsAll.filter(function(qq){
-                if (qq===p || qq===q0 || !canFill(qq, x, 1, true)) return false;
-                if (q0New && !isFirm(dat, qq, x, 0) && !isFirm(dat, qq, x, 1) && dayPeople(x) + 1 >= DAY_MAX) return false;
-                return true;
-              }));
-              if (q0 !== -1 && q1 !== -1) replacements = [q0, q1];
+              if (q0 !== -1) {
+                /* q0 を仮に午前へ入れた状態で q1 が午後に入れるか（競合・人数上限・q0の終日のみ連動を含む）を判定 */
+                const prev0 = dat.shifts[q0][x][0], prev1 = dat.shifts[q0][x][1];
+                const had0 = isFirm(dat, q0, x, 0), had1 = isFirm(dat, q0, x, 1);
+                if (!had0) slotAssign(q0, x, 0);
+                const q1 = isFirm(dat, q0, x, 1) ? -1 : pickBest(idxsAll.filter(function(qq){
+                  return qq!==p && qq!==q0 && canFill(qq, x, 1, true);
+                }));
+                if (!had0) {
+                  slotRemove(q0, x, 0);
+                  dat.shifts[q0][x][0] = prev0;
+                  if (!had1) dat.shifts[q0][x][1] = prev1;
+                }
+                if (q1 !== -1) replacements = [q0, q1];
+              }
             }
           }
           if (replacements.length===0) {
@@ -2995,6 +2980,7 @@ function autoAssignRun() {
     });
     idxsAll.forEach(function(si){
       if (!autoOneDay[si]) return;
+      delete dat.sel1[si];
       for (let d=1; d<=days; d++) { if (!dat.hols[d] && isFirm(dat,si,d,0) && isFirm(dat,si,d,1)) { dat.sel1[si] = d; break; } }
     });
     /* 完了メッセージ用の日数を集計し直す（ペース超過は下のブロックで確定分を除いて判定する） */
@@ -3036,6 +3022,7 @@ function autoAssignRun() {
     });
   }
   /* ペース超過の数え直し：確定分は本人の指定なので除き、自動で入れた分が残りの上限を超えた人だけを数える */
+  let overPaceCount = 0;
   idxsAll.forEach(function(si){
     const pi = paceInfo(si);
     if (!pi.cap) return;
@@ -3050,9 +3037,8 @@ function autoAssignRun() {
     }
     let over = false;
     Object.keys(u).forEach(function(k){ const f = uf[k]||0; if (u[k].halves - f > Math.max(0, pi.cap - f)) over = true; });
-    if (over) overPacePeople[si] = true; else delete overPacePeople[si];
+    if (over) overPaceCount++;
   });
-  const overPaceCount = Object.keys(overPacePeople).length;
   let msg = '自動割り当てが完了しました';
   if (shortSlots>0) msg += '（人数が足りない枠が'+shortSlots+'か所あります）';
   else {
@@ -3093,7 +3079,7 @@ function localSearchRepair(P) {
       if (oneC[si] && oneC[si].indexOf(d) < 0) { states[si][d] = [cur[si][d]]; continue; } /* 1日選択の人は候補日以外に入れない */
       const okA = P.okHalf(si,d,0), okP = P.okHalf(si,d,1);
       let st;
-      if (P.isSun(d) || P.noHalf(si)) st = (okA && okP) ? [0,3] : [cur[si][d]];
+      if (P.isSun(d) || P.noHalf(si) || oneC[si]) st = (okA && okP) ? [0,3] : [cur[si][d]];
       else {
         st = [0];
         if (okA) st.push(1);
@@ -3106,11 +3092,14 @@ function localSearchRepair(P) {
     }
   }
   const bits = [0,1,1,2];
-  const cnt = []; for (let d=0; d<=days; d++) cnt[d] = [0,0];
-  for (let si=0; si<n; si++) for (const d of open) { const s = cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; }
-  /* その日に出勤している人数（午前・午後を通して何人いるか） */
-  const dcnt = []; for (let d=0; d<=days; d++) dcnt[d] = 0;
-  for (let si=0; si<n; si++) for (const d of open) if (cur[si][d]) dcnt[d]++;
+  const cnt = [], dcnt = [];
+  for (let d=0; d<=days; d++) { cnt[d] = [0,0]; dcnt[d] = 0; }
+  function recomputeCounts(withPcost) {
+    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
+    for (let si=0; si<n; si++) for (const d of open) { const s = cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
+    if (withPcost) for (let si=0; si<n; si++) pcost[si] = personCost(si, cur[si]);
+  }
+  recomputeCounts(false);
   /* 日曜は午前の人数だけを数える（午後は同じ） */
   function slotNeed(d,h){ return !(P.isSun(d) && h===1); }
   function slotCost(d){
@@ -3312,8 +3301,7 @@ function localSearchRepair(P) {
   function snapshotRows(){ return cur.map(function(x){ return Int8Array.from(x); }); }
   function restoreRows(rows){
     for (let si=0; si<n; si++) cur[si].set(rows[si]);
-    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
-    for (let si=0; si<n; si++) for (const d of open) { const s=cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
+    recomputeCounts(false);
   }
   let chainNodes = 0, chainLimit = 0;
   const chainStack = new Set();
@@ -3324,28 +3312,18 @@ function localSearchRepair(P) {
     for (let si=0; si<n; si++) if (!locked[si] && !((cur[si][d]>>h)&1)) order.push(si);
     for (let i=order.length-1; i>0; i--) { const j=(rnd()*(i+1))|0, t=order[i]; order[i]=order[j]; order[j]=t; }
     /* ルールに触れずにそのまま入れる人を先に試す */
-    const direct = [], other = [];
-    order.forEach(function(si){
+    const other = [];
+    for (const si of order) {
       const old = cur[si][d];
-      let ok = false;
+      let foundNs = -1;
       for (const ns of states[si][d]) {
         if (!((ns>>h)&1) || (ns & old) !== old || ns === old) continue;
         if (!confOk(si,d,ns) || !roomOther(d,h,si,ns) || !dayRoom(si,d)) continue;
         cur[si][d] = ns; const v = personViol(si, cur[si]); cur[si][d] = old;
-        if (v === 0) { ok = true; break; }
+        if (v === 0) { foundNs = ns; break; }
       }
-      (ok ? direct : other).push(si);
-    });
-    for (const si of direct) {
-      const old = cur[si][d];
-      for (const ns of states[si][d]) {
-        if (!((ns>>h)&1) || (ns & old) !== old || ns === old) continue;
-        if (!confOk(si,d,ns) || !roomOther(d,h,si,ns) || !dayRoom(si,d)) continue;
-        cur[si][d] = ns; const v = personViol(si, cur[si]); cur[si][d] = old;
-        if (v !== 0) continue;
-        setS(si,d,ns);
-        return true;
-      }
+      if (foundNs !== -1) { setS(si, d, foundNs); return true; }
+      other.push(si);
     }
     if (depth <= 0) return false;
     chainStack.add(d+'-'+h);
@@ -3431,9 +3409,7 @@ function localSearchRepair(P) {
         cur[cell[0]][cell[1]] = st[(rnd()*st.length)|0];
       }
     }
-    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
-    for (let si=0; si<n; si++) for (const d of open) { const s=cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
-    for (let si=0; si<n; si++) pcost[si] = personCost(si, cur[si]);
+    recomputeCounts(true);
     for (let it=0; it<ITER; it++) {
       const T = 30 * Math.pow(0.02, it/ITER) + 0.3;
       const mv = nextMoves(true); if (!mv) continue;
@@ -3453,9 +3429,7 @@ function localSearchRepair(P) {
   /* 仕上げ：不足が0になった後も、目標日数との差を詰める（不足0・違反0を保ったまま） */
   if (best) {
     for (let si=0; si<n; si++) cur[si].set(best[si]);
-    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
-    for (let si=0; si<n; si++) for (const d of open) { const s=cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
-    for (let si=0; si<n; si++) pcost[si] = personCost(si, cur[si]);
+    recomputeCounts(true);
     const ITER2 = (bestShort === 0) ? 250000 : 80000; /* 不足が残る場合は目標の微調整を軽めにして待ち時間を抑える */
     let E = 0;
     for (let si=0; si<n; si++) E += pcost[si];
@@ -3494,11 +3468,12 @@ function undoAssign() {
   const dat = getDat();
   if (!dat.assigned || !dat.beforeAssign) { showToast('戻せる割り当てがありません'); return; }
   const edited = dat.beforeAssign.afterSig !== assignSig(dat);
-  if (!confirm('自動割り当てを行う前の状態に戻します。'+(edited?'\n割り当て後に行った編集も失われます。':'')+'\nよろしいですか？')) return;
-  restoreBeforeAssign(dat);
-  delete dat.beforeAssign;
-  initDat(); save(); rebuild();
-  showToast('自動割り当て前の状態に戻しました');
+  openConfirm('割り当て前に戻す', '自動割り当てを行う前の状態に戻します。'+(edited?'\n割り当て後に行った編集も失われます。':'')+'\nよろしいですか？', '戻す', function() {
+    restoreBeforeAssign(dat);
+    delete dat.beforeAssign;
+    initDat(); save(); rebuild();
+    showToast('自動割り当て前の状態に戻しました');
+  }, true);
 }
 
 /* 自動割り当て後の画面状態：入力モードと選択・編集の欄を隠し、休業日設定・必要人数・
@@ -3551,11 +3526,12 @@ function updateUndoBtn() {
 
 /* ── リセット ── */
 function resetMonth() {
-  if (!confirm('この月の入力（○×・◐・休業日・備考）をリセットします。目標日数は残ります。\nよろしいですか？')) return;
-  const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={}; dat.half={}; dat.picks={}; dat.cand={}; dat.sel1={}; dat.fixed={}; delete dat.beforeAssign; delete dat.assigned;
-  selected.clear();
-  selAnchor=null;
-  initDat(); save(); rebuild(); showToast('リセットしました');
+  openConfirm('リセットの確認', 'この月の入力（○×・◐・休業日・備考）をリセットします。目標日数は残ります。\nよろしいですか？', 'リセットする', function() {
+    const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={}; dat.half={}; dat.picks={}; dat.cand={}; dat.sel1={}; dat.fixed={}; delete dat.beforeAssign; delete dat.assigned;
+    selected.clear();
+    selAnchor=null;
+    initDat(); save(); rebuild(); showToast('リセットしました');
+  }, true);
 }
 
 /* ── Excel出力（紙のシフト希望表の書式：1日1列・備考は縦書き／withBeforeなら割り当て前後の表を上下に付ける） ── */
@@ -3607,6 +3583,10 @@ async function exportXLSX(withBefore) {
   const dash = { style:'dashed', color:{argb:'FFB8BCC8'} }; /* 午前・午後の境目（画面と同じ破線） */
   const border = { top:thin, bottom:thin, left:thin, right:thin };
   const center = { horizontal:'center', vertical:'middle' };
+  const styleWork = function(cand) {
+    if (cand) return { font:{ name:'Meiryo', size:12, bold:false, color:{argb:'FF8CC4A2'} }, fill:'FFEEF8F2' };
+    return { font:{ name:'Meiryo', size:12, bold:true, color:{argb:FONT_COLOR[2]} }, fill:FILL[2] };
+  };
 
   /* 1つの表（見出し〜スタッフ行）を top 行目から描画する。label があれば先頭に見出し行を1行付ける。
      1日＝午前・午後の2列にし、半日は真ん中の線（罫線）で区切って普通の○×で出す（画面の表と同じ）。
@@ -3693,10 +3673,7 @@ async function exportXLSX(withBefore) {
           const hf = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
           cellA.fill = hf; cellP.fill = hf; continue;
         }
-        const styleWork = function(cand) {
-          if (cand) return { font:{ name:'Meiryo', size:12, bold:false, color:{argb:'FF8CC4A2'} }, fill:'FFEEF8F2' };
-          return { font:{ name:'Meiryo', size:12, bold:true, color:{argb:FONT_COLOR[2]} }, fill:FILL[2] };
-        };
+
         const fh = fixedHalves(tdat, si, d);
         const isCandDay = !tdat.assigned && tdat.cand && tdat.cand[si] && tdat.cand[si][d];
         const isHalfFlag = !!(tdat.half[si] && tdat.half[si][d]);
