@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.22</title>
+<title>シフト希望表 ver.6.77</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -11,40 +11,61 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;bac
 header{background:#2c3e6b;color:#fff;padding:9px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3);}
 header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap;}
 .hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto;}
-.hdr-right select{padding:6px 8px;border-radius:5px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
+.hdr-right select{padding:6px 8px;border-radius:2px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
 #saveStatus{font-size:.72rem;opacity:.85;white-space:nowrap;color:#adf;}
 .save-status-mobile{display:none;font-size:.75rem;color:#adf;white-space:nowrap;}
-.menuToggle{display:none;background:#3d5080;color:#fff;border:none;border-radius:5px;padding:6px 10px;font-size:.95rem;cursor:pointer;line-height:1;}
+.menuToggle{display:none;background:#3d5080;color:#fff;border:none;border-radius:2px;padding:6px 10px;font-size:.95rem;cursor:pointer;line-height:1;}
 
 /* ── ツールバー：機能グループごとに区切る ── */
 .toolbar{background:#fff;border-bottom:2px solid #d0d4e0;padding:8px 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.tgroup{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:3px 10px;border-radius:8px;background:#f6f7fb;}
-.tgroup-label{font-size:.66rem;font-weight:700;color:#8a92aa;letter-spacing:.02em;margin-right:2px;white-space:nowrap;}
+.tgroup{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:3px 10px;border-radius:2px;background:#f6f7fb;}
+.tgroup-label{display:inline-block;min-width:4em;font-size:.66rem;font-weight:700;color:#8a92aa;letter-spacing:.02em;margin-right:2px;white-space:nowrap;}
 
-.btn{padding:6px 13px;border:none;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn{padding:6px 13px;border:none;border-radius:2px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
 .btn:hover{opacity:.85;} .btn:active{transform:scale(.97);}
-.btn-blue{background:#4a7fda;color:#fff;}
-.btn-teal{background:#2a9d8f;color:#fff;}
 .btn-gray{background:#8a94a8;color:#fff;}
 .btn-dark{background:#2c3e6b;color:#fff;}
-.btn-orange{background:#e07a20;color:#fff;}
 .btn:disabled{opacity:.4;cursor:not-allowed;} .btn:disabled:hover{opacity:.4;} .btn:disabled:active{transform:none;}
 .btn-sm{padding:5px 9px;font-size:.74rem;}
-.lock-btn{padding:6px 12px;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;border:1.5px solid #4caf7d;background:#e8f4e8;color:#1a6636;}
+.lock-btn{padding:6px 12px;border-radius:2px;font-size:.8rem;font-weight:700;cursor:pointer;border:1.5px solid #4caf7d;background:#e8f4e8;color:#1a6636;}
 .lock-btn.on{background:#fde8e8;color:#c0392b;border-color:#e74c3c;}
 .sep{width:1px;height:24px;background:#d0d4e0;margin:0 1px;}
 .req-wrap{display:flex;align-items:center;gap:5px;font-size:.8rem;color:#555;}
-.req-wrap input{width:44px;padding:4px 5px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.82rem;}
+.req-wrap input{width:44px;padding:4px 5px;border:1.5px solid #ccc;border-radius:2px;text-align:center;font-size:.82rem;}
 
-.mode-btn-group{display:flex;border-radius:6px;overflow:hidden;border:1.5px solid #ccc;}
+.mode-btn-group{display:flex;border-radius:2px;overflow:hidden;border:1.5px solid #ccc;}
 .mode-btn{padding:6px 11px;border:none;font-size:.78rem;font-weight:700;cursor:pointer;background:#fff;color:#666;}
 .mode-btn:not(:last-child){border-right:1px solid #ccc;}
 .mode-btn.active-x{background:#fde8e8;color:#c0392b;}
 .mode-btn.active-o{background:#d5f0e0;color:#1a7a40;}
 .mode-btn.active-h{background:#fdf0d5;color:#a5680c;}
 .mode-btn.active-b{background:#e4e6f5;color:#3d5080;}
+.mode-btn.active-s{background:#e8e4f8;color:#5b4a9a;}
+.mode-btn.active-f{background:#1a3a5c;color:#fff;}
+.hc.fixed{background:#1a3a5c !important;color:#fff !important;font-weight:900;}
+.half-cell.fixed{background:#1a3a5c !important;color:#fff !important;font-weight:900;}
+.tol-sel{border:1px solid #ccd;border-radius:5px;background:#fff;color:#555;font-size:.78rem;font-weight:700;padding:4px 2px;cursor:pointer;flex-shrink:0;}
+.norun-btn{border:1px solid #ccd;border-radius:5px;background:#f6f7fb;color:#555;font-size:.72rem;font-weight:700;padding:5px 7px;cursor:pointer;flex-shrink:0;white-space:nowrap;}
+.norun-btn.on{background:#2c3e6b;border-color:#2c3e6b;color:#fff;}
+.conflict-card{margin-top:14px;border-top:1px solid #e2e4ef;padding-top:10px;}
+.conflict-card h3{font-size:.9rem;margin:0 0 8px;}
+.conflict-add{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.conflict-add select{border:1px solid #ccd;border-radius:5px;background:#fff;color:#333;font-size:.8rem;padding:6px 4px;max-width:130px;}
+.conflict-row{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px solid #eef0f7;font-size:.85rem;}
+.conflict-row .conflict-names{flex:1;}
+.conflict-row .del-btn{flex-shrink:0;}
+/* 設定を開いている間は表をさわれないようにする（スクロールはできる） */
+body.settings-open #mainTable{pointer-events:none;}
+/* 1日選択モードの候補日（☆）と確定日 */
+.hc.one-cand{background:#e8e4f8;color:#5b4a9a;}
+.hc.one-day{background:#d5f0e0;color:#1a7a40;box-shadow:inset 0 0 0 2px #7a5fd0;}
+.half-cell.one-cand{background:#e8e4f8;color:#5b4a9a;}
 
-#toolbarMain,#toolbarSettings{display:contents;}
+#toolbarMain{display:contents;}
+#toolbarSettings{display:grid;grid-template-columns:max-content max-content 1fr;column-gap:10px;row-gap:8px;flex:1;min-width:0;align-items:center;}
+.trow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+#toolbarSettings .trow{display:contents;}
+#toolbarSettings .sep{display:none;}
 .toolbar.settings-open #toolbarMain{display:none;}
 .toolbar:not(.settings-open) #toolbarSettings{display:none;}
 
@@ -64,6 +85,7 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
   .mode-btn{flex:1;padding:8px 6px;}
   .req-wrap{width:100%;justify-content:space-between;}
   .sep{display:none;}
+  #toolbarSettings{grid-template-columns:1fr;}
   .tgroup{border-top:1px solid #e8eaf2;}
   .tgroup:first-child{border-top:none;}
   .tgroup{padding:8px 10px;}
@@ -77,8 +99,6 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
 .leg-bl{background:#f7f8fb;color:#bbb;border:1px solid #ddd;}
 .leg-off{background:#d0cece;color:#777;}
 .leg-h{background:#fdf0d5;color:#a5680c;}
-.leg-cand{background:#eef8f2;color:#8cc4a2;}
-.leg-pick{background:#d5f0e0;color:#1a7a40;outline:2px solid #1a7a40;outline-offset:-2px;}
 
 
 .table-outer{overflow:auto;padding:0 0 24px;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 230px);}
@@ -95,12 +115,13 @@ table{border-collapse:separate;border-spacing:0;table-layout:fixed;}
 #tHead tr.note-row td{top:0;z-index:102;}
 #tHead tr.ampm-row td{top:0;z-index:101;}
 /* 横スクロール時に日付セルが「No／名前／目標」の上に乗ってしまわないよう、左右固定セルを最前面にする */
-#tHead .s-no, #tHead .s-name, #tHead .s-target{z-index:120 !important;}
+#tHead .s-no, #tHead .s-name, #tHead .s-target, #tHead .s-actual{z-index:120 !important;}
 
 thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
 th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
 th.s-name{position:sticky;left:26px;z-index:30;background:#1e2d50;width:96px;min-width:96px;}
 th.s-target{position:sticky;right:0;z-index:30;background:#1e2d50;width:54px;min-width:54px;}
+th.s-actual{position:sticky;right:54px;z-index:30;background:#1e2d50;width:44px;min-width:44px;}
 th.sat{background:#1e3f7a!important;}
 th.sun{background:#7a1c1c!important;}
 th.hdr-off{background:#7a7878!important;color:#ddd!important;}
@@ -112,17 +133,22 @@ tr.note-row td.s-no,tr.note-row td.s-name{position:sticky;background:#e4e8f4;fon
 tr.note-row td.s-no{left:0;}
 tr.note-row td.s-name{left:26px;}
 tr.note-row td.s-target{position:sticky;right:0;background:#e4e8f4;z-index:10;cursor:default;}
+tr.note-row td.s-actual{position:sticky;right:54px;background:#e4e8f4;z-index:10;cursor:default;}
 tr.note-row td.nd-off{background:#bfbdbd!important;color:#888;cursor:default;}
 
 tr.ampm-row td{background:#e8ecf5;font-size:.6rem;color:#777;text-align:center;padding:1px;border:1px solid #d0d4e0;height:13px;}
 tr.ampm-row td.s-no{position:sticky;left:0;z-index:10;background:#d8dce8;}
 tr.ampm-row td.s-name{position:sticky;left:26px;z-index:10;background:#d8dce8;}
 tr.ampm-row td.s-target{position:sticky;right:0;z-index:10;background:#d8dce8;}
+tr.ampm-row td.s-actual{position:sticky;right:54px;z-index:10;background:#d8dce8;}
 tr.ampm-row td.ap-off{background:#b8b6b6!important;}
 .half-lbl{display:flex;}
 .half-lbl span{flex:1;text-align:center;}
 
-tr.data-row td{border:1px solid #d0d4e0;vertical-align:middle;padding:0;}
+tr.data-row td{border-top:2px solid #d0d4e0;border-bottom:2px solid #d0d4e0;border-left:1px solid #d0d4e0;border-right:1px solid #d0d4e0;vertical-align:middle;padding:0;}
+/* ロック時の太さ（2px上下・4px左右）を通常時から同じにしておき、ロックでは色だけ変える（枠サイズが変わらない） */
+tr.data-row td.s-no{border-left:4px solid #d0d4e0;}
+tr.data-row td.s-target{border-right:4px solid #d0d4e0;}
 td.s-no{position:sticky;left:0;z-index:5;background:#f0f2f8;text-align:center;font-weight:700;font-size:.78rem;color:#555;padding:2px;border-right:1px solid #b0b8cc;}
 td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left;font-weight:600;font-size:.8rem;padding:3px 5px;border-right:2px solid #a0a8c0;white-space:nowrap;}
 .s-name-inner{display:flex;align-items:center;gap:3px;}
@@ -130,27 +156,30 @@ td.s-name{position:sticky;left:26px;z-index:5;background:#f8f9fc;text-align:left
 .row-lock-btn:hover{background:#e4e6f5;}
 .row-lock-btn.on{background:#dff2e4;}
 .row-lock-btn.on:hover{background:#c8e8d2;}
-.pace-sel{display:block;width:100%;margin-top:2px;padding:0 1px;height:16px;font-size:.62rem;border:1px solid #ccd;border-radius:3px;background:#fff;color:#888;}
-.pace-sel.on{background:#fdf0d5;color:#a5680c;border-color:#e0a050;font-weight:700;}
 .row-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
 
-td.s-target{position:sticky;right:0;z-index:5;background:#fffbe6;padding:2px;text-align:center;border-left:2px solid #a0a8c0;}
-td.s-target input{width:42px;padding:3px;border:1.5px solid #ccc;border-radius:4px;text-align:center;font-size:.85rem;font-weight:700;background:transparent;}
+td.s-target{position:sticky;right:0;z-index:5;background:#fffbe6;padding:2px;text-align:center;border-left:1px solid #b0b8cc;}
+td.s-actual{position:sticky;right:54px;z-index:5;background:#eef4ff;padding:2px;text-align:center;border-left:2px solid #a0a8c0;font-weight:700;font-size:.85rem;color:#2c3e6b;}
+td.s-target input{width:42px;padding:3px;border:1.5px solid #ccc;border-radius:2px;text-align:center;font-size:.85rem;font-weight:700;background:transparent;}
 td.s-target input:focus{outline:none;border-color:#4a7fda;}
 tr.data-row:nth-child(even) td.s-name{background:#f2f4fc;}
 /* ロック中は行全体を緑の線で囲んでハイライト（名前だけでなくシフト欄・目標欄も） */
-tr.data-row.row-locked td{border-top:2px solid #1e9e50;border-bottom:2px solid #1e9e50;}
+tr.data-row.row-locked td{border-top-color:#1e9e50;border-bottom-color:#1e9e50;}
 tr.data-row.row-locked td.s-name{background:#d9efdd;}
-tr.data-row.row-locked td.s-no{background:#d2e8d8;border-left:4px solid #1e9e50;}
-tr.data-row.row-locked td.s-target{background:#e0f0e4;border-right:4px solid #1e9e50;}
+tr.data-row.row-locked td.s-no{background:#d2e8d8;border-left-color:#1e9e50;}
+tr.data-row.row-locked td.s-target{background:#e0f0e4;border-right-color:#1e9e50;}
+tr.data-row.row-locked td.s-actual{background:#e0f0e4;}
 tr.data-row.row-locked .hc[data-s="0"]{background:#e2f2e6;}
 tr.data-row.row-locked .half-cell{background:#e8f0d8;}
 
-td.cell-day{min-width:44px;width:44px;padding:0;}
+td.cell-day{min-width:44px;width:44px;max-width:44px;padding:0;}
+.s-no{max-width:26px;}.s-name{max-width:96px;}.s-actual{max-width:44px;}.s-target{max-width:54px;}
 td.cell-day.day-off{background:#d0cece!important;}
 .cell-wrap{display:grid;grid-template-columns:1fr 1fr;height:42px;}
-.hc{display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.05rem;font-weight:700;user-select:none;transition:background .1s;}
+.hc{display:flex;align-items:center;justify-content:center;height:42px;line-height:1;overflow:hidden;cursor:pointer;font-size:1.05rem;font-weight:700;user-select:none;transition:background .1s;}
 .hc.am{border-right:1px dashed #b8bcc8;}
+.hc.sun{grid-column:1/3;}
+.hc.onecand{grid-column:1/3;}
 .hc[data-s="0"]{background:#f7f8fb;color:transparent;}
 .hc[data-s="1"]{background:#fde8e8;color:#c0392b;}
 .hc[data-s="2"]{background:#d5f0e0;color:#1a7a40;}
@@ -166,7 +195,7 @@ td.cell-day.day-off{background:#d0cece!important;}
 .hc.sel-anchor{box-shadow:inset 0 0 0 3px #e07a20;}
 .half-cell.sel-anchor{box-shadow:inset 0 0 0 3px #e07a20;}
 
-.half-cell{display:flex;align-items:center;justify-content:center;height:42px;cursor:pointer;font-size:1.1rem;font-weight:700;user-select:none;background:#fdf0d5;color:#a5680c;transition:background .1s;}
+.half-cell{display:flex;align-items:center;justify-content:center;height:42px;line-height:1;overflow:hidden;cursor:pointer;font-size:1.1rem;font-weight:700;user-select:none;background:#fdf0d5;color:#a5680c;transition:background .1s;}
 .half-cell:hover:not(.lk){background:#fbe3b5;}
 .half-cell.lk{cursor:default!important;}
 .half-cell.selected{box-shadow:inset 0 0 0 2px #4a7fda;}
@@ -174,7 +203,8 @@ td.cell-day.day-off{background:#d0cece!important;}
 tr.count-row td{background:#eef1f8;text-align:center;font-size:.68rem;padding:2px 1px;border:1px solid #cdd0de;color:#444;}
 tr.count-row td.s-no{position:sticky;left:0;z-index:10;background:#e0e4f0;font-weight:700;}
 tr.count-row td.s-name{position:sticky;left:26px;z-index:10;background:#e0e4f0;font-weight:700;font-size:.72rem;}
-tr.count-row td.s-target{position:sticky;right:0;z-index:10;background:#e0e4f0;}
+tr.count-row td.s-target{position:sticky;right:0;z-index:10;background:#e0e4f0;font-weight:800;font-size:.85rem;}
+tr.count-row td.s-actual{position:sticky;right:54px;z-index:10;background:#e0e4f0;font-weight:800;font-size:.85rem;}
 td.cnt-off{background:#bfbdbd!important;}
 .cnt-wrap{display:flex;flex-direction:column;gap:1px;}
 .cc{padding:1px 3px;border-radius:3px;font-weight:700;font-size:.68rem;}
@@ -195,6 +225,13 @@ td.cnt-off{background:#bfbdbd!important;}
 #allNotesList{max-height:420px;overflow-y:auto;padding-right:4px;}
 
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2c3e6b;color:#fff;padding:9px 20px;border-radius:7px;font-size:.84rem;z-index:600;box-shadow:0 4px 16px rgba(0,0,0,.22);pointer-events:none;opacity:0;transition:opacity .3s;}
+#calcOverlay{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:1100;display:none;align-items:center;justify-content:center;padding:20px;}
+#calcOverlay.on{display:flex;}
+#calcOverlay .calc-box{background:#fff;border-radius:16px;padding:28px 36px;text-align:center;box-shadow:0 20px 50px rgba(15,23,42,.22);min-width:250px;border:1px solid #e2e8f0;}
+#calcOverlay .calc-spinner{width:38px;height:38px;border:4px solid #e2e8f0;border-top-color:#2c3e6b;border-radius:50%;margin:0 auto 14px;animation:calcSpin .8s linear infinite;}
+@keyframes calcSpin{to{transform:rotate(360deg);}}
+#calcOverlay .calc-title{font-size:1.05rem;font-weight:800;color:#2c3e6b;margin-bottom:4px;}
+#calcOverlay .calc-sub{font-size:.84rem;color:#64748b;}
 #toast.show{opacity:1;}
 
 /* ── ホーム画面 ver.6.22 ── */
@@ -213,16 +250,21 @@ body.home-mode .hdr-ym{display:none;}
 .home-staff-row{display:flex;align-items:center;gap:6px;padding:6px 2px;border-bottom:1px solid #e8eaf2;}
 .home-staff-row:last-child{border-bottom:none;}
 .home-staff-name{flex:1;font-weight:700;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
-.home-staff-meta{font-size:.7rem;color:#a5680c;background:#fdf0d5;border-radius:4px;padding:2px 6px;white-space:nowrap;}
 .mv-btn{border:1px solid #ccd;border-radius:5px;background:#f6f7fb;color:#2c3e6b;font-size:.85rem;font-weight:700;width:28px;height:28px;cursor:pointer;flex-shrink:0;line-height:1;}
 .mv-btn:disabled{opacity:.3;cursor:default;}
 .mv-btn:hover:not(:disabled){background:#e4e6f5;}
 .del-btn{border:1px solid #e0b0b0;border-radius:5px;background:#fde8e8;color:#c0392b;font-size:.85rem;font-weight:700;width:28px;height:28px;cursor:pointer;flex-shrink:0;line-height:1;}
 .del-btn:hover{background:#f9cfcf;}
+.nohalf-btn{border:1px solid #ccd;border-radius:5px;background:#f6f7fb;color:#555;font-size:.72rem;font-weight:700;padding:5px 7px;cursor:pointer;flex-shrink:0;white-space:nowrap;}
+.nohalf-btn.on{background:#0e7a6d;border-color:#0e7a6d;color:#fff;}
+.roster-pace-sel{border:1px solid #ccd;border-radius:5px;background:#fff;color:#555;font-size:.78rem;font-weight:700;padding:4px 2px;cursor:pointer;flex-shrink:0;max-width:120px;}
+.roster-pace-sel.on{background:#fdf0d5;color:#a5680c;border-color:#e0a050;}
+.row-pace-label{display:inline-block;margin-top:2px;font-size:.62rem;color:#a5680c;background:#fdf0d5;border-radius:2px;padding:1px 3px;font-weight:700;vertical-align:middle;}
+.row-flag-wrap{display:inline;margin-left:2px;}
+.row-flag-label{display:inline-block;color:#fff;font-size:.62rem;font-weight:700;border-radius:2px;padding:1px 3px;margin:2px 2px 0 0;white-space:nowrap;vertical-align:middle;text-align:center;min-width:15px;}
 .home-add{display:flex;gap:8px;margin-top:12px;}
 .home-add input{flex:1;padding:10px;border:1.5px solid #ccc;border-radius:6px;font-size:.95rem;min-width:0;}
 .home-add input:focus{outline:none;border-color:#4a7fda;}
-.home-add-row2{display:flex;gap:8px;margin-top:8px;}
 .home-empty{color:#888;font-size:.82rem;padding:8px 2px;line-height:1.7;}
 .home-roster{width:100%;padding:16px;font-size:1.05rem;}
 .roster-view{max-width:920px;margin:0 auto;padding:22px 16px 40px;}
@@ -246,13 +288,13 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>📅 シフト希望表 ver.6.22</h1>
+  <h1>シフト希望表 ver.6.77</h1>
   <div class="hdr-right">
-    <button class="btn btn-dark" id="homeNavBtn" onclick="showHome()">🏠 ホーム</button>
+    <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
     <select id="monthSel"></select>月</span>
-    <span id="saveStatus">💾 自動保存</span>
-    <span id="saveStatusMobile" class="save-status-mobile">💾 自動保存</span>
+    <span id="saveStatus">自動保存</span>
+    <span id="saveStatusMobile" class="save-status-mobile">自動保存</span>
     <button class="menuToggle" id="menuToggleBtn" onclick="toggleToolbar()">☰ メニュー</button>
   </div>
 </header>
@@ -261,119 +303,156 @@ body.home-mode .hdr-ym{display:none;}
   <div class="home-title">シフト作成</div>
   <div class="home-grid">
     <div class="home-card">
-      <h2>👥 名簿</h2>
-      <button class="btn btn-dark home-roster" onclick="showRoster()">👥 名簿を見る・編集する <span id="homeStaffCount"></span></button>
-      <div class="home-note">人の追加・削除・並び替えは名簿ページで行います。</div>
+      <h2>名簿</h2>
+      <button class="btn btn-dark home-roster" onclick="showRoster()">名簿を見る・編集する <span id="homeStaffCount"></span></button>
+      <div class="home-note">追加・削除・並び替えができます。</div>
     </div>
     <div class="home-card">
-      <h2>📅 作る月</h2>
+      <h2>作る月</h2>
       <div class="home-month">
         <select id="homeYearSel"></select>年
         <select id="homeMonthSel"></select>月
       </div>
-      <button class="btn btn-dark home-decide" onclick="goToTable()">決定 → シフト表へ</button>
-      <button class="btn btn-orange home-demo" onclick="loadDemo()">▶ デモ</button>
-      <div class="home-note">デモは、2026年12月の表を別物として開きます。デモの内容は実際の12月とは別の場所に保存され、実際の12月のデータには触れません。保存のタイミングは通常と同じです。デモを終えるとデモの保存は消えて、次回は写真の状態から始まります。</div>
+      <button class="btn btn-dark home-decide" onclick="goToTable()">シフト表へ</button>
+      <button class="btn btn-dark home-demo" onclick="loadDemo()">▶ デモ</button>
+      <div class="home-note">デモは2026年12月の表を別に開きます。実際のデータには触れず、終了すると消えます。</div>
+    </div>
+  </div>
+</div>
+
+<div class="home-view" id="demoHomeView" style="display:none;">
+  <div class="home-title">シフト作成（デモ）</div>
+  <div class="home-grid">
+    <div class="home-card">
+      <h2>名簿</h2>
+      <button class="btn btn-dark home-roster" onclick="showRoster()">名簿を見る・編集する <span id="demoHomeStaffCount"></span></button>
+      <div class="home-note">デモ中の変更は実際の名簿には反映されません。</div>
+    </div>
+    <div class="home-card">
+      <h2>作る月</h2>
+      <div class="home-month">
+        <select id="demoHomeYearSel" disabled></select>年
+        <select id="demoHomeMonthSel" disabled></select>月
+      </div>
+      <button class="btn btn-dark home-decide" onclick="goToDemoTable()">シフト表へ</button>
+      <button class="btn btn-dark home-demo" onclick="exitDemoAndHome()">デモを終了</button>
+      <button class="btn btn-gray home-demo" onclick="resetDemo()">デモを最初に戻す</button>
+      <div class="home-note">デモは2026年12月の表を別に開きます。実際のデータには触れず、終了すると消えます。</div>
     </div>
   </div>
 </div>
 
 <div class="roster-view" id="rosterView" style="display:none;">
   <div class="roster-head">
-    <button class="btn btn-dark" onclick="showHome()">← ホームに戻る</button>
+    <button class="btn btn-dark" onclick="goHome()">← ホームに戻る</button>
   </div>
-  <div class="home-title">👥 名簿</div>
+  <div class="home-title">名簿</div>
   <div class="home-card">
-    <h2>👥 人 <span id="rosterStaffCount"></span></h2>
+    <h2>人 <span id="rosterStaffCount"></span></h2>
     <div id="homeStaffList"></div>
     <div class="home-add">
       <input type="text" id="homeNameInput" placeholder="名前を入力" maxlength="20">
+      <button class="btn btn-dark" style="padding:10px 18px;" onclick="addHomeStaff()">確定</button>
     </div>
-    <div class="home-add-row2">
-      <button class="btn btn-blue" style="flex:1;padding:10px;" onclick="addHomeStaff()">確定</button>
+    <div class="home-note">×で削除すると、その人の全ての月のシフトも消えます。<br>終日のみ：半日勤務を割り当てない／目標の許容：厳守・±0.5・±1から選ぶ／連勤制限：終日の2連勤と3連勤を入れない</div>
+    <div class="conflict-card">
+      <h3>一緒に勤務しない組み合わせ</h3>
+      <div class="conflict-add">
+        <select id="conflictSelA"></select>
+        <span>と</span>
+        <select id="conflictSelB"></select>
+        <button class="btn btn-dark" onclick="addConflictPair()">追加</button>
+      </div>
+      <div id="conflictList"></div>
+      <div class="home-note">この2人は同じ時間帯に入りません（確定の日を除く）。</div>
     </div>
-    <div class="home-note">↑↓で並び替えができます。並び替えても、その人のシフト・目標は一緒に移動します。<br>×で削除すると、その人の全ての月のシフトも一緒に削除されます。</div>
   </div>
 </div>
 
-<div class="toolbar" id="toolbar">
+<!-- 表まわり（ツールバー・凡例・表）は初期状態で隠しておく：開いた瞬間にホームだけ見せるため -->
+<div class="toolbar" id="toolbar" style="display:none;">
   <div class="tgroup">
-    <button class="btn btn-dark" id="settingsBtn" onclick="toggleSettings()">⚙ 設定</button>
+    <button class="btn btn-dark" id="settingsBtn" onclick="toggleSettings()">設定</button>
   </div>
 
   <!-- 通常表示：入力モード／選択・編集 -->
   <div id="toolbarMain">
-    <div class="sep"></div>
-    <div class="tgroup">
+    <div class="sep" id="modeSep"></div>
+    <div class="tgroup" id="modeGroup">
       <span class="tgroup-label">入力モード</span>
       <div class="mode-btn-group">
-        <button class="mode-btn active-x" id="modeXBtn" onclick="setClickMode('x')">❌ ×</button>
-        <button class="mode-btn" id="modeOBtn" onclick="setClickMode('o')">⭕ ○</button>
+        <button class="mode-btn active-x" id="modeXBtn" onclick="setClickMode('x')">×</button>
+        <button class="mode-btn" id="modeOBtn" onclick="setClickMode('o')">○</button>
         <button class="mode-btn" id="modeHBtn" onclick="setClickMode('h')">◐ 片方OK</button>
-        <button class="mode-btn" id="modeBBtn" onclick="setClickMode('b')">⬜ 空欄</button>
+        <button class="mode-btn" id="modeBBtn" onclick="setClickMode('b')">空欄</button>
+        <button class="mode-btn" id="modeSBtn" onclick="setClickMode('s')">☆ 1日選択</button>
+        <button class="mode-btn" id="modeFBtn" onclick="setClickMode('f')">📌 確定</button>
       </div>
     </div>
 
-    <div class="sep"></div>
+    <div class="sep" id="selSep"></div>
 
-    <div class="tgroup">
+    <div class="tgroup" id="selGroup">
       <span class="tgroup-label">選択・編集</span>
-      <button class="lock-btn" id="selBtn" onclick="toggleSelectMode()">🔲 複数選択</button>
-      <button class="btn btn-teal" id="applySelBtn" onclick="applyToSelection()" style="display:none;">✅ 選択範囲に適用</button>
+      <button class="lock-btn" id="selBtn" onclick="toggleSelectMode()">複数選択</button>
+      <button class="btn btn-dark" id="applySelBtn" onclick="applyToSelection()" style="display:none;">選択範囲に適用</button>
       <button class="btn btn-gray" id="clearSelBtn" onclick="clearSelection()" style="display:none;">✕ 選択解除</button>
     </div>
   </div>
 
   <!-- 設定表示：休業日・備考／必要人数／自動化／出力 -->
   <div id="toolbarSettings">
-    <div class="sep"></div>
-    <div class="tgroup">
-      <span class="tgroup-label">日程</span>
-      <button class="btn btn-orange" id="holBtn" onclick="toggleHolMode()">🏖 休業日設定</button>
-      <button class="btn btn-blue" onclick="openAllNotes()">📝 備考編集</button>
-    </div>
-
-    <div class="sep"></div>
-
-    <div class="tgroup">
-      <span class="tgroup-label">必要人数</span>
-      <div class="req-wrap">
-        <input type="number" id="reqCount" value="3" min="1" max="20" onchange="updateCounts();">
-        <span>人</span>
+    <div class="trow">
+      <div class="sep"></div>
+      <div class="tgroup">
+        <span class="tgroup-label">日程</span>
+        <button class="btn btn-dark" id="holBtn" onclick="toggleHolMode()">休業日設定</button>
+        <button class="btn btn-dark" onclick="openAllNotes()">備考編集</button>
+      </div>
+      <div class="sep"></div>
+      <div class="tgroup">
+        <span class="tgroup-label">必要人数</span>
+        <div class="req-wrap">
+          <input type="number" id="reqCount" value="3" min="1" max="20" onchange="updateCounts();">
+          <span>人</span>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="tgroup" style="justify-self:end">
+        <button class="btn btn-gray" onclick="resetMonth()">↩ リセット</button>
       </div>
     </div>
-
-    <div class="sep"></div>
-
-    <div class="tgroup">
-      <span class="tgroup-label">自動化</span>
-      <button class="btn btn-teal" onclick="autoAssign()">✨ 自動割り当て</button>
-      <button class="btn btn-orange" id="undoAssignBtn" onclick="undoAssign()" title="自動割り当てをする前の状態に戻します" disabled>↶ 割り当て前に戻す</button>
-      <button class="btn btn-gray" onclick="resetMonth()">↩ リセット</button>
-    </div>
-
-    <div class="sep"></div>
-
-    <div class="tgroup">
-      <span class="tgroup-label">出力</span>
-      <button class="btn btn-dark" id="exportXlsxBtn" onclick="exportXLSX()">📊 Excel出力</button>
-      <button class="btn btn-blue" onclick="exportXLSX(true)" title="Excel出力に、自動割り当て前の表も下に付けて出力します">📊 割り当て前も出力</button>
+    <div class="trow">
+      <div class="sep" style="visibility:hidden"></div>
+      <div class="tgroup">
+        <span class="tgroup-label">出力</span>
+        <button class="btn btn-dark" id="exportXlsxBtn" onclick="exportXLSX()">Excel出力</button>
+        <button class="btn btn-dark" onclick="exportXLSX(true)" title="Excel出力で、自動割り当て前と後の表を上下に並べて出力します">前後を比較</button>
+      </div>
+      <div class="sep"></div>
+      <div class="tgroup">
+        <span class="tgroup-label">自動化</span>
+        <button class="btn btn-dark" id="autoAssignBtn" onclick="autoAssign()">自動割り当て</button>
+        <button class="btn btn-dark" id="undoAssignBtn" onclick="undoAssign()" title="自動割り当てをする前の状態に戻します" disabled>割り当て前に戻す</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="legend">
+<div class="legend" style="display:none;">
   <strong>凡例：</strong>
   <div class="leg-item"><div class="leg-dot leg-x">×</div>入れない</div>
   <div class="leg-item"><div class="leg-dot leg-o">○</div>入りたい</div>
-  <div class="leg-item"><div class="leg-dot leg-bl"></div>どちらでも</div>
   <div class="leg-item"><div class="leg-dot leg-h">◐</div>片方OK（未確定）</div>
+  <div class="leg-item"><div class="leg-dot leg-bl"></div>どちらでも</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#e8e4f8;color:#5b4a9a;">☆</div>1日選択の候補</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#1a3a5c;color:#fff;">📌</div>確定（必ず出勤）</div>
 </div>
 
-<div class="demo-banner" id="demoBanner"><span>▶ デモ中：2026年12月（実際の12月とは別に保存・終了時に消えます）</span><span><button class="btn btn-dark btn-sm" onclick="resetDemo()">デモを最初に戻す</button> <button class="btn btn-dark btn-sm" onclick="exitDemoAndHome()">デモを終了</button></span></div>
-<div class="scroll-hint">👉 横にスワイプすると日付を確認できます</div>
+<div class="demo-banner" id="demoBanner"><span>▶ デモ中（2026年12月・終了時に消えます）</span><span><button class="btn btn-dark btn-sm" onclick="resetDemo()">デモを最初に戻す</button> <button class="btn btn-dark btn-sm" onclick="exitDemoAndHome()">デモを終了</button></span></div>
+<div class="scroll-hint" style="display:none;">横にスワイプすると日付を確認できます</div>
 
-<div class="table-outer">
+<div class="table-outer" style="display:none;">
   <div class="table-wrap">
     <table id="mainTable">
       <thead id="tHead"></thead>
@@ -389,7 +468,7 @@ body.home-mode .hdr-ym{display:none;}
     <input type="text" id="noteInput" placeholder="例：会議、おはなし会など">
     <div class="modal-btns">
       <button class="btn btn-gray" onclick="closeNoteModal()">キャンセル</button>
-      <button class="btn btn-blue" onclick="saveNote()">保存</button>
+      <button class="btn btn-dark" onclick="saveNote()">保存</button>
     </div>
   </div>
 </div>
@@ -397,7 +476,7 @@ body.home-mode .hdr-ym{display:none;}
 <!-- 備考一括編集モーダル -->
 <div class="modal-bg" id="allModal">
   <div class="modal" style="min-width:480px;">
-    <h3>📝 備考一括編集</h3>
+    <h3>備考一括編集</h3>
     <div id="allNotesList"></div>
     <div class="modal-btns" style="margin-top:12px;">
       <button class="btn btn-gray" onclick="closeAllNotes()">閉じる</button>
@@ -406,6 +485,17 @@ body.home-mode .hdr-ym{display:none;}
 </div>
 
 <div id="toast"></div>
+<div id="calcOverlay"><div class="calc-box"><div class="calc-spinner"></div><div class="calc-title">計算中...</div><div class="calc-sub">シフトを割り当てています</div></div></div>
+<div class="confirm-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirm()">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">確認</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-btns">
+      <button class="btn btn-gray" onclick="closeConfirm()">やめる</button>
+      <button class="btn btn-red" id="confirmOkBtn" onclick="confirmOk()">削除する</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script>
@@ -427,10 +517,7 @@ let clickMode = 'x'; /* 'x' = ×モード（空欄⇔×トグル）, 'o' = ○�
 let selectMode = false;
 let currentView = 'home'; /* 'home' = ホーム画面, 'roster' = 名簿ページ, 'table' = シフト表 */
 let demoMode = false; /* デモ中は通常と同じタイミングで、デモ専用の場所に保存する */
-let demoPrevYM = null; /* デモに入る前に選んでいた年月 */
-let demoSavedStaff = null; /* デモに入る前の人リスト（メモリ上で復元するため） */
-let demoSavedPaces = null; /* デモに入る前のペース（メモリ上で復元するため） */
-let demoSavedClickMode = null; /* デモに入る前の入力モード */
+let demoBackup = null; /* デモに入る前の状態（メモリ上で復元するため） */
 let selected = new Set(); /* keys of 'si-d' currently selected */
 let selAnchor = null; /* {si, d} の始点。nullなら次のタップが始点になる */
 
@@ -453,28 +540,25 @@ function lsKey(y,m)  { return 'sft_' + y + '_' + String(m).padStart(2,'0'); }
 function lsStaff()   { return 'sft_staff_v2'; }
 function lsMode()    { return 'sft_click_mode'; }
 
+function updateSaveStatusText(t) {
+  const el = document.getElementById('saveStatus');
+  const elM = document.getElementById('saveStatusMobile');
+  if (el) el.textContent = t;
+  if (elM) elM.textContent = t;
+}
+
 function saveMonth(y,m) {
   if (demoMode) {
-    /* デモ中の保存は通常と同じタイミングで、実際の12月とは別のデモ専用の場所へ */
-    try {
-      storage.setItem(DEMO_STORE_KEY, JSON.stringify(store[lsKey(y,m)]));
-      const t = '💾 デモ保存 ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-      const el = document.getElementById('saveStatus');
-      const elM = document.getElementById('saveStatusMobile');
-      if (el) el.textContent = t;
-      if (elM) elM.textContent = t;
-    } catch(e) { showToast('⚠️ デモの保存に失敗しました'); }
+    /* デモは閉じたら消えるため、ストレージには保存せず画面表示のみ更新 */
+    updateSaveStatusText('デモ中（未保存）');
     return;
   }
   const k = lsKey(y,m);
+  if (!store[k]) return;
   try {
     storage.setItem(k, JSON.stringify(store[k]));
-    const t = '✅ ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-    const el = document.getElementById('saveStatus');
-    const elM = document.getElementById('saveStatusMobile');
-    if (el) el.textContent = t;
-    if (elM) elM.textContent = t;
-  } catch(e) { showToast('⚠️ 保存に失敗しました（容量不足の可能性）'); }
+    updateSaveStatusText('保存 ' + new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}));
+  } catch(e) { showToast('保存に失敗しました（容量不足の可能性）'); }
 }
 
 function loadMonth(y,m) {
@@ -490,6 +574,7 @@ function loadMonth(y,m) {
 }
 
 function saveStaff() {
+  if (demoMode) return; /* デモ中の名簿変更は通常に引き継がない */
   try { storage.setItem(lsStaff(), JSON.stringify(staffList)); } catch(e){}
 }
 function loadStaff() {
@@ -497,23 +582,10 @@ function loadStaff() {
   staffList = [...STAFF_DEF];
 }
 
-/* ── 出勤ペース（人ごとの上限：週半日／週1日／週2日／月1日 まで） ──
-   【ver.6.8】①各月の初期状態を「全部×」に変更（リセット・休業日解除も×に戻る）。
-   ②出勤ペースの上限を「半日（午前or午後の1枠）単位」で数えるように変更。
-   半日は0.5日として計算するので、たとえば週2日まで＝半日×4回（4日に分けて半日ずつ）でもOK。
-   【ver.6.7】自動割り当て後は ×・◐・薄い○ をすべて消し、出勤日の○だけを残す（dat.assigned=true）。
-   「↶ 割り当て前に戻す」ボタンを追加。必要人数を超えて入らないよう上限を厳守
-   （上限ありの人の追加選択・上限なしの人の入力済み○の超過分も調整）。割り当て後の出勤人数は○だけを数える。
-   【ver.6.6】自動割り当て後は、選ばれなかった候補（薄い○）を消去。CSV出力を廃止し、
-   「割り当て前も出力」（Excelの下に自動割り当て前の表を付けて出力）を追加。
-   【ver.6.5】○は上限に関係なくいくつでも入力できます。上限ありの人の○は「候補」で、
-   自動割り当てが候補の中から上限の範囲内で「選択」します（dat.picks に記録）。
-   ・候補（未選択の○）…薄く表示。出勤可能数には数えず「候:n」として別表示
-   ・選択済みの○…枠付きで表示。出勤可能数に数える
-   ・上限なし（通常）の人の○は従来どおり、すべて確定として数えます
-   cap … 期間内に出勤できる「半日枠」の上限数（午前1つ・午後1つがそれぞれ1枠。1日＝2枠、半日＝1枠）
-   unit:'week' … 週（日曜〜土曜）ごと／'month' … 月ごと
-   ※週は表示中の月の範囲だけで数えます（月をまたぐ週は月ごとに別カウント） */
+/* ── 出勤ペース（人ごとの上限） ──
+   cap … 期間内に出勤できる半日枠の数（午前・午後それぞれ1枠。1日＝2枠）
+   unit … 'week'＝週（日曜〜土曜）ごと／'month'＝月ごと。週は表示中の月の範囲だけで数える
+   上限ありの人の○は「候補」。自動割り当てが候補の中から上限の範囲内で選ぶ（dat.picks） */
 const WEEK_START = 0; /* 0=日曜始まり（日〜土）, 1=月曜始まり */
 const PACES = {
   '':    { label:'通常' },
@@ -531,6 +603,54 @@ function loadPaces() {
 function savePaces() {
   if (demoMode) return; /* デモ中のペース変更は通常に引き継がない */
   try { storage.setItem(lsPace(), JSON.stringify(paces)); } catch(e){}
+}
+
+/* 終日のみ（半日勤務なし）：名簿のボタンで設定する人ごとの指定。自動割り当てで半日勤務を割り当てない */
+let noHalf = {}; /* {スタッフ名: true}（月をまたいで保持） */
+function lsNoHalf() { return 'sft_nohalf_v1'; }
+function loadNoHalf() {
+  try { const v = storage.getItem(lsNoHalf()); if (v) { noHalf = JSON.parse(v) || {}; return; } } catch(e){}
+  noHalf = {};
+}
+function saveNoHalf() {
+  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
+  try { storage.setItem(lsNoHalf(), JSON.stringify(noHalf)); } catch(e){}
+}
+/* 目標日数の許容幅：名簿のセレクトで設定する人ごとの指定（0=目標厳守、0.5）。未設定は±1（月をまたいで保持） */
+let targetTol = {}; /* {スタッフ名: 0 | 0.5} */
+function lsTol() { return 'sft_tol_v1'; }
+function tolOf(name) { const v = targetTol[name]; return (v === 0 || v === 0.5) ? v : 1; }
+function loadTol() {
+  try { const v = storage.getItem(lsTol()); if (v) { targetTol = JSON.parse(v) || {}; return; } } catch(e){}
+  targetTol = {};
+  /* 旧「目標厳守」指定（sft_exact_v1）から引き継ぐ */
+  try { const old = storage.getItem('sft_exact_v1'); if (old) { const ex = JSON.parse(old) || {}; Object.keys(ex).forEach(function(nm){ if (ex[nm]) targetTol[nm] = 0; }); saveTol(); } } catch(e){}
+}
+function saveTol() {
+  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
+  try { storage.setItem(lsTol(), JSON.stringify(targetTol)); } catch(e){}
+}
+/* 連勤制限：名簿のボタンで設定する人ごとの指定。ONの人は終日の2連勤と3日以上の連勤を割り当てない（半日の2連勤は可） */
+let noRun = {}; /* {スタッフ名: true}（月をまたいで保持） */
+function lsNoRun() { return 'sft_norun_v1'; }
+function loadNoRun() {
+  try { const v = storage.getItem(lsNoRun()); if (v) { noRun = JSON.parse(v) || {}; return; } } catch(e){}
+  noRun = {};
+}
+function saveNoRun() {
+  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
+  try { storage.setItem(lsNoRun(), JSON.stringify(noRun)); } catch(e){}
+}
+/* 一緒に勤務しない組み合わせ：名簿で設定する2人の組。自動割り当てで同じ時間帯に入れない */
+let conflictPairs = []; /* [[名前A, 名前B], ...]（月をまたいで保持） */
+function lsConflict() { return 'sft_conflict_v1'; }
+function loadConflicts() {
+  try { const v = storage.getItem(lsConflict()); if (v) { conflictPairs = JSON.parse(v) || []; return; } } catch(e){}
+  conflictPairs = [];
+}
+function saveConflicts() {
+  if (demoMode) return; /* デモ中の変更は通常に引き継がない */
+  try { storage.setItem(lsConflict(), JSON.stringify(conflictPairs)); } catch(e){}
 }
 function paceInfo(si) { return PACES[paces[staffList[si]] || ''] || PACES['']; }
 function weekIdx(y,m,d) {
@@ -556,12 +676,37 @@ function setPick(dat, si, d, h, v) {
 }
 function clearPickDay(dat, si, d) { const p = dat.picks && dat.picks[si]; if (p && p.s) delete p.s[d]; }
 function clearPicks(dat, si) { if (dat.picks) delete dat.picks[si]; }
+/* ── 確定（📌）：半日ごとに指定できる。dat.fixed[si][d] は [午前,午後] の配列で持つ。
+   昔の保存形式（日単位の true）は両方確定として読み替える ── */
+function fixedHalves(dat, si, d) {
+  const f = dat.fixed && dat.fixed[si] && dat.fixed[si][d];
+  if (f === true) return [true, true];
+  if (Array.isArray(f)) return [!!f[0], !!f[1]];
+  return [false, false];
+}
+function isFixedHalf(dat, si, d, h) { return fixedHalves(dat, si, d)[h]; }
+function setFixedHalf(dat, si, d, h, on) {
+  if (!dat.fixed) dat.fixed = {};
+  if (!dat.fixed[si]) dat.fixed[si] = {};
+  const cur = fixedHalves(dat, si, d);
+  cur[h] = !!on;
+  if (!cur[0] && !cur[1]) delete dat.fixed[si][d];
+  else dat.fixed[si][d] = cur;
+}
 /* 確定として扱う○か？（上限なしの人は○すべて／上限ありの人は選択済みの○のみ） */
 function isFirm(dat, si, d, h) {
   const sh = dat.shifts[si] && dat.shifts[si][d];
   if (!sh || sh[h] !== 2) return false;
   return !paceInfo(si).cap || isPicked(dat, si, d, h);
 }
+/* その人の実際の日数（確定している午前・午後を各0.5日として数える） */
+function actualDays(dat, si, days) {
+  let c = 0;
+  for (let d=1; d<=days; d++) { if (dat.hols[d]) continue; if (isFirm(dat,si,d,0)) c+=0.5; if (isFirm(dat,si,d,1)) c+=0.5; }
+  return c;
+}
+/* 日数の表示（7は「7」、7.5は「7.5」） */
+function fmtDays(v) { v = Math.round(v*100)/100; return String(v); }
 /* 候補の○か？（上限ありの人の、まだ選ばれていない○） */
 function isCand(dat, si, d, h) {
   const sh = dat.shifts[si] && dat.shifts[si][d];
@@ -586,7 +731,7 @@ function saveClickMode() {
   try { storage.setItem(lsMode(), clickMode); } catch(e){}
 }
 function loadClickMode() {
-  try { const v = storage.getItem(lsMode()); if (v==='x'||v==='o'||v==='h'||v==='b') { clickMode = v; return; } } catch(e){}
+  try { const v = storage.getItem(lsMode()); if (v==='x'||v==='o'||v==='h'||v==='b'||v==='s'||v==='f') { clickMode = v; return; } } catch(e){}
   clickMode = 'x';
 }
 
@@ -596,13 +741,22 @@ function getM()  { return parseInt(document.getElementById('monthSel').value); }
 function getReq(){ return parseInt(document.getElementById('reqCount').value)||3; }
 function daysIn(y,m){ return new Date(y,m,0).getDate(); }
 function dow(y,m,d){ return new Date(y,m-1,d).getDay(); }
+/* 日曜の1日分の値（午前・午後のうち大きい方：○＞×＞空欄。日曜は一日1枠のため） */
+function sunDayVal(dat, si, d) {
+  const sh = dat.shifts[si] && dat.shifts[si][d];
+  if (!sh) return 0;
+  return Math.max(sh[0]||0, sh[1]||0);
+}
 
 function getDat() {
   const y=getY(),m=getM(),k=lsKey(y,m);
-  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{},half:{},locks:{},picks:{}};
+  if (!store[k]) store[k]={shifts:{},hols:{},notes:{},targets:{},half:{},locks:{},picks:{},cand:{},sel1:{},fixed:{}};
   if (!store[k].half) store[k].half={};
   if (!store[k].picks) store[k].picks={};
   if (!store[k].locks) store[k].locks={};
+  if (!store[k].cand) store[k].cand={};
+  if (!store[k].sel1) store[k].sel1={};
+  if (!store[k].fixed) store[k].fixed={};
   return store[k];
 }
 
@@ -612,6 +766,11 @@ function initDat() {
   staffList.forEach((_,si) => {
     if (!dat.shifts[si]) dat.shifts[si]={};
     if (!dat.half[si]) dat.half[si]={};
+    if (!dat.cand) dat.cand={};
+    if (!dat.sel1) dat.sel1={};
+    if (!dat.fixed) dat.fixed={};
+    if (!dat.cand[si]) dat.cand[si]={};
+    if (!dat.fixed[si]) dat.fixed[si]={};
     if (dat.targets[si]===undefined) dat.targets[si]='';
     if (dat.locks[si]===undefined) dat.locks[si]=false;
     for (let d=1;d<=days;d++) {
@@ -630,16 +789,18 @@ function save() { saveMonth(getY(),getM()); }
 
 /* その日の午前/午後の出勤可能人数と◐(未確定)人数を集計する共通関数 */
 function countDay(dat, si_list, d) {
-  let am=0, pm=0, half=0, cand=0;
+  let am=0, pm=0, half=0, cand=0, full=0;
+  /* full：午前・午後両方に出勤できる人数（日曜の一日1枠用） */
   /* 自動割り当て後は「空欄＝出勤しない」なので、○（確定した出勤）だけを数える */
   if (dat.assigned) {
     si_list.forEach(function(si){
       if (dat.half[si] && dat.half[si][d]) { half++; return; }
       if (isFirm(dat,si,d,0)) am++;
       if (isFirm(dat,si,d,1)) pm++;
+      if (isFirm(dat,si,d,0) && isFirm(dat,si,d,1)) full++;
       if (isCand(dat,si,d,0) || isCand(dat,si,d,1)) cand++;
     });
-    return {am:am, pm:pm, half:half, cand:cand};
+    return {am:am, pm:pm, half:half, cand:cand, full:full};
   }
   si_list.forEach(function(si){
     if (dat.half[si] && dat.half[si][d]) { half++; return; }
@@ -649,13 +810,15 @@ function countDay(dat, si_list, d) {
          未選択の○は「候補」として別カウント（空欄は上限があるため数えない） */
       if (isFirm(dat,si,d,0)) am++;
       if (isFirm(dat,si,d,1)) pm++;
+      if (isFirm(dat,si,d,0) && isFirm(dat,si,d,1)) full++;
       if (isCand(dat,si,d,0) || isCand(dat,si,d,1)) cand++;
     } else {
       if (sh && sh[0]!==1) am++;
       if (sh && sh[1]!==1) pm++;
+      if (sh && sh[0]!==1 && sh[1]!==1) full++;
     }
   });
-  return {am:am, pm:pm, half:half, cand:cand};
+  return {am:am, pm:pm, half:half, cand:cand, full:full};
 }
 
 /* スタッフのインデックス配列 [0,1,2,...] を返す共通ヘルパー */
@@ -665,16 +828,19 @@ function staffIdxs() { return staffList.map(function(_,si){ return si; }); }
 function downloadBlob(blob, filename) {
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url; a.download=filename; a.click();
-  URL.revokeObjectURL(url);
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
 }
 
 /* クリックモードの定義（ヒント文言・トースト文言をここに集約） */
 const CLICK_MODES = {
-  x: { hint:'クリック：空欄⇔× ／ 左＝午前・右＝午後', toast:'❌ ×モードに切り替えました' },
-  o: { hint:'クリック：空欄⇔○ ／ 左＝午前・右＝午後', toast:'⭕ ○モードに切り替えました' },
-  h: { hint:'クリック：空欄⇔◐（片方OK・未確定）／ 1日1マスに統合されます', toast:'◐ 片方OKモードに切り替えました' },
-  b: { hint:'クリック：セルを空欄に戻します（複数選択での一括クリアに便利）', toast:'⬜ 空欄モードに切り替えました' }
+  x: { toast:'×モードに切り替えました' },
+  o: { toast:'○モードに切り替えました' },
+  h: { toast:'◐ 片方OKモードに切り替えました' },
+  b: { toast:'空欄モードに切り替えました' },
+  s: { toast:'1日選択モードに切り替えました' },
+  f: { toast:'確定モードに切り替えました' }
 };
 
 /* ── ホーム画面 ver.6.22 ── */
@@ -692,6 +858,7 @@ function showHome() {
   currentView = 'home';
   document.body.classList.add('home-mode');
   document.getElementById('homeView').style.display = 'block';
+  document.getElementById('demoHomeView').style.display = 'none';
   document.getElementById('rosterView').style.display = 'none';
   document.getElementById('toolbar').style.display = 'none';
   document.querySelector('.legend').style.display = 'none';
@@ -702,10 +869,10 @@ function showHome() {
   window.scrollTo(0,0);
 }
 function showRoster() {
-  if (demoMode) exitDemo();
   currentView = 'roster';
   document.body.classList.add('home-mode');
   document.getElementById('homeView').style.display = 'none';
+  document.getElementById('demoHomeView').style.display = 'none';
   document.getElementById('rosterView').style.display = 'block';
   document.getElementById('toolbar').style.display = 'none';
   document.querySelector('.legend').style.display = 'none';
@@ -714,10 +881,41 @@ function showRoster() {
   renderHomeStaff();
   window.scrollTo(0,0);
 }
+/* ホームへ（デモ中はデモホームへ） */
+function goHome() {
+  /* 設定を開いたままホームへ戻らない（次に表を開いたとき設定が残らないように） */
+  const tb = document.getElementById('toolbar');
+  if (tb && tb.classList.contains('settings-open')) toggleSettings();
+  if (demoMode) { showDemoHome(); return; }
+  showHome();
+}
+/* デモ用ホーム画面（通常のホームと同じ基本構造） */
+function showDemoHome() {
+  if (!demoMode) return;
+  currentView = 'demoHome';
+  document.body.classList.add('home-mode');
+  document.getElementById('homeView').style.display = 'none';
+  document.getElementById('demoHomeView').style.display = 'block';
+  document.getElementById('rosterView').style.display = 'none';
+  document.getElementById('toolbar').style.display = 'none';
+  document.querySelector('.legend').style.display = 'none';
+  document.querySelector('.scroll-hint').style.display = 'none';
+  document.querySelector('.table-outer').style.display = 'none';
+  document.getElementById('demoBanner').classList.remove('on');
+  renderHomeStaff();
+  window.scrollTo(0,0);
+}
+function goToDemoTable() {
+  if (!demoMode) return;
+  rebuild();
+  showTableView();
+  window.scrollTo(0,0);
+}
 function showTableView() {
   currentView = 'table';
   document.body.classList.remove('home-mode');
   document.getElementById('homeView').style.display = 'none';
+  document.getElementById('demoHomeView').style.display = 'none';
   document.getElementById('rosterView').style.display = 'none';
   document.getElementById('toolbar').style.display = '';
   document.querySelector('.legend').style.display = '';
@@ -725,7 +923,7 @@ function showTableView() {
   document.querySelector('.table-outer').style.display = '';
   document.getElementById('yearSel').disabled = demoMode;
   document.getElementById('monthSel').disabled = demoMode;
-  document.getElementById('homeNavBtn').style.display = demoMode ? 'none' : '';
+  document.getElementById('homeNavBtn').style.display = '';
   document.getElementById('demoBanner').classList.toggle('on', demoMode);
 }
 function goToTable() {
@@ -743,15 +941,18 @@ function renderHomeStaff() {
   const list = document.getElementById('homeStaffList');
   const cnt = document.getElementById('homeStaffCount');
   const cnt2 = document.getElementById('rosterStaffCount');
+  const cnt3 = document.getElementById('demoHomeStaffCount');
   if (!list) return;
   list.innerHTML = '';
   if (cnt) cnt.textContent = '（' + staffList.length + '名）';
   if (cnt2) cnt2.textContent = '（' + staffList.length + '名）';
+  if (cnt3) cnt3.textContent = '（' + staffList.length + '名）';
   if (staffList.length === 0) {
     const d = document.createElement('div');
     d.className = 'home-empty';
-    d.textContent = 'まだ誰も登録されていません。下の名前から追加してください。';
+    d.textContent = '登録されている人がいません。';
     list.appendChild(d);
+    renderConflicts(); /* 0人のときも組み合わせ欄を空に更新する */
     return;
   }
   staffList.forEach(function(name, si){
@@ -768,12 +969,80 @@ function renderHomeStaff() {
     const nm = document.createElement('span');
     nm.className = 'home-staff-name'; nm.textContent = (si+1) + '. ' + name;
     row.appendChild(up); row.appendChild(dn); row.appendChild(nm);
-    const paceCode = paces[name] || '';
-    if (paceCode) {
-      const meta = document.createElement('span');
-      meta.className = 'home-staff-meta'; meta.textContent = PACES[paceCode].label;
-      row.appendChild(meta);
-    }
+    const paceSel = document.createElement('select');
+    paceSel.className = 'roster-pace-sel' + (paces[name] ? ' on' : '');
+    paceSel.title = '出勤ペースの上限（半日は0.5日）';
+    Object.keys(PACES).forEach(function(code){
+      const o = document.createElement('option'); o.value = code; o.textContent = PACES[code].label;
+      if ((paces[name]||'')===code) o.selected = true;
+      paceSel.appendChild(o);
+    });
+    (function(staffName, staffIdx, sel){
+      sel.addEventListener('change', function(){
+        if (sel.value) paces[staffName]=sel.value; else delete paces[staffName];
+        savePaces();
+        forEachStoredMonth(function(d){ clearPicks(d, staffIdx); }); /* ペースを変えたら選択はやり直し（○は全部候補に戻る） */
+        save();
+        showToast(sel.value ? staffName+'：'+PACES[sel.value].label : staffName+'：通常に戻しました');
+        renderHomeStaff();
+        if (currentView === 'table') rebuild();
+      });
+    })(name, si, paceSel);
+    row.appendChild(paceSel);
+    const nh = document.createElement('button');
+    nh.type = 'button';
+    nh.className = 'nohalf-btn' + (noHalf[name] ? ' on' : '');
+    nh.textContent = '終日のみ';
+    nh.title = noHalf[name] ? '終日のみ（タップで解除）' : 'タップで終日のみに';
+    nh.addEventListener('click', function(){
+      if (!noHalf[name] && tolOf(name) === 0 && hasHalfTarget(si)) {
+        alert(name + ' さんは「目標厳守」で0.5日単位の目標が設定されているため、「終日のみ」にできません。\n先に目標日数を整数に変更するか、許容幅を±0.5/±1にしてください。');
+        return;
+      }
+      if (noHalf[name]) delete noHalf[name]; else noHalf[name] = true;
+      saveNoHalf();
+      renderHomeStaff();
+      showToast(noHalf[name] ? name + '：終日のみにしました' : name + '：半日勤務も可にしました');
+    });
+    row.appendChild(nh);
+    const tolSel = document.createElement('select');
+    tolSel.className = 'tol-sel';
+    tolSel.title = '目標日数の許容幅（自動割り当ての上限）';
+    [[0, '目標厳守'], [0.5, '目標±0.5'], [1, '目標±1']].forEach(function(pair){
+      const o = document.createElement('option'); o.value = pair[0]; o.textContent = pair[1];
+      tolSel.appendChild(o);
+    });
+    tolSel.value = String(tolOf(name));
+    (function(staffName, staffIdx, sel){
+      sel.addEventListener('change', function(){
+        const v = parseFloat(sel.value);
+        if (v === 0 && noHalf[staffName] && hasHalfTarget(staffIdx)) {
+          alert(staffName + ' さんは「終日のみ」で0.5日単位の目標が設定されているため、「目標厳守」にできません。\n先に目標日数を整数に変更してください。');
+          sel.value = String(tolOf(staffName));
+          return;
+        }
+        if (v === 1) delete targetTol[staffName]; else targetTol[staffName] = v;
+        saveTol();
+        forEachStoredMonth(function(d2){ clearPicks(d2, staffIdx); }); /* 許容幅を変えたら選択はやり直し（ペース変更と同じ） */
+        save();
+        showToast(staffName + '：' + (v === 0 ? '目標厳守' : '目標±' + v) + 'にしました');
+        renderHomeStaff();
+        if (currentView === 'table') rebuild();
+      });
+    })(name, si, tolSel);
+    row.appendChild(tolSel);
+    const nr = document.createElement('button');
+    nr.type = 'button';
+    nr.className = 'norun-btn' + (noRun[name] ? ' on' : '');
+    nr.textContent = '連勤制限';
+    nr.title = noRun[name] ? '連勤制限（タップで解除）' : 'タップで連勤制限を付ける';
+    nr.addEventListener('click', function(){
+      if (noRun[name]) delete noRun[name]; else noRun[name] = true;
+      saveNoRun();
+      renderHomeStaff();
+      showToast(noRun[name] ? name + '：連勤制限を付けました' : name + '：連勤制限を外しました');
+    });
+    row.appendChild(nr);
     const del = document.createElement('button');
     del.type = 'button'; del.className = 'del-btn'; del.textContent = '×';
     del.title = name + ' を削除';
@@ -781,6 +1050,61 @@ function renderHomeStaff() {
     row.appendChild(del);
     list.appendChild(row);
   });
+  renderConflicts();
+}
+
+/* 一緒に勤務しない組み合わせの表示・追加・削除 */
+function renderConflicts() {
+  const selA = document.getElementById('conflictSelA'), selB = document.getElementById('conflictSelB');
+  const list = document.getElementById('conflictList');
+  if (!selA || !selB || !list) return;
+  selA.innerHTML = ''; selB.innerHTML = '';
+  staffList.forEach(function(name, si){
+    const o1 = document.createElement('option'); o1.value = name; o1.textContent = (si+1) + '. ' + name;
+    selA.appendChild(o1);
+    const o2 = document.createElement('option'); o2.value = name; o2.textContent = (si+1) + '. ' + name;
+    selB.appendChild(o2);
+  });
+  if (staffList.length > 1) selB.value = staffList[1];
+  list.innerHTML = '';
+  if (conflictPairs.length === 0) {
+    const d = document.createElement('div');
+    d.className = 'home-note';
+    d.textContent = '組み合わせはありません。';
+    list.appendChild(d);
+    return;
+  }
+  conflictPairs.forEach(function(p, i){
+    const row = document.createElement('div');
+    row.className = 'conflict-row';
+    const nm = document.createElement('span');
+    nm.className = 'conflict-names';
+    nm.textContent = p[0] + ' × ' + p[1];
+    const del = document.createElement('button');
+    del.type = 'button'; del.className = 'del-btn'; del.textContent = '×';
+    del.title = p[0] + ' × ' + p[1] + ' を解除';
+    del.addEventListener('click', function(){
+      conflictPairs.splice(i, 1);
+      saveConflicts();
+      renderConflicts();
+      showToast(p[0] + ' × ' + p[1] + ' の組み合わせを解除しました');
+    });
+    row.appendChild(nm); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+function addConflictPair() {
+  const selA = document.getElementById('conflictSelA'), selB = document.getElementById('conflictSelB');
+  if (!selA || !selB) return;
+  const a = selA.value, b = selB.value;
+  if (!a || !b) { showToast('2人を選んでください'); return; }
+  if (a === b) { showToast('同じ人を2回選ぶことはできません'); return; }
+  const exists = conflictPairs.some(function(p){ return (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a); });
+  if (exists) { showToast('その組み合わせはすでに登録されています'); return; }
+  conflictPairs.push([a, b]);
+  saveConflicts();
+  renderConflicts();
+  showToast(a + ' × ' + b + ' を登録しました');
 }
 
 /* 人を追加する（「確定」ボタン／Enter） */
@@ -793,7 +1117,7 @@ function addHomeStaff() {
   saveStaff();
   inp.value = '';
   renderHomeStaff();
-  showToast('👥 「' + name + '」を追加しました');
+  showToast('「' + name + '」を追加しました');
   inp.focus();
 }
 
@@ -806,12 +1130,38 @@ function swapKey(obj, a, b) {
 }
 function swapStaffInDat(dat, a, b) {
   if (!dat) return;
+  const bs = dat.beforeAssign; /* 「割り当て前に戻す」用のデータも同じ並びにする */
+  const wasClean = !!(dat.assigned && bs && bs.afterSig === assignSig(dat));
   swapKey(dat.shifts, a, b); swapKey(dat.half, a, b);
   swapKey(dat.targets, a, b); swapKey(dat.locks, a, b); swapKey(dat.picks, a, b);
+  swapKey(dat.cand, a, b); swapKey(dat.sel1, a, b); swapKey(dat.fixed, a, b);
+  if (bs) {
+    swapKey(bs.shifts, a, b); swapKey(bs.half, a, b); swapKey(bs.picks, a, b); swapKey(bs.cand, a, b); swapKey(bs.sel1, a, b);
+    if (wasClean) bs.afterSig = assignSig(dat);
+  }
+}
+function hasHalfTarget(si) {
+  let found = false;
+  forEachStoredMonth(function(dat){
+    const t = dat && dat.targets && dat.targets[si];
+    if (t !== '' && t !== undefined && !isNaN(parseFloat(t))) {
+      if (Math.round(parseFloat(t) * 2) % 2 !== 0) found = true;
+    }
+  });
+  return found;
 }
 function forEachStoredMonth(fn) {
-  /* メモリ上の月データ */
-  Object.keys(store).forEach(function(k){ fn(store[k]); });
+  if (demoMode) {
+    /* デモ中はデモの月データ（メモリ上）だけを対象にし、実際の月には触れない */
+    const k = lsKey(DEMO_YEAR, DEMO_MONTH);
+    if (store[k]) fn(store[k]);
+    return;
+  }
+  /* メモリ上の月データ（保存済みの月は保存し直す。そうしないと再読込で並びがずれる） */
+  Object.keys(store).forEach(function(k){
+    fn(store[k]);
+    if (storage.getItem(k) !== null) { try { storage.setItem(k, JSON.stringify(store[k])); } catch(e){} }
+  });
   /* localStorage に保存済みの月データ（まだ読み込んでいない月も対象） */
   try {
     const keys = [];
@@ -833,6 +1183,7 @@ function moveStaff(si, dir) {
   const t = staffList[si]; staffList[si] = staffList[ni]; staffList[ni] = t;
   saveStaff();
   forEachStoredMonth(function(dat){ swapStaffInDat(dat, si, ni); });
+  selected.clear(); selAnchor = null;
   save();
   renderHomeStaff();
   if (currentView === 'table') rebuild();
@@ -841,6 +1192,8 @@ function moveStaff(si, dir) {
 /* 人を削除する（全ての月のデータも一緒に削除） */
 function removeStaffFromDat(dat, si) {
   if (!dat) return;
+  const bs = dat.beforeAssign;
+  const wasClean = !!(dat.assigned && bs && bs.afterSig === assignSig(dat));
   function shiftDown(obj) {
     if (!obj) return;
     delete obj[si];
@@ -850,6 +1203,11 @@ function removeStaffFromDat(dat, si) {
   }
   shiftDown(dat.shifts); shiftDown(dat.half);
   shiftDown(dat.targets); shiftDown(dat.locks); shiftDown(dat.picks);
+  shiftDown(dat.cand); shiftDown(dat.sel1); shiftDown(dat.fixed);
+  if (bs) {
+    shiftDown(bs.shifts); shiftDown(bs.half); shiftDown(bs.picks); shiftDown(bs.cand); shiftDown(bs.sel1);
+    if (wasClean) bs.afterSig = assignSig(dat);
+  }
 }
 /* ── 確認画面（×ボタンなど、取り消せない操作の前に表示） ── */
 let confirmAction = null;
@@ -874,8 +1232,14 @@ function deleteHomeStaff(si) {
   openConfirm('削除の確認', '「' + name + '」を削除しますか？\nこの人の全ての月のシフトも一緒に削除されます。', '削除する', function(){
     staffList.splice(si, 1);
     delete paces[name]; savePaces();
+    delete noHalf[name]; saveNoHalf();
+    delete targetTol[name]; saveTol();
+    delete noRun[name]; saveNoRun();
+    conflictPairs = conflictPairs.filter(function(p){ return p[0] !== name && p[1] !== name; });
+    saveConflicts();
     saveStaff();
     forEachStoredMonth(function(dat){ removeStaffFromDat(dat, si); });
+    selected.clear(); selAnchor = null;
     save();
     renderHomeStaff();
     if (currentView === 'table') rebuild();
@@ -883,43 +1247,42 @@ function deleteHomeStaff(si) {
   });
 }
 
-/* その月にすでに入力があるかどうか（デモで上書きする前の確認用） */
-function monthHasInput(dat) {
-  if (!dat) return false;
-  if (dat.assigned) return true;
-  if (Object.keys(dat.hols || {}).some(function(d){ return dat.hols[d]; })) return true;
-  if (Object.keys(dat.notes || {}).some(function(d){ return (dat.notes[d] || '').trim() !== ''; })) return true;
-  let found = false;
-  staffList.forEach(function(_, si){
-    if (found) return;
-    for (const d in (dat.shifts[si] || {})) {
-      const v = dat.shifts[si][d];
-      if (Array.isArray(v) && (v[0] !== 1 || v[1] !== 1)) { found = true; return; }
-    }
-    for (const d in (dat.half[si] || {})) {
-      if (dat.half[si][d]) { found = true; return; }
-    }
-  });
-  return found;
-}
 /* デモデータ：写真の2026年12月シフト希望表をそのまま再現したもの。
    1文字目＝午前、2文字目＝午後。'O'=○, 'X'=×, '.'=空欄, '--'=休業日。
    休業日：5,10,12,19,26,29,30,31日。目標日数は右端の列のとおり（16人目は未設定）。
    選んだ月が12月以外の場合も、同じ日付のパターンで入ります（存在しない日は入りません）。 */
 const DEMO_HOLS = [5,10,12,19,26,29,30,31];
-const DEMO_TARGETS = [5,5,2,4,6,1,4,5,1,7,4,4,7,5,8,null];
+const DEMO_TARGETS = [6.5,5.5,2,4,5,1,4,6,1,7.5,3,3.5,7,6,7,null];
+/* デモのペース初期状態（画像のとおり。名前で指定） */
+const DEMO_PACES = {'森 玲子':'w2','佐藤 祐子':'w2','浅野 ゆり子':'w05','加屋野 美紀':'w1','椙山 真澄':'w2','熊本 和美':'m1','髙橋 洋子':'w1','西島 紀子':'w2','神宮司 智子':'m1','篠　智子':'w2','金澤 緑':'w1','高橋 貴美枝':'w1','櫻井 佐和子':'w2','島袋 公子':'w2','中山 琴美':'w2','柳川 たづ江':'w1'};
+/* デモの終日のみ初期状態（画像のとおり。名前で指定） */
+const DEMO_NOHALF = {'加屋野 美紀':true,'椙山 真澄':true,'熊本 和美':true,'髙橋 洋子':true,'神宮司 智子':true,'金澤 緑':true};
+/* デモの目標厳守（許容0）の初期状態（写真のとおり。名前で指定） */
+const DEMO_EXACT = {'森 玲子':true,'佐藤 祐子':true,'浅野 ゆり子':true,'加屋野 美紀':true,'椙山 真澄':true,'熊本 和美':true,'髙橋 洋子':true,'西島 紀子':true,'島袋 公子':true,'柳川 たづ江':true};
+/* 写真の名簿で「目標±0.5」だった人（それ以外は±1） */
+const DEMO_TOL05 = {'神宮司 智子':true,'篠　智子':true,'金澤 緑':true,'高橋 貴美枝':true,'櫻井 佐和子':true,'中山 琴美':true};
+/* デモの連勤制限初期状態（写真のとおり。名前で指定） */
+const DEMO_NORUN = {'森 玲子':true,'佐藤 祐子':true,'浅野 ゆり子':true,'髙橋 洋子':true,'西島 紀子':true,'金澤 緑':true,'柳川 たづ江':true};
+/* デモの組み合わせ初期状態（写真のとおり） */
+const DEMO_CONFLICTS = [['森 玲子', '佐藤 祐子'], ['森 玲子', '椙山 真澄']];
+/* デモの確定日（終日）：2026-11-27の写真の状態 */
+const DEMO_FIXED = { '加屋野 美紀': [7, 14, 22, 28], '椙山 真澄': [1, 11, 20, 28], '髙橋 洋子': [11, 16, 21, 25], '神宮司 智子': [20], '金澤 緑': [2, 16], '櫻井 佐和子': [9, 14, 17, 23, 24], '島袋 公子': [6, 13, 20, 27], '中山 琴美': [1, 9, 16, 18, 23] };
+/* デモの半日確定（[日, 半日] の組。0=午前、1=午後） */
+const DEMO_FIXED_HALF = { '椙山 真澄': [[8, 0], [25, 0]], '高橋 貴美枝': [[3, 0], [7, 0], [9, 0], [14, 0], [17, 0], [21, 0], [22, 0]], '中山 琴美': [[4, 0], [17, 1]] };
+/* デモの1日選択候補：熊本 和美の1・8・15日を候補にする */
+const DEMO_CAND = { '熊本 和美': [1, 8, 15] };
 const DEMO_SHIFTS = [
   /*  1 森 玲子     */ ['OO','OO','OO','OO','--','OO','OO','OO','OO','--','OO','--','XX','XX','OO','OO','OO','OO','--','OO','OO','OO','OO','OO','OX','--','XX','XX','--','--','--'],
   /*  2 佐藤 祐子   */ ['OO','XX','OO','OO','--','OO','XX','OO','XX','--','OO','--','OO','OO','OO','XX','OO','OO','--','OO','OO','OO','XX','XX','OO','--','OO','OO','--','--','--'],
   /*  3 浅野 ゆり子 */ ['XX','XX','OO','OO','--','XX','OO','OO','XX','--','XX','--','XX','OO','OO','XX','OO','XX','--','XX','OO','OO','XX','XX','XX','--','XX','XX','--','--','--'],
   /*  4 加屋野 美紀 */ ['XX','XX','XX','XX','--','XX','OO','XX','XX','--','XX','--','XX','OO','XX','XX','XX','XX','--','XX','XX','OO','XX','XX','XX','--','XX','OO','--','--','--'],
-  /*  5 椙山 真澄   */ ['OO','XX','XX','XX','--','XX','XX','XX','XX','--','OO','--','XX','XX','XX','XX','XX','XX','--','OO','XX','XX','XX','XX','XX','--','XX','OO','--','--','--'],
+  /*  5 椙山 真澄   */ ['OO','XX','XX','XX','--','XX','XX','OX','XX','--','OO','--','XX','XX','XX','XX','XX','XX','--','OO','XX','XX','XX','XX','OX','--','XX','OO','--','--','--'],
   /*  6 熊本 和美   */ ['OO','XX','XX','XX','--','XX','XX','OO','XX','--','XX','--','XX','XX','OO','XX','XX','XX','--','XX','XX','XX','XX','XX','XX','--','XX','XX','--','--','--'],
-  /*  7 髙橋 洋子   */ ['XX','XX','XX','XX','--','XX','XX','XX','XX','--','OO','--','XX','XX','XX','OO','XX','XX','--','XX','OO','XX','XX','XX','..','--','XX','..','--','--','--'],
+  /*  7 髙橋 洋子   */ ['XX','XX','XX','XX','--','XX','XX','XX','XX','--','OO','--','XX','XX','XX','OO','XX','XX','--','XX','OO','XX','XX','XX','OO','--','XX','XX','--','--','--'],
   /*  8 西島 紀子   */ ['OO','OO','OO','OO','--','OO','OO','XX','OO','--','OO','--','OO','OO','XX','OO','OO','OO','--','OO','OO','OO','OO','OO','OO','--','OO','OO','--','--','--'],
   /*  9 神宮司 智子 */ ['XX','XX','XX','XX','--','XX','XX','XX','XX','--','XX','--','XX','XX','XX','XX','XX','XX','--','OO','XX','XX','XX','XX','XX','--','XX','XX','--','--','--'],
   /* 10 篠 智子     */ ['OO','OO','XX','OO','--','XX','XX','OO','OO','--','OO','--','XX','OO','OO','OO','XX','OO','--','XX','OO','OO','OO','XX','OO','--','XX','OO','--','--','--'],
-  /* 11 金澤 緑     */ ['XX','OO','XX','XX','--','XX','XX','XX','XX','--','XX','--','XX','XX','XX','OO','XX','XX','--','XX','XX','XX','OO','OO','XX','--','XX','XX','--','--','--'],
+  /* 11 金澤 緑     */ ['XX','OO','XX','XX','--','XX','XX','XX','XX','--','XX','--','XX','XX','XX','OO','XX','XX','--','XX','XX','XX','.O','OO','XX','--','XX','XX','--','--','--'],
   /* 12 高橋 貴美枝 */ ['XX','XX','OX','XX','--','XX','OX','XX','OX','--','XX','--','XX','OX','XX','XX','OX','XX','--','XX','OX','OX','XX','XX','XX','--','XX','XX','--','--','--'],
   /* 13 櫻井 佐和子 */ ['XX','OO','OO','OO','--','XX','XX','XX','OO','--','XX','--','XX','OO','XX','XX','OO','XX','--','XX','XX','XX','OO','OO','XX','--','XX','XX','--','--','--'],
   /* 14 島袋 公子   */ ['XO','XX','XX','XX','--','OO','XX','XX','XX','--','XO','--','OO','XO','XO','XX','XO','XX','--','OO','XX','XO','XX','XX','XO','--','OO','XX','--','--','--'],
@@ -928,12 +1291,11 @@ const DEMO_SHIFTS = [
 ];
 
 const DEMO_YEAR = 2026, DEMO_MONTH = 12; /* デモは2026年12月で固定（動作確認用の別データ） */
-const DEMO_STORE_KEY = 'sft_demo_2026_12'; /* デモ専用の保存先（実際の12月とは完全に別） */
 
 /* 写真の2026年12月の表をデモ用データとして入れる */
 function fillDemoData(dat) {
   dat.shifts = {}; dat.targets = {};
-  dat.hols = {}; dat.notes = {}; dat.half = {}; dat.picks = {}; dat.locks = {};
+  dat.hols = {}; dat.notes = {}; dat.half = {}; dat.picks = {}; dat.locks = {}; dat.cand = {}; dat.sel1 = {}; dat.fixed = {};
   delete dat.beforeAssign; delete dat.assigned;
   const days = daysIn(DEMO_YEAR, DEMO_MONTH);
   DEMO_HOLS.forEach(function(d){ if (d <= days) dat.hols[d] = true; });
@@ -951,59 +1313,110 @@ function fillDemoData(dat) {
       dat.shifts[si][d] = [v(cell[0]), v(cell[1])];
     }
   }
+  /* デモの確定日（終日）。確定は最初から出勤として数える */
+  for (let si = 0; si < n; si++) {
+    const fdays = DEMO_FIXED[staffList[si]];
+    if (!fdays) continue;
+    if (!dat.fixed[si]) dat.fixed[si] = {};
+    fdays.forEach(function(d){
+      if (d > days || dat.hols[d]) return;
+      dat.fixed[si][d] = true;
+      dat.shifts[si][d] = [2,2]; /* 確定日は終日で出勤 */
+      if (paceInfo(si).cap) { setPick(dat, si, d, 0, true); setPick(dat, si, d, 1, true); }
+    });
+  }
+  /* デモの半日確定 */
+  for (let si = 0; si < n; si++) {
+    const fhalf = DEMO_FIXED_HALF[staffList[si]];
+    if (!fhalf) continue;
+    fhalf.forEach(function(dh){
+      const d = dh[0], h = dh[1];
+      if (d > days || dat.hols[d]) return;
+      setFixedHalf(dat, si, d, h, true);
+      dat.shifts[si][d][h] = 2; /* 確定の半日は出勤 */
+      if (paceInfo(si).cap) setPick(dat, si, d, h, true);
+    });
+  }
+  /* デモの1日選択候補：熊本の1・8・15日を候補にする */
+  for (let si = 0; si < n; si++) {
+    const cdays = DEMO_CAND[staffList[si]];
+    if (!cdays) continue;
+    if (!dat.cand[si]) dat.cand[si] = {};
+    cdays.forEach(function(d){
+      if (d > days || dat.hols[d]) return;
+      dat.cand[si][d] = true;
+    });
+  }
 }
 
-/* デモ：2026年12月の表を別物として開く。保存はデモ専用の場所へ（実際の12月には触れない） */
+function applyDemoSettings() {
+  paces = Object.assign({}, DEMO_PACES);
+  noHalf = Object.assign({}, DEMO_NOHALF);
+  targetTol = {};
+  Object.keys(DEMO_EXACT).forEach(function(nm){ targetTol[nm] = 0; });
+  Object.keys(DEMO_TOL05).forEach(function(nm){ targetTol[nm] = 0.5; });
+  noRun = Object.assign({}, DEMO_NORUN);
+  conflictPairs = JSON.parse(JSON.stringify(DEMO_CONFLICTS));
+  staffList = [...STAFF_DEF];
+}
+
+/* デモ：2026年12月の表を別物として開く（閉じたら消え、実際のデータには触れない） */
 function loadDemo() {
   if (demoMode) return;
-  demoPrevYM = { y: getY(), m: getM() };
-  demoSavedStaff = [...staffList];
-  demoSavedPaces = JSON.parse(JSON.stringify(paces));
-  demoSavedClickMode = clickMode;
-  paces = {}; /* デモは写真の状態（ペースなし）から始める */
+  demoBackup = {
+    ym: { y: getY(), m: getM() },
+    staff: [...staffList],
+    paces: JSON.parse(JSON.stringify(paces)),
+    clickMode: clickMode,
+    noHalf: JSON.parse(JSON.stringify(noHalf)),
+    tol: JSON.parse(JSON.stringify(targetTol)),
+    noRun: JSON.parse(JSON.stringify(noRun)),
+    conflicts: JSON.parse(JSON.stringify(conflictPairs))
+  };
+  applyDemoSettings();
   demoMode = true;
-  if (staffList.length === 0) staffList = [...STAFF_DEF]; /* メモリ上だけ。保存しない */
   document.getElementById('yearSel').value = DEMO_YEAR;
   document.getElementById('monthSel').value = DEMO_MONTH;
   syncHomeYM();
   loadMonth(DEMO_YEAR, DEMO_MONTH);
   initDat();
-  const dat = getDat();
-  try { storage.removeItem(DEMO_STORE_KEY); } catch(e) {} /* 前回デモの途中で閉じた場合の残りを消し、必ず写真の状態から始める */
-  fillDemoData(dat);
+  fillDemoData(getDat());
   rebuild();
-  showTableView();
+  showDemoHome();
   window.scrollTo(0,0);
-  showToast('▶ デモを開きました（2026年12月・実際の12月とは別に保存されます）');
+  showToast('▶ デモを開きました（2026年12月・終了すると消えます）');
 }
 
-/* デモを写真の状態に戻す（デモ専用の保存も消す） */
+/* デモを写真の状態に戻す */
 function resetDemo() {
   if (!demoMode) return;
-  if (!confirm('デモを写真の2026年12月の状態に戻します。\nデモで保存した内容（自動割り当ての結果など）は消えます。よろしいですか？')) return;
-  try { storage.removeItem(DEMO_STORE_KEY); } catch(e) {}
-  paces = {}; /* 写真の状態（ペースなし）に戻す */
-  const dat = getDat();
-  fillDemoData(dat);
+  if (!confirm('デモを最初の状態に戻します。よろしいですか？')) return;
+  applyDemoSettings();
+  fillDemoData(getDat());
   initDat();
   rebuild();
+  renderHomeStaff();
   showToast('▶ デモを写真の状態に戻しました');
 }
 
-/* デモを終了し、デモの保存を消して元の状態に戻す（次回は写真の状態から／実データは無傷） */
+/* デモを終了し、元の状態に戻す（実データは無傷） */
 function exitDemo() {
   if (!demoMode) return;
   demoMode = false;
   delete store[lsKey(DEMO_YEAR, DEMO_MONTH)]; /* デモ用に上書きしたメモリを捨て、次回は保存済みの実データを読み直す */
-  try { storage.removeItem(DEMO_STORE_KEY); } catch(e) {} /* デモを終えたらデモの保存は消す（次回は写真の状態から） */
-  if (demoSavedStaff !== null) { staffList = demoSavedStaff; demoSavedStaff = null; }
-  if (demoSavedPaces !== null) { paces = demoSavedPaces; demoSavedPaces = null; }
-  if (demoSavedClickMode !== null) { const m = demoSavedClickMode; demoSavedClickMode = null; setClickMode(m, true); }
-  if (demoPrevYM !== null) {
-    document.getElementById('yearSel').value = demoPrevYM.y;
-    document.getElementById('monthSel').value = demoPrevYM.m;
+  if (demoBackup) {
+    staffList = demoBackup.staff;
+    paces = demoBackup.paces;
+    noHalf = demoBackup.noHalf;
+    targetTol = demoBackup.tol;
+    noRun = demoBackup.noRun;
+    conflictPairs = demoBackup.conflicts;
+    const savedMode = demoBackup.clickMode;
+    document.getElementById('yearSel').value = demoBackup.ym.y;
+    document.getElementById('monthSel').value = demoBackup.ym.m;
     syncHomeYM();
-    demoPrevYM = null;
+    demoBackup = null;
+    setClickMode(savedMode, true);
   }
   document.getElementById('yearSel').disabled = false;
   document.getElementById('monthSel').disabled = false;
@@ -1028,7 +1441,8 @@ function toggleSettings() {
   const tb = document.getElementById('toolbar');
   const btn = document.getElementById('settingsBtn');
   const open = tb.classList.toggle('settings-open');
-  btn.textContent = open ? '✕ 設定を閉じる' : '⚙ 設定';
+  document.body.classList.toggle('settings-open', open); /* 設定中は表をさわれないようにする */
+  btn.textContent = open ? '設定を閉じる' : '設定';
   if (open) { if (selectMode) toggleSelectMode(); }   /* 見えなくなる複数選択は終了 */
   else      { if (holMode) toggleHolMode(); }         /* 見えなくなる休業日設定は終了 */
 }
@@ -1037,21 +1451,182 @@ function toggleSettings() {
 function setClickMode(mode, silent) {
   clickMode = mode;
   saveClickMode();
-  const xb=document.getElementById('modeXBtn'), ob=document.getElementById('modeOBtn'), hb=document.getElementById('modeHBtn'), bb=document.getElementById('modeBBtn');
+  const xb=document.getElementById('modeXBtn'), ob=document.getElementById('modeOBtn'), hb=document.getElementById('modeHBtn'), bb=document.getElementById('modeBBtn'), sb=document.getElementById('modeSBtn'), fb=document.getElementById('modeFBtn');
   xb.classList.toggle('active-x', mode==='x');
   ob.classList.toggle('active-o', mode==='o');
   hb.classList.toggle('active-h', mode==='h');
   bb.classList.toggle('active-b', mode==='b');
+  if (sb) sb.classList.toggle('active-s', mode==='s');
+  if (fb) fb.classList.toggle('active-f', mode==='f');
   if (!silent) showToast(CLICK_MODES[mode].toast);
   if (document.getElementById('tBody').innerHTML) rebuild();
+}
+
+/* ── 自動割り当て後の微調整：セルを押すたびに ×→空欄→○→× と切り替える ──
+   基本は半日ずつ切り替える。日曜と統合セル（◐・☆）だけは午前・午後をまとめて切り替える */
+function adjustCycle(si, d, h, forceBoth) {
+  const dat = getDat();
+  const both = forceBoth || dow(getY(), getM(), d) === 0;
+  function setHalf(hh, v) {
+    dat.shifts[si][d][hh] = v;
+    /* 割り当て後の○は出勤として扱う（上限ありの人は選択済みにする）。○でなくなったら選択を外す */
+    setPick(dat, si, d, hh, v === 2 && !!paceInfo(si).cap);
+  }
+  const cur = dat.shifts[si][d][both ? 0 : h];
+  const nx = (cur === 1) ? 0 : (cur === 0) ? 2 : 1; /* ×→空欄、空欄→○、○→× */
+  if (both) { setHalf(0, nx); setHalf(1, nx); }
+  else setHalf(h, nx);
+}
+
+/* ── 通常セル・日曜・候補日のクリック共通処理 ── */
+function handleCellClick(cell, si, d, h, isSunCell, needRebuild) {
+  const dat = getDat();
+  if (dat.locks[si]) return;
+  if (selectMode) { handleSelectClick(si, d); return; }
+  if (dat.assigned) { adjustCycle(si, d, h || 0, !!needRebuild); save(); rebuild(); updateCounts(); return; }
+  if (clickMode === 's') { handleOneDayClick(si, d); return; }
+  if (clickMode === 'f') { handleFixedClick(si, d, h); return; }
+
+  const dayUnit = (h === undefined);
+  if (dayUnit) {
+    const fh = fixedHalves(dat, si, d);
+    if (fh[0] || fh[1]) delete dat.fixed[si][d];
+  } else {
+    if (isFixedHalf(dat, si, d, h)) setFixedHalf(dat, si, d, h, false);
+  }
+  cell.classList.remove('fixed');
+
+  if (clickMode === 'h') {
+    if (dayUnit) return; /* 日曜・候補日は終日のため◐は使えない */
+    dat.half[si][d] = true;
+    dat.shifts[si][d] = [0,0];
+    clearPickDay(dat, si, d);
+    save(); rebuild();
+    return;
+  }
+
+  if (dayUnit) {
+    if (dat.cand && dat.cand[si]) delete dat.cand[si][d];
+    if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
+  }
+
+  let nx = 0;
+  if (clickMode !== 'b') {
+    const cur = dayUnit ? (isSunCell ? parseInt(cell.dataset.s) : dat.shifts[si][d][0]) : parseInt(cell.dataset.s);
+    const target = clickMode === 'x' ? 1 : 2;
+    nx = (cur === target) ? 0 : target;
+  }
+
+  if (dayUnit) {
+    dat.shifts[si][d] = [nx, nx];
+    setPick(dat, si, d, 0, false); setPick(dat, si, d, 1, false);
+    if (dat.assigned && nx === 2 && paceInfo(si).cap) { setPick(dat, si, d, 0, true); setPick(dat, si, d, 1, true); }
+  } else {
+    dat.shifts[si][d][h] = nx;
+    setPick(dat, si, d, h, false);
+    if (dat.assigned && nx === 2 && paceInfo(si).cap) setPick(dat, si, d, h, true);
+  }
+
+  if (needRebuild) {
+    save(); rebuild(); updateCounts();
+    return;
+  }
+  cell.dataset.s = nx;
+  cell.textContent = nx === 0 ? '' : SL[nx];
+  const cap = !!paceInfo(si).cap;
+  const picked = dayUnit ? (cap && nx === 2 && isPicked(dat,si,d,0) && isPicked(dat,si,d,1)) : (cap && nx === 2 && isPicked(dat,si,d,h));
+  const cand = dayUnit ? (isCand(dat,si,d,0) || isCand(dat,si,d,1)) : isCand(dat,si,d,h);
+  cell.classList.toggle('pick', picked);
+  cell.classList.toggle('cand', cand);
+  cell.title = cand ? '候補（自動割り当てで選ばれた日だけ出勤）' : '';
+  save(); updateCounts();
+}
+
+/* ── 1日選択モード：候補日を付ける／候補日を終日の出勤日に確定する ── */
+function handleOneDayClick(si, d) {
+  const dat = getDat();
+  if (dat.hols[d]) return; /* 休業日は対象外 */
+  if (!dat.cand) dat.cand = {};
+  if (!dat.sel1) dat.sel1 = {};
+  if (!dat.cand[si]) dat.cand[si] = {};
+  if (!dat.shifts[si]) dat.shifts[si] = {};
+  if (!dat.shifts[si][d]) dat.shifts[si][d] = [0,0];
+  /* ◐が付いていた日は、まず◐を外して通常セルに戻す */
+  if (dat.half[si]) dat.half[si][d] = false;
+  const confirmed = dat.sel1[si];
+  if (confirmed === d) {
+    /* 自動割り当てで確定した日をタップ → 候補に戻す（選び直しの対象にする） */
+    delete dat.sel1[si];
+    dat.shifts[si][d] = [0,0];
+    setPick(dat, si, d, 0, false); setPick(dat, si, d, 1, false);
+    dat.cand[si][d] = true;
+    showToast('☆ 候補に戻しました');
+  } else if (dat.cand[si][d]) {
+    /* 候補の日をタップ → 候補を外す */
+    delete dat.cand[si][d];
+  } else {
+    /* 空欄・×・○の日をタップ → 候補にする（1日は自動割り当てが候補から選ぶ） */
+    dat.cand[si][d] = true;
+  }
+  save(); rebuild(); updateCounts();
+}
+
+/* ── 確定モード：その半日を確定する（自動割り当てで必ず出勤）。もう一度タップで解除。
+   日単位のセル（日曜・☆候補）では終日まとめて確定する ── */
+function handleFixedClick(si, d, h) {
+  const dat = getDat();
+  if (dat.hols[d]) return; /* 休業日は対象外 */
+  if (!dat.fixed) dat.fixed = {};
+  if (!dat.fixed[si]) dat.fixed[si] = {};
+  if (!dat.shifts[si]) dat.shifts[si] = {};
+  if (!dat.shifts[si][d]) dat.shifts[si][d] = [0,0];
+  if (h === undefined) {
+    /* 日単位のタップ：どちらか確定していれば両方解除、なければ終日で確定する */
+    const fh = fixedHalves(dat, si, d);
+    if (fh[0] || fh[1]) {
+      delete dat.fixed[si][d];
+      dat.shifts[si][d] = [0,0];
+      setPick(dat, si, d, 0, false); setPick(dat, si, d, 1, false);
+      showToast(staffList[si] + ' の ' + d + '日の確定を解除しました');
+    } else {
+      /* ◐・候補を外し、終日で確定する */
+      if (dat.half[si]) dat.half[si][d] = false;
+      if (dat.cand && dat.cand[si]) delete dat.cand[si][d];
+      if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
+      dat.fixed[si][d] = true;
+      dat.shifts[si][d] = [2,2];
+      if (paceInfo(si).cap) { setPick(dat, si, d, 0, true); setPick(dat, si, d, 1, true); }
+      showToast(staffList[si] + ' の ' + d + '日（終日）を確定しました');
+    }
+  } else if (isFixedHalf(dat, si, d, h)) {
+    /* 確定済みの半日をタップ → その半日だけ解除する */
+    setFixedHalf(dat, si, d, h, false);
+    dat.shifts[si][d][h] = 0;
+    setPick(dat, si, d, h, false);
+    showToast(staffList[si] + ' の ' + d + '日（' + (h === 0 ? '午前' : '午後') + '）の確定を解除しました');
+  } else {
+    /* その半日だけを確定する（◐・候補・1日選択の確定は外す） */
+    if (dat.half[si]) dat.half[si][d] = false;
+    if (dat.cand && dat.cand[si]) delete dat.cand[si][d];
+    if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
+    setFixedHalf(dat, si, d, h, true);
+    dat.shifts[si][d][h] = 2;
+    if (paceInfo(si).cap) setPick(dat, si, d, h, true);
+    showToast(staffList[si] + ' の ' + d + '日（' + (h === 0 ? '午前' : '午後') + '）を確定しました');
+  }
+  save(); rebuild(); updateCounts();
 }
 
 /* ── 初期化 ── */
 function init() {
   loadStaff();
   loadPaces();
+  loadNoHalf();
+  loadTol();
+  loadNoRun();
+  loadConflicts();
   loadClickMode();
-  setClickMode(clickMode);
+  setClickMode(clickMode, true); /* 初回表示では切替トーストを出さない */
 
   const now = new Date();
   /* ホームの「作る月」は翌月を初期表示（シフトは翌月分を作ることが多いため） */
@@ -1083,8 +1658,26 @@ function init() {
     hmSel.appendChild(o2);
   }
 
-  ySel.onchange = function(){ if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; } syncHomeYM(); if (currentView==='table') rebuild(); };
-  mSel.onchange = function(){ if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; } syncHomeYM(); if (currentView==='table') rebuild(); };
+  const dhySel = document.getElementById('demoHomeYearSel');
+  const dhmSel = document.getElementById('demoHomeMonthSel');
+  const dYears = [];
+  for (let y=now.getFullYear()-1; y<=now.getFullYear()+2; y++) dYears.push(y);
+  if (dYears.indexOf(DEMO_YEAR) === -1) dYears.unshift(DEMO_YEAR);
+  dYears.forEach(function(y){
+    const o=document.createElement('option');
+    o.value=y; o.textContent=y;
+    if (y===DEMO_YEAR) o.selected=true;
+    dhySel.appendChild(o);
+  });
+  for (let m=1; m<=12; m++) {
+    const o=document.createElement('option');
+    o.value=m; o.textContent=m;
+    if (m===DEMO_MONTH) o.selected=true;
+    dhmSel.appendChild(o);
+  }
+
+  ySel.onchange = function(){ if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; } syncHomeYM(); resetTransientModes(); if (currentView==='table') rebuild(); };
+  mSel.onchange = function(){ if (demoMode) { const ny=ySel.value, nm=mSel.value; exitDemo(); ySel.value=ny; mSel.value=nm; } syncHomeYM(); resetTransientModes(); if (currentView==='table') rebuild(); };
   hySel.onchange = syncHeaderYM;
   hmSel.onchange = syncHeaderYM;
   document.getElementById('homeNameInput').addEventListener('keydown', function(e){
@@ -1106,12 +1699,29 @@ function rebuild() {
   buildHead(y,m,days);
   buildBody(y,m,days);
   updateUndoBtn();
+  updateAssignUI();
 }
 
 function buildHead(y,m,days) {
   const dat=getDat();
   const head=document.getElementById('tHead');
   head.innerHTML='';
+
+  /* 列幅は colgroup で固定する（📌や×の数など中身で列幅が変わらないように） */
+  const tbl=document.getElementById('mainTable');
+  const oldCg=document.getElementById('tCols');
+  if (oldCg) oldCg.remove();
+  const cg=document.createElement('colgroup');
+  cg.id='tCols';
+  const colW=[26,96];
+  for (let cd=1;cd<=days;cd++) colW.push(44);
+  colW.push(44,54);
+  colW.forEach(function(wd){ const c=document.createElement('col'); c.style.width=wd+'px'; cg.appendChild(c); });
+  tbl.insertBefore(cg, head);
+  /* テーブル自体の幅も列の合計に固定する（余った幅が列に配られて幅がバラつくのを防ぐ） */
+  const totalW = colW.reduce(function(a,b){ return a+b; }, 0);
+  tbl.style.width = totalW + 'px';
+  tbl.style.minWidth = totalW + 'px';
 
   /* 日付行 */
   const r1=document.createElement('tr');
@@ -1120,12 +1730,12 @@ function buildHead(y,m,days) {
     const w=dow(y,m,d), off=!!dat.hols[d];
     const el=document.createElement('th');
     el.className=off?'hdr-off':(w===6?'sat':w===0?'sun':'');
-    el.style.cssText='width:44px;min-width:44px;cursor:pointer;';
+    el.style.cssText='width:44px;min-width:44px;max-width:44px;cursor:pointer;';
     el.innerHTML='<span class="th-day">'+d+'</span><span class="th-wd">'+WD[w]+'</span>';
     el.addEventListener('click',function(day){ return function(){ clickHol(day); }; }(d));
     r1.appendChild(el);
   }
-  th(r1,'目標','s-target');
+  th(r1,'割当','s-actual'); th(r1,'目標','s-target');
   head.appendChild(r1);
 
   /* 備考行 */
@@ -1141,7 +1751,7 @@ function buildHead(y,m,days) {
     }
     r2.appendChild(td);
   }
-  tdc(r2,'','s-target');
+  tdc(r2,'','s-actual'); tdc(r2,'','s-target');
   head.appendChild(r2);
 
   /* 午前午後行 */
@@ -1151,10 +1761,11 @@ function buildHead(y,m,days) {
   for (let d=1;d<=days;d++) {
     const td=document.createElement('td');
     if (dat.hols[d]) td.className='ap-off';
+    else if (dow(y,m,d)===0) td.innerHTML='<div class="half-lbl"><span>終日</span></div>';
     else td.innerHTML='<div class="half-lbl"><span>前</span><span>後</span></div>';
     r3.appendChild(td);
   }
-  tdc(r3,'日数','s-target');
+  tdc(r3,'日数','s-actual'); tdc(r3,'日数','s-target');
   head.appendChild(r3);
 
   setHeadStickyOffsets();
@@ -1213,7 +1824,7 @@ function buildBody(y,m,days) {
         e.stopPropagation();
         dat.locks[staffIdx]=!dat.locks[staffIdx];
         save();
-        showToast(dat.locks[staffIdx] ? '🔒 '+staffList[staffIdx]+' をロックしました' : '🔓 '+staffList[staffIdx]+' のロックを解除しました');
+        showToast(dat.locks[staffIdx] ? staffList[staffIdx]+' をロックしました' : staffList[staffIdx]+' のロックを解除しました');
         rebuild();
       });
     })(si, lockBtn);
@@ -1223,25 +1834,37 @@ function buildBody(y,m,days) {
     nameSpan.textContent=name;
     nameInner.appendChild(nameSpan);
     tnm.appendChild(nameInner);
-    const paceSel=document.createElement('select');
-    paceSel.className='pace-sel'+(paces[name]?' on':'');
-    paceSel.title='出勤ペース（上限）。半日は0.5日として数えます（例：週2日まで＝半日×4回でもOK）';
-    Object.keys(PACES).forEach(function(code){
-      const o=document.createElement('option'); o.value=code; o.textContent=PACES[code].label;
-      if ((paces[name]||'')===code) o.selected=true;
-      paceSel.appendChild(o);
-    });
-    (function(staffName, staffIdx, sel){
-      sel.addEventListener('change',function(){
-        if (sel.value) paces[staffName]=sel.value; else delete paces[staffName];
-        savePaces();
-        clearPicks(dat, staffIdx);   /* ペースを変えたら選択はやり直し（○は全部候補に戻る） */
-        save();
-        showToast(sel.value ? '📌 '+staffName+'：'+PACES[sel.value].label+'（半日は0.5日で数えます。○はいくつでもOK。自動割り当てで選びます）' : staffName+'：通常に戻しました');
-        rebuild();
+    /* ペースラベルは常に枠を確保しておく（ペース設定・解除で名前欄の高さが変わらない） */
+    const paceLbl=document.createElement('span');
+    paceLbl.className='row-pace-label';
+    if (paces[name]) {
+      paceLbl.textContent=PACES[paces[name]].label;
+      paceLbl.title='出勤ペース（上限）。名簿で変更できます';
+    } else {
+      paceLbl.textContent='\u00a0';
+      paceLbl.style.visibility='hidden';
+    }
+    tnm.appendChild(paceLbl);
+    /* 名簿の制限指定（終日のみ・目標厳守・連勤制限）も表で見れるように、ペースと同じ行に1漢字で小さく表示する（変更は名簿ページで） */
+    const flagDefs = [
+      [noHalf[name], '終日のみ', '終', '#0e7a6d'],
+      [tolOf(name) !== 1, tolOf(name) === 0 ? '目標厳守' : '目標±0.5', '目', '#5b4a9a'],
+      [noRun[name], '連勤制限', '連', '#2c3e6b']
+    ];
+    if (flagDefs.some(function(f){ return f[0]; })) {
+      const fw = document.createElement('span');
+      fw.className = 'row-flag-wrap';
+      flagDefs.forEach(function(f){
+        if (!f[0]) return;
+        const fl = document.createElement('span');
+        fl.className = 'row-flag-label';
+        fl.style.background = f[3];
+        fl.textContent = f[2];
+        fl.title = f[1] + '（名簿で変更できます）';
+        fw.appendChild(fl);
       });
-    })(name, si, paceSel);
-    tnm.appendChild(paceSel);
+      tnm.appendChild(fw);
+    }
     tr.appendChild(tnm);
 
     /* 日付 */
@@ -1262,6 +1885,9 @@ function buildBody(y,m,days) {
           cell.addEventListener('click',function(){
             if (dat.locks[staffIdx]) return;
             if (selectMode) { handleSelectClick(staffIdx, day); return; }
+            if (dat.assigned) { adjustCycle(staffIdx, day, 0, true); save(); rebuild(); updateCounts(); return; } /* 割り当て後は微調整 */
+            if (clickMode==='s') { handleOneDayClick(staffIdx, day); return; }
+            if (clickMode==='f') { handleFixedClick(staffIdx, day); return; }
             /* どのモードでクリックしても統合解除して通常セル（空欄）に戻す */
             dat.half[staffIdx][day]=false;
             dat.shifts[staffIdx][day]=[0,0];
@@ -1270,6 +1896,51 @@ function buildBody(y,m,days) {
           });
         })(hcEl, si, d);
         td.appendChild(hcEl);
+      } else if (dow(y,m,d)===0) {
+        /* 日曜：一日1枠（午前・午後をまとめた1つのセル） */
+        const wrap=document.createElement('div');
+        wrap.className='cell-wrap';
+        const c=document.createElement('div');
+        c.className='hc sun';
+        if (isLocked) c.classList.add('lk');
+        if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
+        if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
+        const sv=sunDayVal(dat,si,d);
+        c.dataset.s=sv; c.textContent=sv===0?'':SL[sv];
+        if (paceInfo(si).cap && sv===2) {
+          if (isPicked(dat,si,d,0) && isPicked(dat,si,d,1)) { c.classList.add('pick'); c.title='選択済み'; }
+          else { c.classList.add('cand'); c.title='候補（自動割り当てで選ばれた日だけ出勤）'; }
+        }
+        if (dat.cand && dat.cand[si] && dat.cand[si][d]) { c.textContent='☆'; c.classList.add('one-cand'); c.title='1日選択の候補（もう一度タップで終日の出勤日に確定）'; }
+        if (dat.sel1 && dat.sel1[si]===d) { c.classList.add('one-day'); c.title='1日選択で確定した出勤日（タップで候補に戻す）'; }
+        if (dat.fixed && dat.fixed[si] && dat.fixed[si][d] && !dat.assigned) { c.textContent='📌'; c.classList.add('fixed'); c.title='確定（自動割り当てで必ず出勤）'; }
+        (function(cell, staffIdx, day){
+          cell.addEventListener('click',function(){
+            handleCellClick(cell, staffIdx, day, undefined, true);
+          });
+        })(c, si, d);
+        wrap.appendChild(c);
+        td.appendChild(wrap);
+      } else if (dat.cand && dat.cand[si] && dat.cand[si][d]) {
+        /* 1日選択の候補日：午前・午後をまとめた1つのセルに☆を表示する（日曜と同じ形） */
+        const wrap=document.createElement('div');
+        wrap.className='cell-wrap';
+        const c=document.createElement('div');
+        c.className='hc onecand one-cand';
+        if (isLocked) c.classList.add('lk');
+        if (selectMode && selected.has(si+'-'+d)) c.classList.add('selected');
+        if (selectMode && selAnchor && selAnchor.si===si && selAnchor.d===d) c.classList.add('sel-anchor');
+        c.textContent='☆';
+        c.title='1日選択の候補（もう一度タップで終日の出勤日に確定）';
+        if (dat.sel1 && dat.sel1[si]===d) { c.classList.add('one-day'); c.title='1日選択で確定した出勤日（タップで候補に戻す）'; }
+        if (dat.fixed && dat.fixed[si] && dat.fixed[si][d] && !dat.assigned) { c.textContent='📌'; c.classList.add('fixed'); c.title='確定（自動割り当てで必ず出勤）'; }
+        (function(cell, staffIdx, day){
+          cell.addEventListener('click',function(){
+            handleCellClick(cell, staffIdx, day, undefined, false, true);
+          });
+        })(c, si, d);
+        wrap.appendChild(c);
+        td.appendChild(wrap);
       } else {
         const wrap=document.createElement('div');
         wrap.className='cell-wrap';
@@ -1282,44 +1953,14 @@ function buildBody(y,m,days) {
           const s=dat.shifts[si][d][h];
           c.dataset.s=s; c.textContent=s===0?'':SL[s];
           if (paceInfo(si).cap && s===2) {
-            if (isPicked(dat,si,d,h)) { c.classList.add('pick'); c.title='選択済み（'+paceInfo(si).label+'の範囲で選ばれた日）'; }
-            else { c.classList.add('cand'); c.title='候補（'+paceInfo(si).label+'のため、自動割り当てで選ばれた日だけ出勤になります）'; }
+            if (isPicked(dat,si,d,h)) { c.classList.add('pick'); c.title='選択済み'; }
+            else { c.classList.add('cand'); c.title='候補（自動割り当てで選ばれた日だけ出勤）'; }
           }
+          if (dat.sel1 && dat.sel1[si]===d) { c.classList.add('one-day'); c.title='1日選択で確定した出勤日（タップで候補に戻す）'; }
+          if (isFixedHalf(dat, si, d, h) && !dat.assigned) { c.textContent='📌'; c.classList.add('fixed'); c.title='確定（自動割り当てで必ず出勤）'; }
           (function(cell, staffIdx, day, half){
             cell.addEventListener('click',function(){
-              if (dat.locks[staffIdx]) return;
-              if (selectMode) { handleSelectClick(staffIdx, day); return; }
-              if (clickMode==='h') {
-                /* 片方OKモード：このセルを統合セル（◐）に変換。
-                   既存の午前/午後の希望は◐（未確定）に置き換わるためクリアする */
-                dat.half[staffIdx][day]=true;
-                dat.shifts[staffIdx][day]=[0,0];
-                clearPickDay(dat, staffIdx, day);
-                save(); rebuild();
-                return;
-              }
-              if (clickMode==='b') {
-                /* 空欄モード：常に空欄にする */
-                dat.shifts[staffIdx][day][half]=0;
-                setPick(dat, staffIdx, day, half, false);
-                cell.dataset.s=0; cell.textContent='';
-                cell.classList.remove('cand','pick'); cell.title='';
-                save(); updateCounts();
-                return;
-              }
-              const cur=parseInt(cell.dataset.s);
-              /* ×モード：空欄⇔× をトグル（○の場合は×に上書き）。○モード：空欄⇔○ をトグル（×の場合は○に上書き） */
-              const target = clickMode==='x' ? 1 : 2;
-              const nx = (cur===target) ? 0 : target;
-              dat.shifts[staffIdx][day][half]=nx;
-              setPick(dat, staffIdx, day, half, false);   /* ○はいくつでも入力可。上限ありの人は「候補」になる */
-              /* 自動割り当て後に手で入れた○は、そのまま出勤として扱う */
-              if (dat.assigned && nx===2 && paceInfo(staffIdx).cap) setPick(dat, staffIdx, day, half, true);
-              cell.dataset.s=nx; cell.textContent=nx===0?'':SL[nx];
-              cell.classList.toggle('pick', paceInfo(staffIdx).cap && nx===2 && isPicked(dat,staffIdx,day,half));
-              cell.classList.toggle('cand', isCand(dat,staffIdx,day,half));
-              cell.title = isCand(dat,staffIdx,day,half) ? '候補（'+paceInfo(staffIdx).label+'のため、自動割り当てで選ばれた日だけ出勤になります）' : '';
-              save(); updateCounts();
+              handleCellClick(cell, staffIdx, day, half, false);
             });
           })(c, si, d, h);
           wrap.appendChild(c);
@@ -1329,14 +1970,39 @@ function buildBody(y,m,days) {
       tr.appendChild(td);
     }
 
+    /* 実際の日数 */
+    const act=document.createElement('td'); act.className='s-actual'; act.id='act'+si; act.title='割り当て日数（確定分）';
+    act.textContent=fmtDays(actualDays(dat, si, days));
+    tr.appendChild(act);
+
     /* 目標 */
     const tgt=document.createElement('td'); tgt.className='s-target';
     const inp=document.createElement('input');
-    inp.type='number'; inp.min=0; inp.max=days;
+    inp.type='number'; inp.min=0; inp.max=days; inp.step=0.5;
     inp.value=dat.targets[si]!==''&&dat.targets[si]!==undefined?dat.targets[si]:'';
     inp.placeholder='日';
+    inp.disabled=!!dat.assigned; /* 自動割り当て後は目標日数を変更できない（割り当て前に戻すと変更可） */
     (function(staffIdx, input){
-      input.addEventListener('change',function(){ dat.targets[staffIdx]=input.value===''?'':parseInt(input.value); save(); });
+      input.addEventListener('change',function(){
+        const raw = input.value.trim();
+        if (raw === '') {
+          dat.targets[staffIdx] = '';
+        } else {
+          const v = parseFloat(raw);
+          if (isNaN(v)) {
+            input.value = (dat.targets[staffIdx] !== '' && dat.targets[staffIdx] !== undefined) ? dat.targets[staffIdx] : '';
+            return;
+          }
+          const nm = staffList[staffIdx];
+          if (noHalf[nm] && tolOf(nm) === 0 && (Math.round(v * 2) % 2 !== 0)) {
+            alert('「終日のみ」かつ「目標厳守」の人は、0.5日単位（' + v + '）を目標に設定できません。\n整数（' + Math.floor(v) + ' や ' + Math.ceil(v) + ' など）を入力してください。');
+            input.value = (dat.targets[staffIdx] !== '' && dat.targets[staffIdx] !== undefined) ? dat.targets[staffIdx] : '';
+            return;
+          }
+          dat.targets[staffIdx] = v;
+        }
+        save(); updateCounts();
+      });
     })(si, inp);
     tgt.appendChild(inp); tr.appendChild(tgt);
     body.appendChild(tr);
@@ -1351,7 +2017,8 @@ function buildBody(y,m,days) {
     if (dat.hols[d]) td.className='cnt-off';
     ctr.appendChild(td);
   }
-  const cr=document.createElement('td'); cr.className='s-target'; ctr.appendChild(cr);
+  const ca=document.createElement('td'); ca.className='s-actual'; ca.id='cntActualTotal'; ca.title='割り当て日数の合計'; ctr.appendChild(ca);
+  const cr=document.createElement('td'); cr.className='s-target'; cr.id='cntTargetTotal'; cr.title='目標日数の合計'; ctr.appendChild(cr);
   body.appendChild(ctr);
   updateCounts();
 }
@@ -1362,6 +2029,15 @@ function updateCounts() {
     const td=document.getElementById('cnt'+d);
     if (!td||dat.hols[d]) continue;
     const c = countDay(dat, idxs, d);
+    if (dow(y,m,d)===0) {
+      const sunShort = req-c.full;
+      td.innerHTML='<div class="cnt-wrap">'
+        +'<span class="cc '+(c.full===0?'cc-idle':c.full>=req?'cc-ok':'cc-warn')+'" title="日曜 必要'+req+'人">終日:'+c.full+(sunShort>0?'(-'+sunShort+')':'')+'</span>'
+        +(c.half>0?'<span class="cc cc-idle">◐:'+c.half+'</span>':'')
+        +(c.cand>0?'<span class="cc cc-idle" title="上限ありの人の未選択の○（候補）">候:'+c.cand+'</span>':'')
+        +'</div>';
+      continue;
+    }
     const amShort = req-c.am, pmShort = req-c.pm;
     td.innerHTML='<div class="cnt-wrap">'
       +'<span class="cc '+(c.am===0?'cc-idle':c.am>=req?'cc-ok':'cc-warn')+'" title="午前 必要'+req+'人">前:'+c.am+(amShort>0?'(-'+amShort+')':'')+'</span>'
@@ -1370,6 +2046,24 @@ function updateCounts() {
       +(c.cand>0?'<span class="cc cc-idle" title="上限ありの人の未選択の○（候補）">候:'+c.cand+'</span>':'')
       +'</div>';
   }
+  /* 目標日数の合計（一番下の目標列。未設定は0として数える） */
+  const tt=document.getElementById('cntTargetTotal');
+  if (tt) {
+    let sum=0;
+    idxs.forEach(function(si){ const t=dat.targets[si]; if (t!==''&&t!==undefined&&!isNaN(parseFloat(t))) sum+=parseFloat(t); });
+    sum = Math.round(sum*100)/100; /* 0.1+0.2 のような浮動小数点の誤差を消す */
+    tt.textContent = sum>0 ? '計'+sum : '';
+  }
+  /* 実際の日数（1人ごと＋一番下の実際列に合計） */
+  let asum=0;
+  idxs.forEach(function(si){
+    const v=actualDays(dat, si, days);
+    asum+=v;
+    const cell=document.getElementById('act'+si);
+    if (cell) cell.textContent=fmtDays(v);
+  });
+  const at=document.getElementById('cntActualTotal');
+  if (at) { asum=Math.round(asum*100)/100; at.textContent = asum>0 ? '計'+asum : ''; }
 }
 
 /* ── 複数選択モード（矩形選択：始点タップ→終点タップ） ── */
@@ -1380,7 +2074,7 @@ function toggleSelectMode() {
   const b=document.getElementById('selBtn');
   const ab=document.getElementById('applySelBtn');
   const cb=document.getElementById('clearSelBtn');
-  b.textContent=selectMode?'🔲 選択モード終了':'🔲 複数選択';
+  b.textContent=selectMode?'選択モード終了':'複数選択';
   b.className=selectMode?'lock-btn on':'lock-btn';
   ab.style.display=selectMode?'':'none';
   cb.style.display=selectMode?'':'none';
@@ -1394,7 +2088,7 @@ function handleSelectClick(si, d) {
     selAnchor = {si:si, d:d};
     selected.clear();
     selected.add(si+'-'+d);
-    showToast('終点のセルをタップしてください（同じセルをもう一度タップで解除）');
+    showToast('終点のセルをタップ（同じセルで解除）');
     rebuild();
     return;
   }
@@ -1418,7 +2112,7 @@ function handleSelectClick(si, d) {
     }
   }
   selAnchor = null;
-  showToast('📐 '+selected.size+'件のセルを範囲選択しました');
+  showToast(selected.size+'件のセルを範囲選択しました');
   rebuild();
 }
 
@@ -1433,14 +2127,31 @@ function applyToSelection() {
   const dat=getDat();
   selected.forEach(function(key){
     const parts=key.split('-'); const si=parseInt(parts[0]), d=parseInt(parts[1]);
-    if (dat.hols[d]) return;
+    if (dat.hols[d] || dat.locks[si]) return;
+    if (dat.assigned) { adjustCycle(si, d, 0, true); return; } /* 割り当て後は微調整の切り替えを適用 */
+    if (dat.fixed && dat.fixed[si] && dat.fixed[si][d]) delete dat.fixed[si][d]; /* 確定の日も他のセルと同じく適用する（確定は外れる） */
+    if (dat.cand && dat.cand[si]) delete dat.cand[si][d]; /* 候補（☆）の日も通常セルとして適用する（候補は外れる） */
+    if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
     clearPickDay(dat, si, d);
     if (clickMode==='h') {
+      if (dow(getY(),getM(),d)===0) return; /* 日曜は一日1枠のため◐は使えない */
       dat.half[si][d]=true;
       dat.shifts[si][d]=[0,0];
     } else if (clickMode==='b') {
       dat.half[si][d]=false;
       dat.shifts[si][d]=[0,0];
+    } else if (clickMode==='s') {
+      dat.half[si][d]=false;
+      if (!dat.cand) dat.cand={};
+      if (!dat.cand[si]) dat.cand[si]={};
+      dat.cand[si][d]=true;
+    } else if (clickMode==='f') {
+      dat.half[si][d]=false;
+      if (!dat.fixed) dat.fixed={};
+      if (!dat.fixed[si]) dat.fixed[si]={};
+      dat.fixed[si][d]=true;
+      dat.shifts[si][d]=[2,2];
+      if (paceInfo(si).cap) { setPick(dat, si, d, 0, true); setPick(dat, si, d, 1, true); }
     } else {
       dat.half[si][d]=false;
       const val = clickMode==='x' ? 1 : 2;
@@ -1452,16 +2163,24 @@ function applyToSelection() {
   const n=selected.size;
   selected.clear();
   selAnchor=null;
-  rebuild();
-  showToast((clickMode==='b'?'⬜ ':'✅ ')+n+'件のセルに適用しました');
+  rebuild(); updateCounts();
+  showToast(n+'件のセルに適用しました');
 }
 
 /* ── 休業日 ── */
+/* 月を切り替えたとき等に、複数選択・休業日モードを引き継がないためのリセット */
+function resetTransientModes() {
+  if (selectMode) toggleSelectMode();
+  selected.clear(); selAnchor = null;
+  if (holMode) toggleHolMode();
+}
+
 function toggleHolMode() {
+  if (getDat().assigned) return; /* 自動割り当て後は休業日を変更できない */
   holMode=!holMode;
   const b=document.getElementById('holBtn');
   b.style.background=holMode?'#c0392b':'';
-  b.textContent=holMode?'✅ 休業日設定終了':'🏖 休業日設定';
+  b.textContent=holMode?'休業日設定終了':'休業日設定';
   showToast(holMode?'日付をクリックして休業日を設定/解除してください':'休業日設定を終了しました');
 }
 function clickHol(d) {
@@ -1473,6 +2192,11 @@ function clickHol(d) {
     dat.shifts[si][d] = dat.hols[d] ? [0,0] : [1,1];
     if (dat.half[si]) dat.half[si][d]=false;
     clearPickDay(dat, si, d);
+    if (dat.hols[d]) {
+      if (dat.fixed && dat.fixed[si]) delete dat.fixed[si][d];
+      if (dat.cand && dat.cand[si]) delete dat.cand[si][d];
+      if (dat.sel1 && dat.sel1[si] === d) delete dat.sel1[si];
+    }
   });
   save(); rebuild();
 }
@@ -1512,10 +2236,31 @@ function closeAllNotes() { document.getElementById('allModal').classList.remove(
 /* 割り当て後の状態の目印（編集されたかどうかの判定用） */
 function assignSig(dat) { return JSON.stringify([dat.shifts, dat.half]); }
 
-function autoAssign() {
-  if (!confirm('自動割り当てを実行します。\n×の希望は守り、◐（片方OK）は空欄と同じ扱いで、人数が不足する枠だけ片方に自動確定します。必要人数を超えて入ることはありません（入力済みの○が必要人数を超えている枠は減らします）。出勤ペース（週1日まで等）がある人は、入力された○（いくつでも可）の中から上限の範囲内で出勤日を選びます（半日は0.5日として数えるので、週2日まで＝半日×4回も可／○がない週は空欄から補充）。目標日数にできるだけ近づけて空欄を補充します（午前のみ・午後のみの勤務は0.5日として計算／人数不足の場合は目標を多少超過してでも必要人数を優先します）。実行後は×・◐・選ばれなかった○をすべて消し、出勤日の○だけが残ります。「↶ 割り当て前に戻す」で元に戻せます（割り当て前の表は「割り当て前も出力」でも出力できます）。人数が足りない枠は、ペースの上限を超えてでも必要人数を確保します（超えた人は完了時に知らせます）。実行しますか？')) return;
+/* 自動割り当て（ボタンから呼ばれる）：確認 → 「計算中…」を表示 → 一拍置いてから計算を始める
+   （表示が描かれる前に計算で画面が固まらないようにするため） */
+async function autoAssign() {
+  if (!confirm('自動割り当てを実行します。\n×は守り、人数が足りない枠だけを埋めます。\n実行後は×・◐・選ばれなかった○が消え、出勤日の○だけが残ります（「割り当て前に戻す」で戻せます）。\nよろしいですか？')) return;
+  const ov = document.getElementById('calcOverlay');
+  if (ov) ov.classList.add('on');
+  await new Promise(function(r){ setTimeout(r, 80); }); /* 「計算中…」が描かれてから計算する */
+  try { autoAssignRun(); } finally { if (ov) ov.classList.remove('on'); }
+}
+
+function autoAssignRun() {
   const y=getY(),m=getM(),days=daysIn(y,m),dat=getDat(),req=getReq();
+  /* 1日に入れる人数の上限（午前・午後を通して数える）。終日2人＋半日2人で4人まで。
+     必要人数がそれより多い月は、必要人数ぶんまでは入れる（日曜は1枠で必要人数が全員終日になるため） */
+  const DAY_MAX = Math.max(4, req);
   const idxsAll = staffIdxs();
+
+  /* ── 自動割り当ての流れと守るルール（メモ） ──
+     流れ：1日選択の確定 → 不足枠を候補の少ない順に埋める → 自分の○を上限内で選ぶ
+           → 最後の手段（ペース超過のみ許可） → 入れ替え修復 → 局所探索で不足を減らす。
+           午前・午後どちらも○の人は、可能なら終日で入れる（人数不足なら分割も可）。
+     守るルール：×には入れない／ペース上限（週半日までは超過も不可）／連日（基本2日まで、
+     3日は全て半日のときだけ。連勤制限の人は終日の2連勤と3日以上の連勤も不可）／
+     日曜は月2回まで／目標日数の上限（ちょうど・±1）／一緒に勤務しない組み合わせ／
+     1日の人数は4人まで／確定（📌）と1日選択の確定日は固定。 */
 
   /* 割り当て直後から何も編集していない状態で再実行する場合は、いったん割り当て前に戻してからやり直す
      （×や◐は割り当て後には残っていないため、元の希望から計算し直す） */
@@ -1523,30 +2268,48 @@ function autoAssign() {
     restoreBeforeAssign(dat);
   }
 
-  /* 割り当て前の状態を保存（「割り当て前も出力」用）。
+  /* 割り当て前の状態を保存（「前後を比較」用）。
      前回の割り当て直後から何も編集していない場合は、元の割り当て前データを残す */
   if (!dat.beforeAssign || dat.beforeAssign.afterSig !== assignSig(dat)) {
     dat.beforeAssign = {
       shifts: JSON.parse(JSON.stringify(dat.shifts)),
       half:   JSON.parse(JSON.stringify(dat.half)),
       picks:  JSON.parse(JSON.stringify(dat.picks || {})),
+      cand:   JSON.parse(JSON.stringify(dat.cand || {})),
+      sel1:   JSON.parse(JSON.stringify(dat.sel1 || {})),
       time:   Date.now()
     };
   }
 
   /* 上限ありの人の「選択」は毎回ゼロから選び直す（○はすべて候補に戻る） */
   idxsAll.forEach(function(si){ if (paceInfo(si).cap) clearPicks(dat, si); });
+  /* 1日選択モードで確定した日は、出勤として固定する（選び直しの対象外） */
+  idxsAll.forEach(function(si){
+    const sd = dat.sel1 && dat.sel1[si];
+    if (sd && paceInfo(si).cap) { setPick(dat, si, sd, 0, true); setPick(dat, si, sd, 1, true); }
+  });
+  /* 確定（📌）は、出勤として固定する（選び直しの対象外）。半日だけの確定もある */
+  idxsAll.forEach(function(si){
+    const fx = dat.fixed && dat.fixed[si];
+    if (!fx) return;
+    Object.keys(fx).forEach(function(ds){
+      const d = Number(ds);
+      if (dat.hols[d]) return;
+      if (paceInfo(si).cap) { const fh = fixedHalves(dat, si, d); [0,1].forEach(function(h){ if (fh[h]) setPick(dat, si, d, h, true); }); }
+    });
+  });
 
   /* 目標日数（未設定なら999＝実質無制限として扱う） */
   function targetOf(si) {
     const t = dat.targets[si];
-    return (t!==''&&t!==undefined) ? parseInt(t) : 999;
+    return (t!==''&&t!==undefined) ? parseFloat(t) : 999;
   }
 
   /* 現在すでに確定している日数をスタッフごとに「日」単位で数える。
      ◐（未確定）はまだ確定していないのでここではカウントしない。
      午前・午後どちらか片方だけの○は0.5日、両方○の日は1日としてカウントする。 */
   const assignedDays = {};
+  const paceUse = {};
   idxsAll.forEach(function(si){
     let c=0;
     for (let d=1;d<=days;d++){
@@ -1564,8 +2327,15 @@ function autoAssign() {
   for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
-      const firm = idxsAll.filter(function(si){ return isFirm(dat,si,d,h); });
-      let over = firm.length - req;
+      if (isSun(d) && h===1) return; /* 日曜は午前枠だけ処理し、午後はミラーする */
+      const allFirm = idxsAll.filter(function(si){ return isFirm(dat,si,d,h); });
+      /* 確定の半日は外さない（日曜・終日のみは片方でも確定ならその日ごと外さない） */
+      const firm = allFirm.filter(function(si){
+        if (dat.sel1 && dat.sel1[si] === d) return false; /* 1日選択で確定した日は外さない */
+        const fh = fixedHalves(dat, si, d);
+        return fullDayOnly(si, d) ? !(fh[0] || fh[1]) : !fh[h];
+      });
+      let over = Math.min(allFirm.length - req, firm.length);
       while (over > 0) {
         firm.sort(function(a,b){
           const sa = assignedDays[a] - targetOf(a), sb = assignedDays[b] - targetOf(b);
@@ -1573,38 +2343,219 @@ function autoAssign() {
           return assignedDays[b] - assignedDays[a];
         });
         const si = firm.shift();
-        dat.shifts[si][d][h] = 0;
-        assignedDays[si] -= 0.5;
+        slotRemove(si, d, h);
         over--;
       }
     });
   }
 
+  /* 1日の人数上限（4人）をすでに超えている日は、上限なしの人の○を1日分外して上限に収める
+     （確定の日・1日選択で確定した日は外さない。上限ありの人はこの時点ではまだ選ばれていない） */
+  for (let d=1; d<=days; d++) {
+    if (dat.hols[d]) continue;
+    let guard = 0;
+    while (guard++ < 40 && dayPeople(d) > DAY_MAX) {
+      const removable = idxsAll.filter(function(si){
+        if (!isFirm(dat,si,d,0) && !isFirm(dat,si,d,1)) return false;
+        const fhx = fixedHalves(dat, si, d);
+        if (fhx[0] || fhx[1]) return false; /* 確定が付いた日は外さない */
+        if (dat.sel1 && dat.sel1[si] === d) return false;
+        return !paceInfo(si).cap;
+      });
+      if (removable.length === 0) break;
+      removable.sort(function(a,b){
+        const sa = assignedDays[a] - targetOf(a), sb = assignedDays[b] - targetOf(b);
+        if (sa !== sb) return sb - sa;
+        return assignedDays[b] - assignedDays[a];
+      });
+      const si = removable[0];
+      [0,1].forEach(function(h){ if (isFirm(dat,si,d,h)) slotRemove(si, d, h); });
+    }
+  }
+
   /* 出勤ペースの上限管理：現在の○から期間ごとの使用状況を作る */
-  const paceUse = {};
   idxsAll.forEach(function(si){ if (paceInfo(si).cap) paceUse[si] = paceUsage(dat, si, y, m, days); });
   const weekCount = weekIdx(y,m,days) + 1;
-  /* 上限ありの人について、期間ごとに○（候補）があるかを記録。
-     ○がある期間は○の日だけを選ぶ対象にし、○がない期間は従来どおり空欄から補充する。 */
-  const hasCand = {};
-  idxsAll.forEach(function(si){
-    const pi = paceInfo(si); if (!pi.cap) return;
-    hasCand[si] = {};
-    for (let d=1; d<=days; d++) {
-      if (dat.hols[d]) continue;
-      if (dat.shifts[si][d][0]===2 || dat.shifts[si][d][1]===2) hasCand[si][periodKey(pi,y,m,d)] = true;
-    }
-  });
-  function paceOk(si, d) {
+  function paceOk(si, d, n) {
     const pi = paceInfo(si); if (!pi.cap) return true;
     const x = paceUse[si][periodKey(pi,y,m,d)];
-    return !x || x.halves < pi.cap;   /* 午前・午後どちらも1枠（半日）として数える */
+    const used = x ? x.halves : 0;
+    return used + (n||1) - 1 < pi.cap;   /* 午前・午後どちらも1枠（半日）として数える。日曜・終日のみは2枠分。未使用の期間は0枠として数える（!x のまま返すと2枠でも通ってしまうため） */
   }
   function paceAdd(si, d) {
     const pi = paceInfo(si); if (!pi.cap) return;
     const k = periodKey(pi,y,m,d);
+    if (!paceUse[si]) paceUse[si] = {};
     if (!paceUse[si][k]) paceUse[si][k] = {halves:0, days:new Set(), first:d, last:d};
     paceUse[si][k].halves++; paceUse[si][k].days.add(d);
+  }
+  function paceSub(si, d) {
+    const pi = paceInfo(si); if (!pi.cap || !paceUse[si]) return;
+    const k = periodKey(pi,y,m,d);
+    if (paceUse[si][k] && paceUse[si][k].halves > 0) paceUse[si][k].halves--;
+  }
+  /* 日曜は一日1枠：午前枠だけを処理し、午後へミラーする */
+  function isSun(d){ return dow(y,m,d)===0; }
+  function slotVal(si, d, h){ return isSun(d) ? sunDayVal(dat,si,d) : dat.shifts[si][d][h]; }
+  /* 終日のみ（半日勤務なし）の人：一日単位で割り当てる（日曜と同じく両半日を一緒に入れる） */
+  function noHalfDay(si){ return !!noHalf[staffList[si]]; }
+  /* 連勤制限（名簿で設定）の人か：終日の2連勤と3日以上の連勤を入れない */
+  function strictRun(si){ return !!noRun[staffList[si]]; }
+  function fullDayOnly(si, d){ return isSun(d) || noHalfDay(si); }
+  /* この枠に入れるときに増える半日数（半日勤務なしの人はもう片方も入れる分） */
+  function assignHalves(si, d, h){
+    if (!fullDayOnly(si, d)) return 1;
+    return isFirm(dat,si,d,1-h) ? 1 : 2;
+  }
+  /* 1日選択モードの人（候補あり・確定済み）は自動割り当ての対象外（手で1日だけ決める） */
+  function isOneDayPerson(si){
+    if (dat.sel1 && dat.sel1[si]) return true;
+    const c = dat.cand && dat.cand[si];
+    return !!(c && Object.keys(c).length > 0);
+  }
+  /* 確定（📌）の日か？ */
+  function isFixedDay(si, d){ const fh = fixedHalves(dat, si, d); return fh[0] && fh[1]; }
+  /* その人の今月の日曜出勤回数（確定の日曜は数えない） */
+  function sundayCount(si){
+    let n = 0;
+    for (let d=1; d<=days; d++) {
+      if (!isSun(d) || dat.hols[d]) continue;
+      if (isFixedDay(si, d)) continue;
+      if (isFirm(dat, si, d, 0)) n++;
+    }
+    return n;
+  }
+  /* 日曜は1人につき月2回まで（確定の日曜は除く） */
+  function sundayOk(si, d){
+    if (!isSun(d)) return true;
+    return sundayCount(si) < 2;
+  }
+  /* 目標日数の上限（日単位）。目標＋許容幅（厳守=0、±0.5、±1）。目標なしは無制限 */
+  function targetCap(si){
+    const t = targetOf(si);
+    if (t === 999) return Infinity;
+    return t + tolOf(staffList[si]);
+  }
+  /* この枠に入れても目標日数の上限を超えないか */
+  function targetOk(si, d, h){
+    const cap = targetCap(si);
+    if (!isFinite(cap)) return true;
+    return Math.round((assignedDays[si] + assignHalves(si,d,h)/2) * 2) / 2 <= cap;
+  }
+  /* その人の「一緒に勤務しない」相手がその時間帯にすでに入っているか */
+  function conflictBlocked(si, d, h){
+    const name = staffList[si];
+    for (let i=0; i<conflictPairs.length; i++) {
+      const p = conflictPairs[i];
+      let partner = null;
+      if (p[0] === name) partner = p[1];
+      else if (p[1] === name) partner = p[0];
+      if (!partner) continue;
+      const pj = staffList.indexOf(partner);
+      if (pj < 0) continue;
+      if (isFirm(dat, pj, d, h)) return true;
+    }
+    return false;
+  }
+  /* その日にすでに出勤している人数（午前・午後を通して何人いるか） */
+  function dayPeople(d){
+    let n = 0;
+    idxsAll.forEach(function(s2){ if (isFirm(dat,s2,d,0) || isFirm(dat,s2,d,1)) n++; });
+    return n;
+  }
+  /* si を d 日に入れても、その日の人数が上限（4人）を超えないか。すでに入っている人は人数が増えないので可 */
+  function dayCapOk(si, d){
+    if (isFirm(dat,si,d,0) || isFirm(dat,si,d,1)) return true;
+    return dayPeople(d) < DAY_MAX;
+  }
+  /* その人がその半日枠の割り当て対象になるか（値・選択状態・◐使用済み） */
+  function halfAssignable(si, d, hh){
+    if (isFirm(dat,si,d,hh)) return true; /* すでに入っている半日は問題ない */
+    const v = dat.shifts[si][d][hh];
+    const pi = paceInfo(si);
+    if (pi.cap) {
+      if (isPicked(dat,si,d,hh)) return false;
+      if (v===1) return false; /* ×は入れない。○・空欄（どちらでも）・◐は対象 */
+    } else if (v!==0) return false;
+    if (halfUsedInRun.has(si+'-'+d)) return false;
+    return true;
+  }
+  /* その半日枠にまだ人数の余裕があるか（その人がすでに入っている場合も可） */
+  function halfHasRoom(si, d, hh){
+    if (isFirm(dat,si,d,hh)) return true;
+    return idxsAll.filter(function(s2){ return isFirm(dat,s2,d,hh); }).length < req;
+  }
+  /* 連日ルール：連続する出勤日は基本2日まで。3日連続は全て半日勤務のときだけ可
+     （上限ありの人の未選択の○は出勤日ではないので、確定済みかどうかで判定する） */
+  function dayIsWork(si, x){
+    return isFirm(dat, si, x, 0) || isFirm(dat, si, x, 1);
+  }
+  function dayIsFull(si, x){
+    return isFirm(dat, si, x, 0) && isFirm(dat, si, x, 1);
+  }
+  /* si を d日に入れたとき（dFull=trueなら終日、falseなら半日）、連日の並びがルールを満たすか */
+  function runOkAfter(si, d, dFull){
+    let start = d, end = d;
+    while (start > 1 && dayIsWork(si, start-1)) start--;
+    while (end < days && dayIsWork(si, end+1)) end++;
+    const len = end - start + 1;
+    if (strictRun(si)) {
+      /* 連勤制限の人：3日以上の連勤は不可。2日連続は両日とも終日のときだけ不可（半日が1日でもあればよい） */
+      if (len <= 1) return true;
+      if (len >= 3) return false;
+      for (let x = start; x <= end; x++) {
+        if (!((x === d) ? dFull : dayIsFull(si, x))) return true;
+      }
+      return false;
+    }
+    if (len <= 2) return true;
+    if (len >= 4) return false;
+    for (let x = start; x <= end; x++) {
+      if ((x === d) ? dFull : dayIsFull(si, x)) return false;
+    }
+    return true;
+  }
+  /* この枠に入れると d日は終日になるか（日曜・終日のみは両半日／もう片方がすでに入っていれば終日） */
+  function assignMakesFull(si, d, h){
+    if (fullDayOnly(si, d)) return true;
+    return isFirm(dat, si, d, 1-h);
+  }
+  function slotAssign(si, d, h){
+    dat.shifts[si][d][h]=2;
+    if (paceInfo(si).cap) setPick(dat, si, d, h, true);
+    assignedDays[si]+=0.5;
+    paceAdd(si, d);
+    if (fullDayOnly(si, d) && !isFirm(dat,si,d,1-h)) {
+      dat.shifts[si][d][1-h]=2;
+      if (paceInfo(si).cap) { setPick(dat, si, d, 1-h, true); paceAdd(si, d); }
+      assignedDays[si]+=0.5;
+    }
+  }
+  function slotRemove(si, d, h){
+    dat.shifts[si][d][h]=0;
+    if (paceInfo(si).cap) setPick(dat, si, d, h, false);
+    assignedDays[si]-=0.5;
+    paceSub(si, d);
+    if (fullDayOnly(si, d) && isFirm(dat,si,d,1-h)) {
+      dat.shifts[si][d][1-h]=0;
+      if (paceInfo(si).cap) setPick(dat, si, d, 1-h, false);
+      assignedDays[si]-=0.5;
+      paceSub(si, d);
+    }
+  }
+  /* 午前・午後どちらも○の人は、できれば終日で入れる：片方の枠に入れた直後、
+     もう片方の枠にも余裕があり全ルールを満たせば、続けてそちらも入れる。
+     （もう片方が満員・ルールに触れる場合は無理をせず、半日のままにする） */
+  function tryFullDay(si, d, h){
+    if (isSun(d) || fullDayOnly(si, d)) return; /* 日曜・終日のみは slotAssign が両半分入れる */
+    if (isFirm(dat, si, d, 1-h)) return;
+    if (slotVal(si, d, 0) !== 2 || slotVal(si, d, 1) !== 2) return; /* 希望が午前・午後どちらも○の人だけ */
+    if (idxsAll.filter(function(s2){ return isFirm(dat,s2,d,1-h); }).length >= req) return; /* もう片方が満員なら終日にしない */
+    if (!paceOk(si, d, 1)) return; /* ペース上限（もう半日分） */
+    if (!targetOk(si, d, 1-h)) return; /* 目標日数の上限 */
+    if (conflictBlocked(si, d, 1-h)) return; /* 一緒に勤務しない相手 */
+    if (!runOkAfter(si, d, true)) return; /* 連日ルール（終日として判定） */
+    slotAssign(si, d, 1-h);
   }
   /* 上限までに残っている出勤枠を「日」単位で返す（上限なしはInfinity） */
   function capLeft(si) {
@@ -1629,6 +2580,7 @@ function autoAssign() {
   for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
+      if (isSun(d) && h===1) return; /* 日曜は午前枠だけ（午後はミラー） */
       const fixedCount = idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length;
       const need = req - fixedCount;
       if (need<=0) return;
@@ -1640,12 +2592,16 @@ function autoAssign() {
   function availCount(d, h) {
     let n = 0;
     idxsAll.forEach(function(si){
-      const v = dat.shifts[si][d][h];
+      if (!sundayOk(si, d)) return;
+      if (!dayCapOk(si, d)) return;
+      if (!targetOk(si, d, h)) return;
+      if (conflictBlocked(si, d, h)) return;
+      if (fullDayOnly(si, d) && slotVal(si, d, 1-h) === 1) return; /* 終日のみの人は片方が×なら半日の候補に入れない */
+      const v = slotVal(si, d, h);
       const pi = paceInfo(si);
       if (pi.cap) {
         if (isPicked(dat,si,d,h)) return;
-        if (hasCand[si][periodKey(pi,y,m,d)]) { if (v===2) n++; }
-        else if (v===0) n++;
+        if (v!==1) n++; /* ×以外（○・空欄・◐）は候補として数える */
       } else if (v===0) n++;
     });
     return n;
@@ -1656,33 +2612,97 @@ function autoAssign() {
   /* ◐（片方OK）の人は「片方だけ」しか働けないので、同じ日に両方の枠へ
      二重に割り当てられないよう、この回で使用済みの (staffIdx-day) を記録する。 */
   const halfUsedInRun = new Set();
+  /* この回の自動割り当てで1日を選んだ人（候補日のリスト）。手で確定した人は含めない。
+     人数不足の修復では、この人の1日を候補日の中で動かしてよい（1日だけ・終日というルールは変えない） */
+  const autoOneDay = {};
+
+  /* 1日選択モード：候補日の中から、自動割り当てが1日だけ終日で選ぶ。
+     候補がある人はここで1日を確定し、後のフェーズでは追加で割り当てない。
+     （週半日までの人は終日（2コマ）に入れないので選ばない。連日ルールは守る） */
+  idxsAll.forEach(function(si){
+    const c = dat.cand && dat.cand[si];
+    if (!c || Object.keys(c).length === 0) return;
+    if (dat.sel1 && dat.sel1[si]) return; /* すでに確定済み */
+    const pi = paceInfo(si);
+    if (pi.cap && pi.cap < 2) return; /* 週半日まで（上限1コマ）は終日に入れない */
+    const candDays = Object.keys(c).map(Number).filter(function(d){ return !dat.hols[d]; });
+    if (candDays.length === 0) return;
+    const scored = candDays.map(function(d){
+      let score = 0;
+      [0,1].forEach(function(h){
+        if (isSun(d) && h===1) return;
+        const cnt = idxsAll.filter(function(s2){ return isFirm(dat,s2,d,h); }).length;
+        score += Math.max(0, req - cnt);
+      });
+      return { d:d, score:score, paceOk:paceOk(si, d, 2), runOk:runOkAfter(si, d, true) };
+    }).filter(function(x){
+      if (!x.runOk) return false; /* 連日ルールは守る */
+      if (!x.paceOk) return false; /* ペース上限は超えない */
+      if (!sundayOk(si, x.d)) return false; /* 日曜は月2回まで */
+      if (assignedDays[si] + 1 > targetCap(si)) return false; /* 目標日数の上限（許容幅）を超えない */
+      if (!dayCapOk(si, x.d)) return false; /* その日の人数上限（4人）を超える日は選ばない */
+      if (conflictBlocked(si, x.d, 0) || conflictBlocked(si, x.d, 1)) return false; /* 一緒に勤務しない相手が入っている日は選ばない */
+      return true;
+    });
+    if (scored.length === 0) return; /* どの候補日も連日ルールで入れない場合は選ばない */
+    scored.sort(function(a,b){
+      if (a.paceOk !== b.paceOk) return a.paceOk ? -1 : 1;
+      if (b.score !== a.score) return b.score - a.score;
+      return a.d - b.d;
+    });
+    const pick = scored[0];
+    /* 終日で確定する（日曜・終日のみはミラーで両半日入る） */
+    slotAssign(si, pick.d, 0);
+    if (!isFirm(dat, si, pick.d, 1)) slotAssign(si, pick.d, 1);
+    if (dat.half[si] && dat.half[si][pick.d]) {
+      dat.half[si][pick.d]=false;
+      halfUsedInRun.add(si+'-'+pick.d);
+    }
+    autoOneDay[si] = candDays.slice();
+    dat.sel1[si] = pick.d;
+    dat.cand[si] = {};
+  });
+
+  /* この枠にその人を割り当てられるかの共通判定（checkRun=trueなら連日ルールも含めて判定） */
+  function canAssignToSlot(si, d, h, checkRun){
+    if (isOneDayPerson(si)) return false; /* 1日選択モードの人は自動割り当ての対象外 */
+    const v = slotVal(si, d, h);
+    const pi = paceInfo(si);
+    if (fullDayOnly(si,d) && pi.cap && pi.cap < 2) return false; /* 日曜・終日のみは2コマ分のため上限2未満は不可 */
+    if (pi.cap) {
+      if (isPicked(dat,si,d,h)) return false;
+      if (v===1) return false; /* ×は入れない。○・空欄（どちらでも）・◐は対象 */
+    } else if (v!==0) return false;
+    if (halfUsedInRun.has(si+'-'+d)) return false;
+    if (noHalfDay(si) && !isSun(d)) {
+      /* 半日勤務なしの人は一日単位：もう片方も対象になり、人数に余裕があること */
+      if (!halfAssignable(si,d,1-h) || !halfHasRoom(si,d,1-h)) return false;
+    }
+    if (!paceOk(si, d, assignHalves(si,d,h))) return false; /* 出勤ペースの上限を超えない */
+    if (!sundayOk(si, d)) return false; /* 日曜は月2回まで（確定は除く） */
+    if (!targetOk(si, d, h)) return false; /* 目標日数の上限（許容幅）を超えない */
+    if (conflictBlocked(si, d, h)) return false; /* 一緒に勤務しない相手が入っている時間帯は入れない */
+    if (fullDayOnly(si, d) && !isFirm(dat, si, d, 1-h) && conflictBlocked(si, d, 1-h)) return false; /* 終日で入る場合、もう片方も相手がいないこと */
+    if (!dayCapOk(si, d)) return false; /* 1日の人数上限（4人）を超える人は入れない */
+    if (checkRun && !runOkAfter(si, d, assignMakesFull(si,d,h))) return false; /* 連日ルール */
+    return true;
+  }
 
   slots.forEach(function(slot){
     const d=slot.d, h=slot.h;
 
-    /* この枠に入れる候補：空欄のまま残っている人（◐で未確定な人も含む）。
-       ただし、元◐だった人がこの日ですでに片方の枠で使われていれば
-       （変換後はdat.halfがfalseになるため）halfUsedInRunで除外する。 */
-    let flex = idxsAll.filter(function(si){
-      const v = dat.shifts[si][d][h];
-      const pi = paceInfo(si);
-      if (pi.cap) {
-        if (isPicked(dat,si,d,h)) return false;
-        /* ○がある期間は○（候補）の日だけ、ない期間は空欄だけが対象 */
-        if (hasCand[si][periodKey(pi,y,m,d)]) { if (v!==2) return false; }
-        else if (v!==0) return false;
-      } else if (v!==0) return false;
-      if (halfUsedInRun.has(si+'-'+d)) return false;
-      if (!paceOk(si, d)) return false;   /* 出勤ペースの上限に達している人は選べない */
-      return true;
-    });
+    /* この枠に入れる候補：空欄のまま残っている人（◐で未確定な人も含む） */
+    let flex = idxsAll.filter(function(si){ return canAssignToSlot(si, d, h, true); });
     if (flex.length===0) return;
 
     /* 残り必要日数が多い人を優先。同数なら現在の確定日数が少ない人を優先（さらに公平化） */
     flex.sort(function(a,b){
       /* 自分で○を付けた候補を最優先 */
-      const ca = dat.shifts[a][d][h]===2?1:0, cb = dat.shifts[b][d][h]===2?1:0;
+      const ca = slotVal(a,d,h)===2?1:0, cb = slotVal(b,d,h)===2?1:0;
       if (ca!==cb) return cb - ca;
+      /* 午前・午後どちらも○の人を先に選ぶ（終日で入れやすくするため） */
+      const fa = (slotVal(a,d,0)===2 && slotVal(a,d,1)===2)?1:0, fb = (slotVal(b,d,0)===2 && slotVal(b,d,1)===2)?1:0;
+      if (fa!==fb) return fb - fa;
       const diff = remaining(b) - remaining(a);
       if (diff!==0) return diff;
       return assignedDays[a] - assignedDays[b];
@@ -1690,99 +2710,300 @@ function autoAssign() {
 
     const need = req - idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length;
     if (need<=0) return;
-    flex.slice(0, need).forEach(function(si){
-      dat.shifts[si][d][h]=2;
-      if (paceInfo(si).cap) setPick(dat, si, d, h, true);
-      assignedDays[si]+=0.5;
-      paceAdd(si, d);
+    /* flex は割り当て前に作った一覧のため、同じ枠で先に選ばれた人と
+       組み合わせが重ならないか、割り当て時に改めて確認する */
+    let assigned = 0;
+    for (let fi = 0; fi < flex.length && assigned < need; fi++) {
+      const si = flex[fi];
+      if (conflictBlocked(si, d, h)) continue;
+      if (fullDayOnly(si, d) && !isFirm(dat, si, d, 1-h) && conflictBlocked(si, d, 1-h)) continue;
+      if (!sundayOk(si, d)) continue;
+      if (!targetOk(si, d, h)) continue;
+      if (!dayCapOk(si, d)) continue;
+      slotAssign(si, d, h);
+      tryFullDay(si, d, h); /* ○○希望の人は可能なら終日で入れる */
       if (dat.half[si] && dat.half[si][d]) {
         /* ◐だった人を実際に確定した場合のみ、片方だけ働く形に変換する。
            不足がなければここには来ないため、◐は空欄同様「基本入れない」まま残る。 */
         dat.half[si][d]=false;
         halfUsedInRun.add(si+'-'+d);
       }
-    });
+      assigned++;
+    }
   });
 
   /* 上限ありの人：人数が足りている日でも、○を付けた人には上限の範囲で必ず出勤日を選ぶ。
      （人数が少なくて済む＝出勤が多すぎない枠を優先／目標日数に達していれば追加しない） */
   idxsAll.forEach(function(si){
     const pi = paceInfo(si); if (!pi.cap) return;
+    if (isOneDayPerson(si)) return; /* 1日選択モードの人は自動割り当ての対象外 */
     const list = [];
     for (let d=1; d<=days; d++) {
       if (dat.hols[d]) continue;
-      [0,1].forEach(function(h){ if (isCand(dat,si,d,h)) list.push({d:d,h:h}); });
+      [0,1].forEach(function(h){
+        if (isSun(d) && h===1) return;
+        if (!isCand(dat,si,d,h)) return;
+        if (noHalfDay(si) && !isSun(d)) {
+          /* 半日勤務なしの人は、もう片方も候補か入っている日だけ */
+          if (!isCand(dat,si,d,1-h) && !isFirm(dat,si,d,1-h)) return;
+        }
+        list.push({d:d,h:h});
+      });
     }
     function cover(c){ return idxsAll.filter(function(s2){ return isFirm(dat,s2,c.d,c.h); }).length; }
     list.sort(function(a,b){ return (cover(a)-cover(b)) || (a.d-b.d) || (a.h-b.h); });
     list.forEach(function(c){
-      if (!paceOk(si, c.d)) return;
-      if (assignedDays[si] >= targetOf(si)) return;
+      if (isPicked(dat,si,c.d,c.h)) return; /* すでに選ばれている（ミラーで選ばれた場合） */
+      if (!paceOk(si, c.d, assignHalves(si,c.d,c.h))) return;
+      if (!dayCapOk(si, c.d)) return; /* 1日の人数上限（4人） */
+      if (!sundayOk(si, c.d)) return; /* 日曜は月2回まで */
+      if (conflictBlocked(si, c.d, c.h)) return; /* 一緒に勤務しない相手が入っている時間帯は入れない */
+      if (fullDayOnly(si, c.d) && !isFirm(dat, si, c.d, 1-c.h) && conflictBlocked(si, c.d, 1-c.h)) return;
+      if (!runOkAfter(si, c.d, assignMakesFull(si,c.d,c.h))) return; /* 連日ルール：基本2日連続まで。3日連続は全て半日のときだけ */
+      if (assignedDays[si] >= targetOf(si) || !targetOk(si, c.d, c.h)) return;
+      const needMirror = noHalfDay(si) && !isSun(c.d) && !isFirm(dat,si,c.d,1-c.h);
+      if (needMirror && cover({d:c.d, h:1-c.h}) >= req) return; /* もう片方が満員なら一日では入れない */
       /* 必要人数に達している枠には追加しない。ただし目標日数を超えている上限なしの人がいれば入れ替わってもらう */
       if (cover(c) >= req) {
         const donors = idxsAll.filter(function(s2){
-          return s2!==si && !paceInfo(s2).cap && isFirm(dat,s2,c.d,c.h) && assignedDays[s2] > targetOf(s2);
+          if (s2===si || paceInfo(s2).cap || !isFirm(dat,s2,c.d,c.h) || assignedDays[s2] <= targetOf(s2)) return false;
+          const fh = fixedHalves(dat, s2, c.d);
+          if (fullDayOnly(s2, c.d) ? (fh[0] || fh[1]) : fh[c.h]) return false; /* 確定は外さない */
+          if (dat.sel1 && dat.sel1[s2] === c.d) return false; /* 1日選択で確定した日は外さない */
+          return true;
         });
         if (donors.length===0) return;
         donors.sort(function(a,b){ return (assignedDays[b]-targetOf(b)) - (assignedDays[a]-targetOf(a)); });
-        dat.shifts[donors[0]][c.d][c.h] = 0;
-        assignedDays[donors[0]] -= 0.5;
+        slotRemove(donors[0], c.d, c.h);
       }
       setPick(dat, si, c.d, c.h, true);
       assignedDays[si]+=0.5;
       paceAdd(si, c.d);
+      if (needMirror) { setPick(dat, si, c.d, 1-c.h, true); assignedDays[si]+=0.5; paceAdd(si, c.d); }
+      else if (isSun(c.d)) { setPick(dat, si, c.d, 1, true); assignedDays[si]+=0.5; paceAdd(si, c.d); }
     });
   });
 
-  /* 最後の手段：それでも人数が足りない枠は、ペースの上限を超えてでも必要人数を確保する。
-     （上限を超えた人は完了時に知らせる。候補が誰もいない枠だけは不足が残る） */
+  /* 補充：上の順で埋まらなかった枠（候補日が出たあとに残った枠など）を改めて埋める（ペースの上限は厳格に守る） */
   const overPacePeople = {};
-  function paceOverBy(si, d) {
-    const pi = paceInfo(si); if (!pi.cap) return 0;
-    const x = paceUse[si][periodKey(pi,y,m,d)];
-    return Math.max(0, (x?x.halves:0) + 1 - pi.cap);
-  }
   for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
+      if (isSun(d) && h===1) return; /* 日曜は午前枠だけ処理し、午後はミラーする */
       let need = req - idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length;
       if (need<=0) return;
-      /* 上限を無視して選べる人：○または空欄の人（◐で片方使用済みの人は除く） */
-      let flex = idxsAll.filter(function(si){
-        const v = dat.shifts[si][d][h];
-        const pi = paceInfo(si);
-        if (pi.cap) {
-          if (isPicked(dat,si,d,h)) return false;
-          if (hasCand[si][periodKey(pi,y,m,d)]) { if (v!==2) return false; }
-          else if (v!==0) return false;
-        } else if (v!==0) return false;
-        if (halfUsedInRun.has(si+'-'+d)) return false;
-        return true;
-      });
-      /* ○を最優先し、上限の超過が少ない人を先に選ぶ */
+      let flex = idxsAll.filter(function(si){ return canAssignToSlot(si, d, h, true); });
+      /* ○を最優先し、午前・午後どちらも○の人・現在の日数が少ない人を先に選ぶ */
       flex.sort(function(a,b){
-        const ca = dat.shifts[a][d][h]===2?1:0, cb = dat.shifts[b][d][h]===2?1:0;
+        const ca = slotVal(a,d,h)===2?1:0, cb = slotVal(b,d,h)===2?1:0;
         if (ca!==cb) return cb - ca;
-        const oa = paceOverBy(a, d), ob = paceOverBy(b, d);
-        if (oa!==ob) return oa - ob;
+        const fa = (slotVal(a,d,0)===2 && slotVal(a,d,1)===2)?1:0, fb = (slotVal(b,d,0)===2 && slotVal(b,d,1)===2)?1:0;
+        if (fa!==fb) return fb - fa;
         return assignedDays[a] - assignedDays[b];
       });
-      flex.slice(0, need).forEach(function(si){
-        dat.shifts[si][d][h]=2;
-        if (paceInfo(si).cap) {
-          setPick(dat, si, d, h, true);
-          paceAdd(si, d);
-          const pi = paceInfo(si), k = periodKey(pi,y,m,d);
-          if (paceUse[si][k] && paceUse[si][k].halves > pi.cap) overPacePeople[si] = true;
-        }
-        assignedDays[si]+=0.5;
+      let assigned = 0;
+      for (let fi = 0; fi < flex.length && assigned < need; fi++) {
+        const si = flex[fi];
+        if (conflictBlocked(si, d, h)) continue;
+        if (fullDayOnly(si, d) && !isFirm(dat, si, d, 1-h) && conflictBlocked(si, d, 1-h)) continue;
+        if (!sundayOk(si, d)) continue;
+        if (!targetOk(si, d, h)) continue;
+        if (!dayCapOk(si, d)) continue;
+        slotAssign(si, d, h);
+        tryFullDay(si, d, h); /* ○○希望の人は可能なら終日で入れる */
         if (dat.half[si] && dat.half[si][d]) {
           dat.half[si][d]=false;
           halfUsedInRun.add(si+'-'+d);
         }
-      });
+        assigned++;
+      }
     });
   }
+
+  /* 修復：それでも人数が足りない枠は、1人の入れ替えで直せるか試す。
+     連日ルール・週半日までの上限は守ったまま、他の人の配置をずらして枠を埋める。
+     （例：森さんが日曜12/6終日・12/7半日で12/8午後に入れない場合、森さんを日曜12/6から外し、
+       佐藤さんを日曜に入れて、森さんを12/8午後に入れる） */
+  function canFill(si, d, h, checkRun){ return canAssignToSlot(si, d, h, checkRun); }
+  /* その人をその日から外す（入っている半日をすべて外す。ミラーも考慮） */
+  function removeFromDay(si, d){
+    if (fullDayOnly(si, d)) {
+      if (isFirm(dat,si,d,0)) slotRemove(si, d, 0);
+      else if (isFirm(dat,si,d,1)) slotRemove(si, d, 1);
+    } else {
+      [0,1].forEach(function(hh){ if (isFirm(dat,si,d,hh)) slotRemove(si, d, hh); });
+    }
+  }
+  /* その人をその日に（指定した半日で）入れる。◐の変換も行う */
+  function addToDay(si, d, halves){
+    if (fullDayOnly(si, d)) {
+      if (halves.indexOf(0) !== -1) slotAssign(si, d, 0);
+      else if (halves.indexOf(1) !== -1) slotAssign(si, d, 1);
+    } else {
+      halves.forEach(function(hh){ slotAssign(si, d, hh); });
+    }
+    if (dat.half[si] && dat.half[si][d]) {
+      dat.half[si][d]=false;
+      halfUsedInRun.add(si+'-'+d);
+    }
+  }
+  /* 入れ替えの候補から、残り必要日数が多い人を選ぶ */
+  function pickBest(cands){
+    if (cands.length===0) return -1;
+    cands.sort(function(a,b){ return remaining(b) - remaining(a); });
+    return cands[0];
+  }
+  for (let d=1; d<=days; d++) {
+    if (dat.hols[d]) continue;
+    [0,1].forEach(function(h){
+      if (isSun(d) && h===1) return;
+      let need = req - idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length;
+      if (need<=0) return;
+      /* 連日ルールで止まっている人（それ以外は通る） */
+      const blocked = idxsAll.filter(function(si){
+        return canFill(si,d,h,false) && !canFill(si,d,h,true);
+      });
+      for (let bi=0; bi<blocked.length && need>0; bi++) {
+        const p = blocked[bi];
+        /* p の連日の並び（d を含む）のうち、d 以外の日を1日外すことを試す */
+        let start = d, end = d;
+        while (start > 1 && dayIsWork(p, start-1)) start--;
+        while (end < days && dayIsWork(p, end+1)) end++;
+        const daysToTry = [];
+        for (let x=start; x<=end; x++) {
+          if (x===d) continue;
+          const fhx = fixedHalves(dat, p, x);
+          if (fhx[0] || fhx[1]) continue;
+          if (dat.sel1 && dat.sel1[p] === x) continue;
+          daysToTry.push(x);
+        }
+        daysToTry.sort(function(a,b){ return Math.abs(a-d) - Math.abs(b-d); });
+        for (let ti=0; ti<daysToTry.length; ti++) {
+          const x = daysToTry[ti];
+          const halves = [];
+          [0,1].forEach(function(hh){ if (isFirm(dat,p,x,hh)) halves.push(hh); });
+          if (halves.length===0) continue;
+          removeFromDay(p, x);
+          if (!canFill(p, d, h, true)) {
+            addToDay(p, x, halves);
+            continue;
+          }
+          /* x の空いた枠を埋められる人を探す */
+          let replacements = [];
+          if (isSun(x)) {
+            const q = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, 0, true); }));
+            if (q !== -1) replacements = [q];
+          } else if (halves.length === 1) {
+            const q = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, halves[0], true); }));
+            if (q !== -1) replacements = [q];
+          } else {
+            const qBoth = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, 0, true) && canFill(qq, x, 1, true); }));
+            if (qBoth !== -1) replacements = [qBoth];
+            else {
+              const q0 = pickBest(idxsAll.filter(function(qq){ return qq!==p && canFill(qq, x, 0, true); }));
+              const q0New = (q0 !== -1) && !isFirm(dat, q0, x, 0) && !isFirm(dat, q0, x, 1);
+              const q1 = pickBest(idxsAll.filter(function(qq){
+                if (qq===p || qq===q0 || !canFill(qq, x, 1, true)) return false;
+                if (q0New && !isFirm(dat, qq, x, 0) && !isFirm(dat, qq, x, 1) && dayPeople(x) + 1 >= DAY_MAX) return false;
+                return true;
+              }));
+              if (q0 !== -1 && q1 !== -1) replacements = [q0, q1];
+            }
+          }
+          if (replacements.length===0) {
+            addToDay(p, x, halves);
+            continue;
+          }
+          /* 入れ替えを実行：p を d に、代わりの人を x に */
+          addToDay(p, d, [h]);
+          if (isSun(x)) {
+            addToDay(replacements[0], x, [0]);
+          } else if (halves.length === 1) {
+            addToDay(replacements[0], x, halves);
+          } else if (replacements.length === 1) {
+            addToDay(replacements[0], x, [0,1]);
+          } else {
+            addToDay(replacements[0], x, [0]);
+            addToDay(replacements[1], x, [1]);
+          }
+          need--;
+          break;
+        }
+      }
+    });
+  }
+
+  /* 人数が足りない枠が残っていたら、全体の入れ替え探索で埋め直す */
+  (function(){
+    let shortNow = 0;
+    for (let d=1; d<=days; d++) {
+      if (dat.hols[d]) continue;
+      [0,1].forEach(function(h){
+        if (isSun(d) && h===1) return;
+        if (idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length < req) shortNow++;
+      });
+    }
+    if (shortNow === 0) return;
+    const P = {
+      days: days, req: req, dayMax: DAY_MAX, n: staffList.length, hols: dat.hols,
+      isSun: isSun,
+      weekOf: function(d){ return weekIdx(y,m,d); },
+      weekCount: weekCount,
+      cap: function(si){ return paceInfo(si).cap || 0; },
+      unitMonth: function(si){ return paceInfo(si).unit === 'month'; },
+      noHalf: function(si){ return noHalfDay(si); },
+      strictRun: function(si){ return !!noRun[staffList[si]]; },
+      /* その日の希望が午前・午後どちらも○か（割り当て前の状態で判定。終日で入れる優先の目安） */
+      bothWish: function(si,d){ const b = dat.beforeAssign; return !!(b && b.shifts && b.shifts[si] && b.shifts[si][d] && b.shifts[si][d][0]===2 && b.shifts[si][d][1]===2); },
+      targetHalves: function(si){ const t = targetOf(si); return t === 999 ? null : t*2; },
+      targetCapHalves: function(si){ const c = targetCap(si); return isFinite(c) ? c*2 : Infinity; },
+      locked: function(si){ return isOneDayPerson(si) && !autoOneDay[si]; },
+      oneDayCands: function(si){ return autoOneDay[si] || null; },
+      fixedDay: function(si,d){ return isFixedDay(si,d); },
+      fixedMask: function(si,d){ const fh = fixedHalves(dat, si, d); return (fh[0]?1:0) | (fh[1]?2:0); },
+      firm: function(si,d,h){ return isFirm(dat,si,d,h); },
+      /* その半日に入れるか（×は不可。上限なしの人は空欄のみ、上限ありの人は○・空欄・◐） */
+      okHalf: function(si,d,h){
+        if (isFirm(dat,si,d,h)) return true;
+        const v = slotVal(si,d,h);
+        return paceInfo(si).cap ? v!==1 : v===0;
+      },
+      isCandOrFirm: function(si,d,h){ return dat.shifts[si][d][h]===2; },
+      halfFlag: function(si,d){ return !!(dat.half[si] && dat.half[si][d]); },
+      conflicts: conflictPairs.map(function(p){ return [staffList.indexOf(p[0]), staffList.indexOf(p[1])]; }).filter(function(p){ return p[0]>=0 && p[1]>=0; })
+    };
+    const S = localSearchRepair(P);
+    if (!S) return;
+    /* 結果を書き戻す */
+    idxsAll.forEach(function(si){
+      if (isOneDayPerson(si) && !autoOneDay[si]) return;
+      for (let d=1; d<=days; d++) {
+        if (dat.hols[d]) continue;
+        const s = S[si][d];
+        [0,1].forEach(function(h){
+          const want = !!((s>>h)&1), have = isFirm(dat,si,d,h);
+          if (want && !have) {
+            dat.shifts[si][d][h] = 2;
+            if (paceInfo(si).cap) setPick(dat, si, d, h, true);
+            if (dat.half[si] && dat.half[si][d]) dat.half[si][d] = false;
+          } else if (!want && have) {
+            dat.shifts[si][d][h] = 0;
+            if (paceInfo(si).cap) setPick(dat, si, d, h, false);
+          }
+        });
+      }
+    });
+    idxsAll.forEach(function(si){
+      if (!autoOneDay[si]) return;
+      for (let d=1; d<=days; d++) { if (!dat.hols[d] && isFirm(dat,si,d,0) && isFirm(dat,si,d,1)) { dat.sel1[si] = d; break; } }
+    });
+    /* 完了メッセージ用の日数を集計し直す（ペース超過は下のブロックで確定分を除いて判定する） */
+    idxsAll.forEach(function(si){
+      let c = 0;
+      for (let d=1; d<=days; d++) { if (dat.hols[d]) continue; if (isFirm(dat,si,d,0)) c+=0.5; if (isFirm(dat,si,d,1)) c+=0.5; }
+      assignedDays[si] = c;
+    });
+  })();
 
   /* 仕上げ：×・◐（片方OK）・選ばれなかった候補の○をすべて消し、出勤日の○だけにする。
      割り当て前の状態は dat.beforeAssign に残してある（「割り当て前に戻す」で復元できる） */
@@ -1803,19 +3024,36 @@ function autoAssign() {
 
   /* 目標超過が発生したスタッフがいれば件数を伝える（気づきやすくするため） */
   const overCount = idxsAll.filter(function(si){
-    const t = dat.targets[si];
-    return (t!==''&&t!==undefined) && assignedDays[si] > parseInt(t);
+    return assignedDays[si] > targetCap(si);
   }).length;
   /* 必要人数に届かなかった枠の数 */
   let shortSlots = 0;
   for (let d=1; d<=days; d++) {
     if (dat.hols[d]) continue;
     [0,1].forEach(function(h){
+      if (isSun(d) && h===1) return;
       if (idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length < req) shortSlots++;
     });
   }
+  /* ペース超過の数え直し：確定分は本人の指定なので除き、自動で入れた分が残りの上限を超えた人だけを数える */
+  idxsAll.forEach(function(si){
+    const pi = paceInfo(si);
+    if (!pi.cap) return;
+    const u = paceUsage(dat, si, y, m, days), uf = {};
+    for (let d=1; d<=days; d++) {
+      if (dat.hols[d]) continue;
+      const fh = fixedHalves(dat, si, d);
+      const n = ((fh[0] && isFirm(dat,si,d,0))?1:0) + ((fh[1] && isFirm(dat,si,d,1))?1:0);
+      if (!n) continue;
+      const k = periodKey(pi,y,m,d);
+      uf[k] = (uf[k]||0) + n;
+    }
+    let over = false;
+    Object.keys(u).forEach(function(k){ const f = uf[k]||0; if (u[k].halves - f > Math.max(0, pi.cap - f)) over = true; });
+    if (over) overPacePeople[si] = true; else delete overPacePeople[si];
+  });
   const overPaceCount = Object.keys(overPacePeople).length;
-  let msg = '✨ 自動割り当てが完了しました';
+  let msg = '自動割り当てが完了しました';
   if (shortSlots>0) msg += '（人数が足りない枠が'+shortSlots+'か所あります）';
   else {
     if (overPaceCount>0) msg += '（人数確保のためペース上限を超えた人が'+overPaceCount+'名います）';
@@ -1825,17 +3063,433 @@ function autoAssign() {
   showToast(msg);
 }
 
+/* 人数不足の枠を埋め直す入れ替え探索（焼きなまし法）。
+   ルール違反が残る結果は採用せず、改善できなければ null（＝元の結果のまま）を返す。 */
+function localSearchRepair(P) {
+  const n = P.n, days = P.days, req = P.req;
+  const dayMax = P.dayMax || Infinity; /* 1日の人数上限（午前・午後を通して） */
+  const HARD = 100;            /* 不足1人・違反1件あたりの重み */
+  const open = []; for (let d=1; d<=days; d++) if (!P.hols[d]) open.push(d);
+  if (open.length === 0) return null;
+  /* 疑似乱数（毎回同じ結果になるよう固定の種） */
+  let seed = 123456789;
+  function rnd() { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed>>>15), 1 | seed); t = (t + Math.imul(t ^ (t>>>7), 61 | t)) ^ t; return ((t ^ (t>>>14)) >>> 0) / 4294967296; }
+
+  /* 各人・各日の「取れる状態」（bit0=午前, bit1=午後。日曜と終日のみの人は 0 か 3 だけ） */
+  const states = [], cur = [], locked = [], oneC = [];
+  for (let si=0; si<n; si++) {
+    states[si] = []; cur[si] = new Int8Array(days+1);
+    const lk = P.locked(si);
+    locked[si] = lk;
+    oneC[si] = (P.oneDayCands && P.oneDayCands(si)) || null;
+    for (let d=1; d<=days; d++) {
+      if (P.hols[d]) { states[si][d] = [0]; continue; }
+      const a = P.firm(si,d,0)?1:0, p = P.firm(si,d,1)?1:0;
+      cur[si][d] = a | (p<<1);
+      if (lk) { states[si][d] = [cur[si][d]]; continue; }
+      /* 確定の半日は出勤として固定し、通常の候補のうち確定の半分を含む状態だけに絞る */
+      const fm = P.fixedMask(si,d);
+      if (fm) cur[si][d] |= fm;
+      if (oneC[si] && oneC[si].indexOf(d) < 0) { states[si][d] = [cur[si][d]]; continue; } /* 1日選択の人は候補日以外に入れない */
+      const okA = P.okHalf(si,d,0), okP = P.okHalf(si,d,1);
+      let st;
+      if (P.isSun(d) || P.noHalf(si)) st = (okA && okP) ? [0,3] : [cur[si][d]];
+      else {
+        st = [0];
+        if (okA) st.push(1);
+        if (okP) st.push(2);
+        if (okA && okP && !P.halfFlag(si,d)) st.push(3);
+      }
+      if (fm) st = st.filter(function(s){ return (s & fm) === fm; }); /* 確定の半日は外せない */
+      if (st.indexOf(cur[si][d]) < 0) st.push(cur[si][d]);   /* いまの状態は必ず選べる */
+      states[si][d] = st;
+    }
+  }
+  const bits = [0,1,1,2];
+  const cnt = []; for (let d=0; d<=days; d++) cnt[d] = [0,0];
+  for (let si=0; si<n; si++) for (const d of open) { const s = cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; }
+  /* その日に出勤している人数（午前・午後を通して何人いるか） */
+  const dcnt = []; for (let d=0; d<=days; d++) dcnt[d] = 0;
+  for (let si=0; si<n; si++) for (const d of open) if (cur[si][d]) dcnt[d]++;
+  /* 日曜は午前の人数だけを数える（午後は同じ） */
+  function slotNeed(d,h){ return !(P.isSun(d) && h===1); }
+  function slotCost(d){
+    let c = 0;
+    for (let h=0; h<2; h++) {
+      if (!slotNeed(d,h)) continue;
+      const k = cnt[d][h];
+      if (k < req) c += HARD*(req-k); else if (k > req) c += (HARD*0.6)*(k-req);
+    }
+    if (dcnt[d] > dayMax) c += HARD*(dcnt[d]-dayMax); /* 1日の人数上限（4人）を超えた分 */
+    return c;
+  }
+  const partners = []; for (let si=0; si<n; si++) partners[si] = [];
+  P.conflicts.forEach(function(p){ partners[p[0]].push(p[1]); partners[p[1]].push(p[0]); });
+  function conflictAt(si,d,s){
+    let c = 0;
+    for (const q of partners[si]) { const t = cur[q][d]; c += bits[s&t] ; }
+    return c;
+  }
+  /* 1人分のコスト（ルール違反＋目標との差＋ペース超過） */
+  const weekN = P.weekCount;
+  function personCost(si, row) {
+    let halves = 0, sunN = 0, run = 0, runFull = false, runAllFull = true, c = 0;
+    const cap = P.cap(si), per = new Array(weekN+1).fill(0);
+    const monthly = P.unitMonth(si);
+    /* 連勤の並びへの罰（連勤制限の人は厳しい方で数える） */
+    function runCost(){
+      if (P.strictRun(si)) {
+        if (run>=3) return HARD*(run-1);
+        if (run===2 && runAllFull) return HARD;
+        return 0;
+      }
+      if (run>=4) return HARD*(run-3);
+      if (run===3 && runFull) return HARD;
+      return 0;
+    }
+    for (let d=1; d<=days; d++) {
+      const s = P.hols[d] ? 0 : row[d];
+      /* 午前・午後どちらも○希望の日を半日だけにしたら少し損（終日で入れる形を優先させるため） */
+      if ((s===1 || s===2) && P.bothWish(si, d)) c += 4;
+      if (s) {
+        const hh = (s===3) ? 2 : 1;
+        const hcount = P.isSun(d) ? 2 : hh;
+        halves += hcount;
+        if (cap) per[monthly ? 0 : P.weekOf(d)] += hcount;
+        if (P.isSun(d) && !P.fixedDay(si,d)) sunN++;
+        run++; if (s===3) runFull = true; else runAllFull = false;
+      } else {
+        c += runCost();
+        run = 0; runFull = false; runAllFull = true;
+      }
+    }
+    c += runCost();
+    if (sunN > 2) c += HARD*(sunN-2);
+    if (oneC[si]) { let wd=0; for (let d=1; d<=days; d++) if (!P.hols[d] && row[d]) wd++; if (wd > 1) c += HARD*(wd-1); }
+    const tc = P.targetCapHalves(si);
+    if (halves > tc) c += HARD*(halves-tc);
+    const th = P.targetHalves(si);
+    if (th !== null) c += 8*Math.abs(halves - th);
+    if (cap) for (let k=0; k<per.length; k++) if (per[k] > cap) c += HARD*(per[k]-cap);
+    return c;
+  }
+  const pcost = [];
+  for (let si=0; si<n; si++) pcost[si] = personCost(si, cur[si]);
+  function personViol(si, row){
+    let run=0, runFull=false, runAllFull=true, runAllFx=true, sunN=0, halves=0, halvesF=0, v=0; const cap=P.cap(si), per={}, perF={};
+    /* 全て確定でできている連日は本人の指定なので違反に数えない（確定の日曜・競合と同じ扱い） */
+    function runBad(){ return P.strictRun(si) ? ((run>=3 || (run===2 && runAllFull)) && !runAllFx) : ((run>=4 || (run===3 && runFull)) && !runAllFx); }
+    for (let d=1; d<=days; d++) {
+      const s = P.hols[d]?0:row[d];
+      if (s) {
+        const hc = P.isSun(d)?2:(s===3?2:1); halves += hc;
+        const hf = bits[s & P.fixedMask(si,d)]; halvesF += hf;
+        if (cap) { const k = P.unitMonth(si)?'m':P.weekOf(d); per[k]=(per[k]||0)+hc; perF[k]=(perF[k]||0)+hf; }
+        if (P.isSun(d) && !P.fixedDay(si,d)) sunN++;
+        run++; if (s===3) runFull=true; else runAllFull=false; if ((s & ~P.fixedMask(si,d)) !== 0) runAllFx=false;
+      } else { if (runBad()) v++; run=0; runFull=false; runAllFull=true; runAllFx=true; }
+    }
+    if (runBad()) v++;
+    if (sunN>2) v++;
+    if (oneC[si]) { let wd=0; for (let d=1; d<=days; d++) if (!P.hols[d] && row[d]) wd++; if (wd > 1) v++; }
+    /* 確定分は本人の指定。自動で入れた分が、確定分を差し引いた上限を超えたら違反 */
+    if (halves - halvesF > Math.max(0, P.targetCapHalves(si) - halvesF)) v++;
+    if (cap) Object.keys(per).forEach(function(k){ if (per[k]-perF[k] > Math.max(0, cap-perF[k])) v++; });
+    return v;
+  }
+  /* 違反（不足を除く）の有無を厳密に確認 */
+  function violations(rows){
+    let v = 0;
+    for (let si=0; si<n; si++) v += personViol(si, rows[si]);
+    for (const d of open) for (const p of P.conflicts) { const ov = rows[p[0]][d] & rows[p[1]][d]; if (ov && (ov & ~(P.fixedMask(p[0],d) & P.fixedMask(p[1],d)))) v++; }
+    for (const d of open) { let dn=0; for (let si=0; si<n; si++) if (rows[si][d]) dn++; if (dn > dayMax) v += dn - dayMax; }
+    return v;
+  }
+  function shortage(){
+    let u=0; for (const d of open) for (let h=0;h<2;h++){ if(!slotNeed(d,h)) continue; if (cnt[d][h]<req) u+=req-cnt[d][h]; } return u;
+  }
+  const startShort = shortage();
+  if (startShort === 0) return null;
+  const startRows = cur.map(function(r){ return Int8Array.from(r); });
+  let best = null, bestShort = startShort;
+
+  /* 動かせるマス（選べる状態が2つ以上あるもの） */
+  const cells = [];
+  for (let si=0; si<n; si++) for (const d of open) if (states[si][d].length > 1) cells.push([si,d]);
+  if (cells.length === 0) return null;
+  function canBe(si,d,v){ return states[si][d].indexOf(v) >= 0; }
+
+  /* 動かし方：moves = [[人, 日, 新しい状態], ...] をまとめて適用し、コストの差を返す（undoで元に戻せる） */
+  function applyMoves(moves) {
+    const days_ = [], sis = [], olds = [];
+    let before = 0, after = 0;
+    for (const mv of moves) { if (days_.indexOf(mv[1])<0) days_.push(mv[1]); if (sis.indexOf(mv[0])<0) sis.push(mv[0]); }
+    for (const d of days_) before += slotCost(d);
+    for (const mv of moves) { before += conflictAt(mv[0],mv[1],cur[mv[0]][mv[1]]) * HARD; }
+    const oldPc = sis.map(function(si){ return pcost[si]; });
+    for (const mv of moves) {
+      const si = mv[0], d = mv[1], nw = mv[2], old = cur[si][d];
+      olds.push(old); cur[si][d] = nw;
+      for (let h=0; h<2; h++) cnt[d][h] += ((nw>>h)&1) - ((old>>h)&1);
+      if ((old===0) !== (nw===0)) dcnt[d] += (nw!==0) ? 1 : -1;
+    }
+    for (const d of days_) after += slotCost(d);
+    for (const mv of moves) { after += conflictAt(mv[0],mv[1],cur[mv[0]][mv[1]]) * HARD; }
+    const newPc = sis.map(function(si){ return personCost(si, cur[si]); });
+    let dPc = 0; for (let i=0;i<sis.length;i++) dPc += newPc[i]-oldPc[i];
+    return {
+      delta: (after-before) + dPc,
+      commit: function(){ for (let i=0;i<sis.length;i++) pcost[sis[i]] = newPc[i]; },
+      undo: function(){
+        for (let i=moves.length-1; i>=0; i--) {
+          const si = moves[i][0], d = moves[i][1], nw = moves[i][2], old = olds[i];
+          cur[si][d] = old;
+          for (let h=0; h<2; h++) cnt[d][h] -= ((nw>>h)&1) - ((old>>h)&1);
+          if ((old===0) !== (nw===0)) dcnt[d] -= (nw!==0) ? 1 : -1;
+        }
+      }
+    };
+  }
+  /* 次の動きを1つ決める（ねらい撃ち／1人の出勤日の付け替え／1マスの変更） */
+  function nextMoves(focusShort) {
+    const r = rnd();
+    if (focusShort && r < 0.3) {
+      let sd = -1, sh = 0;
+      for (let tries=0; tries<8 && sd<0; tries++) { const dd = open[(rnd()*open.length)|0]; for (let h=0;h<2;h++) if (slotNeed(dd,h) && cnt[dd][h] < req) { sd = dd; sh = h; } }
+      if (sd > 0) {
+        const si = (rnd()*n)|0;
+        const cand = states[si][sd].filter(function(v){ return ((v>>sh)&1) && v !== cur[si][sd]; });
+        if (cand.length) return [[si, sd, cand[(rnd()*cand.length)|0]]];
+      }
+    } else if (r < 0.6) {
+      /* 1人の出勤を別の日へ付け替える（出勤日数はそのまま） */
+      const si = (rnd()*n)|0;
+      if (!locked[si]) {
+        const d1 = open[(rnd()*open.length)|0], d2 = open[(rnd()*open.length)|0];
+        const s1 = cur[si][d1], s2 = cur[si][d2];
+        if (d1 !== d2 && s1 !== 0 && s2 !== s1 && canBe(si,d1,0) && canBe(si,d2,s1)) {
+          if (s2 === 0) return [[si,d1,0],[si,d2,s1]];
+          if (canBe(si,d1,s2)) return [[si,d1,s2],[si,d2,s1]];
+        }
+      }
+    } else if (r < 0.75) {
+      /* 同じ日の2人を入れ替える */
+      const d = open[(rnd()*open.length)|0], a = (rnd()*n)|0, b2 = (rnd()*n)|0;
+      if (a !== b2 && cur[a][d] !== cur[b2][d] && canBe(a,d,cur[b2][d]) && canBe(b2,d,cur[a][d])) return [[a,d,cur[b2][d]],[b2,d,cur[a][d]]];
+    }
+    const cell = cells[(rnd()*cells.length)|0], st = states[cell[0]][cell[1]];
+    const nw = st[(rnd()*st.length)|0];
+    return nw === cur[cell[0]][cell[1]] ? null : [[cell[0], cell[1], nw]];
+  }
+
+
+  /* ── 玉突き修復（人数不足の枠を、他の人の出勤を1つずつずらしながら埋める） ──
+     不足枠に入れる人がいても、その人の連日・ペース上限・目標日数のルールに触れる場合は、
+     その人の別の出勤を1つ外して、外れた枠を別の人が埋める…を最大数段まで連鎖させて探す。
+     途中の状態は必ず全ルールを守る形のものだけを使う。 */
+  function confOk(si, d, s){
+    for (const q of partners[si]) if ((cur[q][d] & s) !== 0) return false;
+    return true;
+  }
+  /* その日に新しく入ると、1日の人数上限（4人）を超えないか（すでに入っている人は増えないので可） */
+  function dayRoom(si, d){ return cur[si][d] !== 0 || dcnt[d] < dayMax; }
+  function setS(si, d, ns){
+    const old = cur[si][d]; if (old === ns) return;
+    cur[si][d] = ns;
+    for (let h=0; h<2; h++) cnt[d][h] += ((ns>>h)&1) - ((old>>h)&1);
+    if ((old===0) !== (ns===0)) dcnt[d] += (ns!==0) ? 1 : -1;
+  }
+  function roomOther(d, h, si, ns){
+    /* 追加で入る半日がほかにある（終日・日曜）場合、そちらも人数に余裕があること */
+    for (let hh=0; hh<2; hh++) {
+      if (hh===h || !((ns>>hh)&1) || ((cur[si][d]>>hh)&1)) continue;
+      if (!slotNeed(d,hh)) continue;
+      if (cnt[d][hh] >= req) return false;
+    }
+    return true;
+  }
+  /* 失敗した連鎖が途中の状態を残さないよう、試行前の状態を保存して戻す */
+  function snapshotRows(){ return cur.map(function(x){ return Int8Array.from(x); }); }
+  function restoreRows(rows){
+    for (let si=0; si<n; si++) cur[si].set(rows[si]);
+    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
+    for (let si=0; si<n; si++) for (const d of open) { const s=cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
+  }
+  let chainNodes = 0, chainLimit = 0;
+  const chainStack = new Set();
+  function fillSlot(d, h, depth){
+    if (cnt[d][h] >= req) return true;
+    if (++chainNodes > chainLimit) return false;
+    const order = [];
+    for (let si=0; si<n; si++) if (!locked[si] && !((cur[si][d]>>h)&1)) order.push(si);
+    for (let i=order.length-1; i>0; i--) { const j=(rnd()*(i+1))|0, t=order[i]; order[i]=order[j]; order[j]=t; }
+    /* ルールに触れずにそのまま入れる人を先に試す */
+    const direct = [], other = [];
+    order.forEach(function(si){
+      const old = cur[si][d];
+      let ok = false;
+      for (const ns of states[si][d]) {
+        if (!((ns>>h)&1) || (ns & old) !== old || ns === old) continue;
+        if (!confOk(si,d,ns) || !roomOther(d,h,si,ns) || !dayRoom(si,d)) continue;
+        cur[si][d] = ns; const v = personViol(si, cur[si]); cur[si][d] = old;
+        if (v === 0) { ok = true; break; }
+      }
+      (ok ? direct : other).push(si);
+    });
+    for (const si of direct) {
+      const old = cur[si][d];
+      for (const ns of states[si][d]) {
+        if (!((ns>>h)&1) || (ns & old) !== old || ns === old) continue;
+        if (!confOk(si,d,ns) || !roomOther(d,h,si,ns) || !dayRoom(si,d)) continue;
+        cur[si][d] = ns; const v = personViol(si, cur[si]); cur[si][d] = old;
+        if (v !== 0) continue;
+        setS(si,d,ns);
+        return true;
+      }
+    }
+    if (depth <= 0) return false;
+    chainStack.add(d+'-'+h);
+    try {
+      for (const si of other) {
+        const old = cur[si][d];
+        for (const ns of states[si][d]) {
+          if (!((ns>>h)&1) || (ns & old) !== old || ns === old) continue;
+          if (!confOk(si,d,ns) || !roomOther(d,h,si,ns) || !dayRoom(si,d)) continue;
+          /* この人の別の出勤を1つ外す候補 */
+          const drops = [];
+          for (const d1 of open) {
+            if (d1 === d) continue;
+            const c1 = cur[si][d1]; if (c1 === 0 || P.fixedDay(si,d1)) continue;
+            for (const r of states[si][d1]) { if (r !== c1 && (r & c1) === r) drops.push([d1, r]); }
+          }
+          for (let i=drops.length-1; i>0; i--) { const j=(rnd()*(i+1))|0, t=drops[i]; drops[i]=drops[j]; drops[j]=t; }
+          for (const dr of drops) {
+            const d1 = dr[0], r = dr[1], c1 = cur[si][d1];
+            const lost = c1 & ~r;
+            let skip = false;
+            for (let hh=0; hh<2; hh++) if (((lost>>hh)&1) && slotNeed(d1,hh) && chainStack.has(d1+'-'+hh)) skip = true;
+            if (skip) continue;
+            const snapDrop = snapshotRows();
+            setS(si,d,ns); setS(si,d1,r);
+            if (personViol(si, cur[si]) === 0) {
+              let all = true;
+              for (let hh=0; hh<2 && all; hh++) {
+                if (!((lost>>hh)&1) || !slotNeed(d1,hh)) continue;
+                if (cnt[d1][hh] >= req) continue;
+                if (!fillSlot(d1, hh, depth-1)) all = false;
+              }
+              if (all) return true;
+            }
+            /* 失敗：再帰で変更された他の人の枠も含めて試行前の状態へ丸ごと戻す */
+            restoreRows(snapDrop);
+          }
+        }
+      }
+    } finally { chainStack.delete(d+'-'+h); }
+    return false;
+  }
+  (function chainRepair(){
+    const startViol = violations(startRows);
+    const tc0 = Date.now(), CHAIN_MS = 1200;
+    let improved = true;
+    while (improved && shortage() > 0 && Date.now()-tc0 < CHAIN_MS) {
+      improved = false;
+      for (let depth=0; depth<=6 && !improved && Date.now()-tc0 < CHAIN_MS; depth++) {
+        const shorts = [];
+        for (const d of open) for (let h=0; h<2; h++) if (slotNeed(d,h) && cnt[d][h] < req) shorts.push([d,h]);
+        for (const sh of shorts) {
+          if (Date.now()-tc0 >= CHAIN_MS) break;
+          const snap = snapshotRows();
+          chainNodes = 0; chainLimit = 40000; chainStack.clear();
+          if (fillSlot(sh[0], sh[1], depth)) {
+            const rows = snapshotRows();
+            if (violations(rows) <= startViol) { improved = true; break; }
+          }
+          restoreRows(snap);
+        }
+      }
+    }
+    const sh = shortage();
+    if (sh < bestShort) {
+      const rows = snapshotRows();
+      if (violations(rows) <= startViol) {
+        bestShort = sh; best = rows;
+        for (let si=0; si<n; si++) startRows[si].set(rows[si]);
+      }
+    }
+    restoreRows(startRows);
+  })();
+  const t0 = Date.now(), LIMIT_MS = 5000;
+  const ROUNDS = 60, ITER = 60000;
+  for (let round=0; round<ROUNDS && bestShort>0 && (round<3 || Date.now()-t0 < LIMIT_MS); round++) {
+    for (let si=0; si<n; si++) cur[si].set(best ? best[si] : startRows[si]);
+    if (round > 0) {
+      /* 前回の最良を少しだけ崩してから焼きなます（同じ形ばかり試さないため） */
+      const k = 4 + ((rnd()*16)|0);
+      for (let i=0; i<k; i++) {
+        const cell = cells[(rnd()*cells.length)|0], st = states[cell[0]][cell[1]];
+        cur[cell[0]][cell[1]] = st[(rnd()*st.length)|0];
+      }
+    }
+    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
+    for (let si=0; si<n; si++) for (const d of open) { const s=cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
+    for (let si=0; si<n; si++) pcost[si] = personCost(si, cur[si]);
+    for (let it=0; it<ITER; it++) {
+      const T = 30 * Math.pow(0.02, it/ITER) + 0.3;
+      const mv = nextMoves(true); if (!mv) continue;
+      const r = applyMoves(mv);
+      if (r.delta <= 0 || rnd() < Math.exp(-r.delta/T)) {
+        r.commit();
+        if (r.delta < 0 || it % 16 === 0) {
+          const sh = shortage();
+          if (sh < bestShort) {
+            const rows = cur.map(function(x){ return Int8Array.from(x); });
+            if (violations(rows) === 0) { bestShort = sh; best = rows; if (sh === 0) break; }
+          }
+        }
+      } else r.undo();
+    }
+  }
+  /* 仕上げ：不足が0になった後も、目標日数との差を詰める（不足0・違反0を保ったまま） */
+  if (best) {
+    for (let si=0; si<n; si++) cur[si].set(best[si]);
+    for (const d of open) { cnt[d] = [0,0]; dcnt[d] = 0; }
+    for (let si=0; si<n; si++) for (const d of open) { const s=cur[si][d]; if (s&1) cnt[d][0]++; if (s&2) cnt[d][1]++; if (s) dcnt[d]++; }
+    for (let si=0; si<n; si++) pcost[si] = personCost(si, cur[si]);
+    const ITER2 = (bestShort === 0) ? 250000 : 80000; /* 不足が残る場合は目標の微調整を軽めにして待ち時間を抑える */
+    let E = 0;
+    for (let si=0; si<n; si++) E += pcost[si];
+    for (const d of open) E += slotCost(d);
+    let bestE = E;
+    for (let it=0; it<ITER2; it++) {
+      const T = 12 * Math.pow(0.02, it/ITER2) + 0.2;
+      const mv = nextMoves(false); if (!mv) continue;
+      const r = applyMoves(mv);
+      if (r.delta <= 0 || rnd() < Math.exp(-r.delta/T)) {
+        r.commit(); E += r.delta;
+        if (E < bestE - 1e-9 && shortage() <= bestShort) {
+          const rows2 = cur.map(function(x){ return Int8Array.from(x); });
+          if (violations(rows2) === 0) { bestE = E; best = rows2; }
+        }
+      } else r.undo();
+    }
+  }
+  return best;
+}
+
 /* 割り当て前の状態を書き戻す（共通処理） */
 function restoreBeforeAssign(dat) {
   const bs = dat.beforeAssign; if (!bs) return false;
   dat.shifts = JSON.parse(JSON.stringify(bs.shifts));
   dat.half   = JSON.parse(JSON.stringify(bs.half));
   dat.picks  = JSON.parse(JSON.stringify(bs.picks || {}));
+  if (bs.cand) dat.cand = JSON.parse(JSON.stringify(bs.cand));
+  if (bs.sel1) dat.sel1 = JSON.parse(JSON.stringify(bs.sel1));
   dat.assigned = false;
   return true;
 }
 
-/* ↶ 割り当て前に戻す */
+/* 割り当て前に戻す */
 function undoAssign() {
   const dat = getDat();
   if (!dat.assigned || !dat.beforeAssign) { showToast('戻せる割り当てがありません'); return; }
@@ -1844,7 +3498,48 @@ function undoAssign() {
   restoreBeforeAssign(dat);
   delete dat.beforeAssign;
   initDat(); save(); rebuild();
-  showToast('↶ 自動割り当て前の状態に戻しました');
+  showToast('自動割り当て前の状態に戻しました');
+}
+
+/* 自動割り当て後の画面状態：入力モードと選択・編集の欄を隠し、休業日設定・必要人数・
+   自動割り当てボタンをさわれなくする。目標日数の入力欄はテーブル構築時に無効化する。
+   「割り当て前に戻す」とすべて元に戻る */
+function updateAssignUI() {
+  const assigned = !!getDat().assigned;
+  const mg = document.getElementById('modeGroup');
+  const ms = document.getElementById('modeSep');
+  if (mg) mg.style.display = assigned ? 'none' : '';
+  if (ms) ms.style.display = assigned ? 'none' : '';
+  const sg = document.getElementById('selGroup');
+  const ss = document.getElementById('selSep');
+  if (sg) sg.style.display = assigned ? 'none' : '';
+  if (ss) ss.style.display = assigned ? 'none' : '';
+  const hb = document.getElementById('holBtn');
+  if (hb) hb.disabled = assigned;
+  const rq = document.getElementById('reqCount');
+  if (rq) rq.disabled = assigned;
+  const ab = document.getElementById('autoAssignBtn');
+  if (ab) ab.disabled = assigned;
+  const sb = document.getElementById('selBtn');
+  if (sb) sb.disabled = assigned;
+  const ap = document.getElementById('applySelBtn');
+  if (ap) ap.disabled = assigned;
+  const cb = document.getElementById('clearSelBtn');
+  if (cb) cb.disabled = assigned;
+  /* 割り当て後に休業日設定モードが残っていたら終了する */
+  if (assigned && holMode) {
+    holMode = false;
+    if (hb) { hb.style.background = ''; hb.textContent = '休業日設定'; }
+  }
+  /* 割り当て後に複数選択モードが残っていたら終了する */
+  if (assigned && selectMode) {
+    selectMode = false;
+    selected.clear();
+    selAnchor = null;
+    if (sb) { sb.textContent = '複数選択'; sb.className = 'lock-btn'; }
+    if (ap) ap.style.display = 'none';
+    if (cb) cb.style.display = 'none';
+  }
 }
 
 /* 「割り当て前に戻す」ボタンの有効／無効 */
@@ -1856,24 +3551,17 @@ function updateUndoBtn() {
 
 /* ── リセット ── */
 function resetMonth() {
-  if (!confirm('この月のシフト（○×・◐・休業日・備考）をリセットしますか？\n全部×の初期状態に戻ります。目標日数は保持されます。')) return;
-  const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={}; dat.half={}; dat.picks={}; delete dat.beforeAssign; delete dat.assigned;
+  if (!confirm('この月の入力（○×・◐・休業日・備考）をリセットします。目標日数は残ります。\nよろしいですか？')) return;
+  const dat=getDat(); dat.shifts={}; dat.hols={}; dat.notes={}; dat.half={}; dat.picks={}; dat.cand={}; dat.sel1={}; dat.fixed={}; delete dat.beforeAssign; delete dat.assigned;
   selected.clear();
   selAnchor=null;
   initDat(); save(); rebuild(); showToast('リセットしました');
 }
 
-/* ── Excel出力（写真の手書き帳票レイアウトを再現） ──
-   ルール：
-   - 各日は「午前」「午後」の2列を持つ
-   - 午前と午後の希望が同じ（○○・××・空欄空欄）なら1セルに結合して1つだけ表示
-   - 午前と午後が異なる場合は2列に分けてそれぞれ表示（ラベルなし）
-   - 休業日は2列結合してグレー表示
-   - exportXLSX(true) のときは、現在の表の下に「自動割り当て前」の表も続けて出力する
-*/
+/* ── Excel出力（紙のシフト希望表の書式：1日1列・備考は縦書き／withBeforeなら割り当て前後の表を上下に付ける） ── */
 async function exportXLSX(withBefore) {
   if (typeof ExcelJS === 'undefined') {
-    showToast('⚠️ Excel出力ライブラリの読み込みに失敗しました（通信環境をご確認ください）');
+    showToast('Excel出力ライブラリの読み込みに失敗しました（通信環境をご確認ください）');
     return;
   }
   initDat();
@@ -1891,7 +3579,7 @@ async function exportXLSX(withBefore) {
         hf[si][d] = !!(bs.half && bs.half[si] && bs.half[si][d]);
       }
     });
-    beforeDat = Object.assign({}, dat, { shifts:sh, half:hf, picks:bs.picks||{}, assigned:false });
+    beforeDat = Object.assign({}, dat, { shifts:sh, half:hf, picks:bs.picks||{}, cand:(bs.cand||{}), sel1:(bs.sel1||{}), assigned:false });
   }
 
   const FILL = { 1:'FFFDE8E8', 2:'FFD5F0E0' };
@@ -1901,36 +3589,35 @@ async function exportXLSX(withBefore) {
   const HALF_FONT = 'FFA5680C';
   const NOTE_FILL = 'FFF0F4FF';
   const NOTE_HOL_FILL = 'FFBFBDBD';
-  const AMPM_FILL = 'FFE8ECF5';
-  const AMPM_HOL_FILL = 'FFB8B6B6';
+  const SAT_FILL = 'FFE4E4E4';
   const HEADER_NAVY = 'FF2C3E6B';
   const HEADER_DARKBLUE = 'FF1E2D50';
 
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet(y+'年'+m+'月', { views:[{ showGridLines:false }] });
 
-  const NAME_COL = 2, FIRST_DAY_COL = 3;
-  const dcol = (d) => FIRST_DAY_COL + (d-1)*2;
-  const targetCol = dcol(days+1);
+  const NAME_COL = 2, FIRST_DAY_COL = 3; /* 1:No 2:名前 3〜:日（1日＝午前・午後の2列） */
+  const dcol = (d) => FIRST_DAY_COL + (d-1)*2; /* その日の午前列（午後列は +1） */
 
   ws.getColumn(1).width = 4.5;
   ws.getColumn(2).width = 14;
-  for (let d=1; d<=days; d++) {
-    ws.getColumn(dcol(d)).width = 3.4;
-    ws.getColumn(dcol(d)+1).width = 3.4;
-  }
-  ws.getColumn(targetCol).width = 7.5;
+  for (let d=1; d<=days; d++) { ws.getColumn(dcol(d)).width = 1.8; ws.getColumn(dcol(d)+1).width = 1.8; }
 
   const thin = { style:'thin', color:{argb:'FFB0B8CC'} };
+  const dash = { style:'dashed', color:{argb:'FFB8BCC8'} }; /* 午前・午後の境目（画面と同じ破線） */
   const border = { top:thin, bottom:thin, left:thin, right:thin };
   const center = { horizontal:'center', vertical:'middle' };
 
-  /* 1つの表（見出し〜集計行）を top 行目から描画する。label があれば先頭に見出し行を1行付ける。
-     戻り値：{ ampmRow, lastRow } */
+  /* 1つの表（見出し〜スタッフ行）を top 行目から描画する。label があれば先頭に見出し行を1行付ける。
+     1日＝午前・午後の2列にし、半日は真ん中の線（罫線）で区切って普通の○×で出す（画面の表と同じ）。
+     日曜・1日選択の候補日・片方OKの日は、画面と同じく統合セルで出す。
+     割り当て前の表では、確定は📌・1日選択の候補は☆で出す（画面と同じ）。
+     戻り値：{ headRow, lastRow } */
   function buildTable(tdat, top, label) {
+    const lastCol = dcol(days) + 1; /* 目標・割当の欄は出さない */
     let r0 = top;
     if (label) {
-      ws.mergeCells(top, 1, top, targetCol);
+      ws.mergeCells(top, 1, top, lastCol);
       const lc = ws.getCell(top, 1);
       lc.value = label; lc.alignment = { horizontal:'left', vertical:'middle' };
       lc.font = { name:'Meiryo', size:12, bold:true, color:{argb:'FFFFFFFF'} };
@@ -1938,68 +3625,58 @@ async function exportXLSX(withBefore) {
       ws.getRow(top).height = 22;
       r0 = top + 1;
     }
-    const ROW_TITLE=r0, ROW_DAY=r0+1, ROW_WD=r0+2, ROW_NOTE=r0+3, ROW_AMPM=r0+4, DATA_START=r0+5;
+    const ROW_TITLE=r0, ROW_DAY=r0+1, ROW_WD=r0+2, ROW_NOTE=r0+3, DATA_START=r0+4;
 
     /* 年・月見出し */
-    ws.mergeCells(ROW_TITLE, NAME_COL, ROW_TITLE, FIRST_DAY_COL+1);
+    ws.mergeCells(ROW_TITLE, 1, ROW_TITLE, NAME_COL);
     const yCell = ws.getCell(ROW_TITLE, NAME_COL);
     yCell.value = y+'年'; yCell.font = { name:'Meiryo', size:16, bold:true }; yCell.alignment = center;
-    const titleEndCol = Math.min(dcol(8), targetCol-1);
-    ws.mergeCells(ROW_TITLE, FIRST_DAY_COL+2, ROW_TITLE, titleEndCol);
-    const tCell = ws.getCell(ROW_TITLE, FIRST_DAY_COL+2);
+    const titleEndCol = Math.min(dcol(10), lastCol);
+    ws.mergeCells(ROW_TITLE, FIRST_DAY_COL, ROW_TITLE, titleEndCol);
+    const tCell = ws.getCell(ROW_TITLE, FIRST_DAY_COL);
     tCell.value = m+'月シフト希望表'; tCell.font = { name:'Meiryo', size:22, bold:true, underline:true }; tCell.alignment = center;
     ws.getRow(ROW_TITLE).height = 30;
 
-    /* row(固定行)のc0〜c0+1をマージし、値・中央寄せ・フォントを設定する共通ヘルパー */
-    function setMergedCell(row, c0, value, font, fillArgb) {
-      ws.mergeCells(row, c0, row, c0+1);
-      const cell = ws.getCell(row, c0);
-      cell.value = value; cell.alignment = center; cell.font = font;
-      if (fillArgb) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:fillArgb} };
-      return cell;
-    }
-
+    /* 日付・曜日・備考の見出し（備考は写真どおり縦書きで、備考の内容を出す。
+       縦書きは1文字ずつ改行して表す（Excelの縦書き指定はライブラリが書き出せないため） */
+    let noteLines = 1;
+    for (let d=1; d<=days; d++) { const t = (tdat.notes[d]||'') || (tdat.hols[d] ? '休' : ''); const n = [...t].length; if (n > noteLines) noteLines = n; }
     for (let d=1; d<=days; d++) {
-      const c0 = dcol(d);
+      const c = dcol(d);
+      ws.mergeCells(ROW_DAY, c, ROW_DAY, c+1);
+      ws.mergeCells(ROW_WD, c, ROW_WD, c+1);
+      ws.mergeCells(ROW_NOTE, c, ROW_NOTE, c+1);
       const isHol = !!tdat.hols[d];
+      const isSat = dow(y,m,d)===6;
       const hdrColor = isHol ? 'FF666666' : HEADER_DARKBLUE;
-
-      setMergedCell(ROW_DAY, c0, d, { name:'Meiryo', size:11, bold:true, color:{argb:hdrColor} }, isHol?HOL_FILL:null);
-      setMergedCell(ROW_WD, c0, WD[dow(y,m,d)], { name:'Meiryo', size:9, bold:true, color:{argb:hdrColor} }, isHol?HOL_FILL:null);
-      setMergedCell(ROW_NOTE, c0, isHol?'休':(tdat.notes[d]||''), { name:'Meiryo', size:7, color:{argb:'FF555555'} }, isHol?NOTE_HOL_FILL:NOTE_FILL);
-
-      if (isHol) {
-        ws.mergeCells(ROW_AMPM, c0, ROW_AMPM, c0+1);
-        ws.getCell(ROW_AMPM, c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:AMPM_HOL_FILL} };
-      } else {
-        const ac = ws.getCell(ROW_AMPM, c0), pc = ws.getCell(ROW_AMPM, c0+1);
-        ac.value = '前'; pc.value = '後';
-        [ac,pc].forEach(function(cell){
-          cell.font = { name:'Meiryo', size:6, color:{argb:'FF777777'} };
-          cell.alignment = center;
-          cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:AMPM_FILL} };
-        });
-      }
+      const hdrFill = isHol ? HOL_FILL : (isSat ? SAT_FILL : null);
+      const dCell = ws.getCell(ROW_DAY, c);
+      dCell.value = d; dCell.alignment = center;
+      dCell.font = { name:'Meiryo', size:11, bold:true, color:{argb:hdrColor} };
+      if (hdrFill) dCell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:hdrFill} };
+      const wCell = ws.getCell(ROW_WD, c);
+      wCell.value = WD[dow(y,m,d)]; wCell.alignment = center;
+      wCell.font = { name:'Meiryo', size:9, bold:true, color:{argb:hdrColor} };
+      if (hdrFill) wCell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:hdrFill} };
+      const nCell = ws.getCell(ROW_NOTE, c);
+      const noteTxt = (tdat.notes[d]||'') || (isHol ? '休' : '');
+      nCell.value = noteTxt ? [...noteTxt].join('\n') : '';
+      nCell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
+      nCell.font = { name:'Meiryo', size:8, color:{argb:'FF555555'} };
+      nCell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: isHol?NOTE_HOL_FILL:(isSat?SAT_FILL:NOTE_FILL)} };
+      ws.getCell(ROW_NOTE, c+1).fill = nCell.fill;
     }
     ws.getRow(ROW_DAY).height = 18;
     ws.getRow(ROW_WD).height = 18;
-    ws.getRow(ROW_NOTE).height = 13;
-    ws.getRow(ROW_AMPM).height = 11;
+    ws.getRow(ROW_NOTE).height = Math.min(120, Math.max(30, noteLines * 10.5 + 8));
 
     /* 名前・No見出し */
-    ws.mergeCells(ROW_DAY, 1, ROW_AMPM, 1);
+    ws.mergeCells(ROW_DAY, 1, ROW_NOTE, 1);
     const noH = ws.getCell(ROW_DAY,1); noH.value=''; noH.fill={type:'pattern',pattern:'solid',fgColor:{argb:HEADER_NAVY}};
-    ws.mergeCells(ROW_DAY, 2, ROW_AMPM, 2);
+    ws.mergeCells(ROW_DAY, 2, ROW_NOTE, 2);
     const nameH = ws.getCell(ROW_DAY,2); nameH.value='名前'; nameH.alignment=center;
     nameH.font={name:'Meiryo',size:10,bold:true,color:{argb:'FFFFFFFF'}};
     nameH.fill={type:'pattern',pattern:'solid',fgColor:{argb:HEADER_NAVY}};
-
-    /* 目標列見出し */
-    ws.mergeCells(ROW_DAY, targetCol, ROW_AMPM, targetCol);
-    const tgtH = ws.getCell(ROW_DAY, targetCol);
-    tgtH.value = '目標\n日数'; tgtH.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
-    tgtH.font = { name:'Meiryo', size:9, bold:true, color:{argb:'FFFFFFFF'} };
-    tgtH.fill = { type:'pattern', pattern:'solid', fgColor:{argb:HEADER_NAVY} };
 
     /* スタッフ行 */
     staffList.forEach(function(name, si) {
@@ -2008,96 +3685,91 @@ async function exportXLSX(withBefore) {
       const nmC = ws.getCell(r,2); nmC.value=name; nmC.font={name:'Meiryo',size:10,bold:true}; nmC.alignment={vertical:'middle'};
 
       for (let d=1; d<=days; d++) {
-        const c0 = dcol(d);
+        const cA = dcol(d), cP = dcol(d) + 1;
+        const cellA = ws.getCell(r, cA), cellP = ws.getCell(r, cP);
+        cellA.alignment = center; cellP.alignment = center;
+        const isSat = dow(y,m,d)===6;
         if (tdat.hols[d]) {
-          ws.mergeCells(r, c0, r, c0+1);
-          ws.getCell(r,c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
-          continue;
+          const hf = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
+          cellA.fill = hf; cellP.fill = hf; continue;
         }
-        if (tdat.half[si] && tdat.half[si][d]) {
-          ws.mergeCells(r, c0, r, c0+1);
-          const hCell = ws.getCell(r, c0);
-          hCell.value = '◐'; hCell.alignment = center;
-          hCell.font = { name:'Meiryo', size:12, bold:true, color:{argb: HALF_FONT} };
-          hCell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: HALF_FILL} };
-          continue;
-        }
-        const am = tdat.shifts[si][d][0], pm = tdat.shifts[si][d][1];
-        /* 上限ありの人の未選択の○（候補）は薄い色で表示 */
-        const amC = isCand(tdat,si,d,0), pmC = isCand(tdat,si,d,1);
-        const styleCell = function(cell, v, cand, size) {
-          cell.value = SL[v]; cell.alignment = center;
-          cell.font = { name:'Meiryo', size:size, bold:!cand, color:{argb: cand?'FF8CC4A2':(FONT_COLOR[v]||'FF000000')} };
-          if (cand) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:'FFEEF8F2'} };
-          else if (FILL[v]) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:FILL[v]} };
+        const styleWork = function(cand) {
+          if (cand) return { font:{ name:'Meiryo', size:12, bold:false, color:{argb:'FF8CC4A2'} }, fill:'FFEEF8F2' };
+          return { font:{ name:'Meiryo', size:12, bold:true, color:{argb:FONT_COLOR[2]} }, fill:FILL[2] };
         };
-        if (am === pm && amC === pmC) {
-          ws.mergeCells(r, c0, r, c0+1);
-          styleCell(ws.getCell(r, c0), am, amC, 12);
-        } else {
-          styleCell(ws.getCell(r, c0), am, amC, 10);
-          styleCell(ws.getCell(r, c0+1), pm, pmC, 10);
+        const fh = fixedHalves(tdat, si, d);
+        const isCandDay = !tdat.assigned && tdat.cand && tdat.cand[si] && tdat.cand[si][d];
+        const isHalfFlag = !!(tdat.half[si] && tdat.half[si][d]);
+        /* 日曜・候補日・片方OKは画面と同じ統合セル */
+        if (dow(y,m,d)===0 || isCandDay || isHalfFlag) {
+          ws.mergeCells(r, cA, r, cP);
+          let val = '', font = { name:'Meiryo', size:12, bold:true }, fill = null;
+          if (!tdat.assigned && fh[0] && fh[1]) { val = '📌'; font = { name:'Meiryo', size:8 }; }
+          else if (isCandDay) { val = '☆'; font = { name:'Meiryo', size:12, bold:true, color:{argb:'FF2C3E6B'} }; }
+          else if (isHalfFlag) { val = '◐'; font = { name:'Meiryo', size:12, bold:true, color:{argb:HALF_FONT} }; fill = HALF_FILL; }
+          else {
+            const v = sunDayVal(tdat,si,d);
+            val = SL[v];
+            if (v===2) { const sw = styleWork(isCand(tdat,si,d,0) || isCand(tdat,si,d,1)); font = sw.font; fill = sw.fill; }
+            else if (v===1) { font = { name:'Meiryo', size:12, bold:true, color:{argb:FONT_COLOR[1]} }; fill = FILL[1]; }
+          }
+          cellA.value = val; cellA.font = font;
+          const f2 = fill ? { type:'pattern', pattern:'solid', fgColor:{argb:fill} } : (isSat ? { type:'pattern', pattern:'solid', fgColor:{argb:SAT_FILL} } : null);
+          if (f2) { cellA.fill = f2; cellP.fill = f2; }
+          continue;
+        }
+        /* 平日は午前・午後の2セルに分け、真ん中の線で区切って普通の○×を出す */
+        for (let h=0; h<2; h++) {
+          const cell = h===0 ? cellA : cellP;
+          let val = '', font = { name:'Meiryo', size:12, bold:true }, fill = null;
+          if (!tdat.assigned && fh[h]) { val = '📌'; font = { name:'Meiryo', size:8 }; }
+          else {
+            const v = tdat.shifts[si][d][h];
+            if (v===2) { const sw = styleWork(isCand(tdat,si,d,h)); font = sw.font; fill = sw.fill; val = '○'; }
+            else if (v===1) { val = '×'; font = { name:'Meiryo', size:12, bold:true, color:{argb:FONT_COLOR[1]} }; fill = FILL[1]; }
+          }
+          cell.value = val; cell.font = font;
+          if (fill) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:fill} };
+          else if (isSat) cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb:SAT_FILL} };
         }
       }
-      const tg = tdat.targets[si];
-      const tgC = ws.getCell(r, targetCol);
-      tgC.value = (tg!==undefined && tg!=='') ? tg+'日' : '';
-      tgC.alignment = center; tgC.font = { name:'Meiryo', size:10, bold:true };
-
-      for (let c=1; c<=targetCol; c++) ws.getCell(r,c).border = border;
+      for (let c=1; c<=lastCol; c++) ws.getCell(r,c).border = border;
+      /* 午前と午後の間の線は、画面と同じ点線（破線）にする（結合セルは除く） */
+      for (let d=1; d<=days; d++) {
+        const isCandDay = !tdat.assigned && tdat.cand && tdat.cand[si] && tdat.cand[si][d];
+        const isHalfFlag = !!(tdat.half[si] && tdat.half[si][d]);
+        if (tdat.hols[d] || dow(y,m,d)===0 || isCandDay || isHalfFlag) continue;
+        const cA = dcol(d);
+        ws.getCell(r, cA).border = { top:thin, bottom:thin, left:thin, right:dash };
+        ws.getCell(r, cA + 1).border = { top:thin, bottom:thin, left:dash, right:thin };
+      }
       ws.getRow(r).height = 20;
     });
 
-    /* 出勤可能数集計行（午前・午後それぞれ表示、結合なし） */
-    const idxsXlsx = staffIdxs();
-    const cntRow = DATA_START + staffList.length;
-    ws.mergeCells(cntRow, 1, cntRow, 2);
-    const cntLbl = ws.getCell(cntRow, 1);
-    cntLbl.value = tdat.assigned ? '出勤人数' : '出勤可能数'; cntLbl.alignment = center;
-    cntLbl.font = { name:'Meiryo', size:9, bold:true };
-    cntLbl.fill = { type:'pattern', pattern:'solid', fgColor:{argb:'FFE0E4F0'} };
+    /* 見出し行（日付・曜日・備考）にも罫線を引く（線が無いと読みにくいため） */
+    for (let hr=ROW_DAY; hr<=ROW_NOTE; hr++) for (let c=1; c<=lastCol; c++) ws.getCell(hr,c).border = border;
 
-    for (let d=1; d<=days; d++) {
-      const c0 = dcol(d);
-      if (tdat.hols[d]) {
-        ws.mergeCells(cntRow, c0, cntRow, c0+1);
-        ws.getCell(cntRow, c0).fill = { type:'pattern', pattern:'solid', fgColor:{argb:HOL_FILL} };
-        continue;
-      }
-      const c = countDay(tdat, idxsXlsx, d);
-      [[c0,c.am],[c0+1,c.pm]].forEach(function(pair){
-        const cell = ws.getCell(cntRow, pair[0]);
-        const extra = []; if (c.half>0) extra.push('◐'+c.half); if (c.cand>0) extra.push('候'+c.cand);
-        cell.value = extra.length ? pair[1]+'(+'+extra.join('/')+')' : pair[1];
-        cell.alignment = center;
-        cell.font = { name:'Meiryo', size:9, bold:true, color:{argb: pair[1]>=req?'FF155724':(pair[1]===0?'FF555555':'FF721C24')} };
-        cell.fill = { type:'pattern', pattern:'solid', fgColor:{argb: pair[1]===0?'FFE2E3E5':(pair[1]>=req?'FFC3E6CB':'FFF8D7DA')} };
-      });
-    }
-    for (let c=1; c<=targetCol; c++) ws.getCell(cntRow,c).border = border;
-    ws.getRow(cntRow).height = 18;
-
-    return { ampmRow: ROW_AMPM, lastRow: cntRow };
+    return { headRow: ROW_NOTE, lastRow: DATA_START + staffList.length - 1 };
   }
 
   let fname = 'シフト希望表_'+y+'年'+m+'月';
   if (beforeDat) {
-    /* 上＝現在（自動割り当て後）／下＝自動割り当て前 */
-    const t1 = buildTable(dat, 1, '【自動割り当て後（現在の表）】');
+    /* 上＝自動割り当て後／下＝自動割り当て前 */
+    const t1 = buildTable(dat, 1, '【自動割り当て後】');
     buildTable(beforeDat, t1.lastRow + 3, '【自動割り当て前】');
     ws.views = [{ state:'frozen', xSplit:2, showGridLines:false }];
     fname += '_割り当て前後';
   } else {
     const t1 = buildTable(dat, 1, null);
-    ws.views = [{ state:'frozen', xSplit:2, ySplit:t1.ampmRow, showGridLines:false }];
+    ws.views = [{ state:'frozen', xSplit:2, ySplit:t1.headRow, showGridLines:false }];
   }
   ws.pageSetup = { orientation:'landscape', fitToPage:true, fitToWidth:1, fitToHeight:0 };
 
   const buf = await wb.xlsx.writeBuffer();
   const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   downloadBlob(blob, fname+'.xlsx');
-  if (withBefore && !beforeDat) showToast('ℹ️ 自動割り当て前のデータがないため、現在の表のみ出力しました');
-  else showToast(beforeDat ? '📊 割り当て前の表つきでExcelを出力しました' : '📊 Excelを出力しました');
+  if (withBefore && !beforeDat) showToast('自動割り当て前のデータがないため、この表のみ出力しました');
+  else showToast(beforeDat ? '割り当て前の表つきでExcelを出力しました' : 'Excelを出力しました');
 }
 
 /* ── トースト ── */
@@ -2112,7 +3784,7 @@ function showToast(msg) {
 /* ── キーボード ── */
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('noteModal').classList.contains('open'))saveNote();
-  if(e.key==='Escape'){closeNoteModal();closeAllNotes();}
+  if(e.key==='Escape'){closeNoteModal();closeAllNotes();closeConfirm();}
 });
 
 /* ── PC幅に戻った時、モバイル用の開閉状態をリセット ── */
@@ -2128,15 +3800,5 @@ window.addEventListener('resize', function(){
 /* ── 起動 ── */
 init();
 </script>
-<div class="confirm-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirm()">
-  <div class="confirm-box">
-    <div class="confirm-title" id="confirmTitle">確認</div>
-    <div class="confirm-msg" id="confirmMsg"></div>
-    <div class="confirm-btns">
-      <button class="btn btn-gray" onclick="closeConfirm()">やめる</button>
-      <button class="btn btn-red" id="confirmOkBtn" onclick="confirmOk()">削除する</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
