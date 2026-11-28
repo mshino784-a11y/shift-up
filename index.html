@@ -56,6 +56,7 @@ header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap
 .conflict-row .del-btn{flex-shrink:0;}
 /* 設定を開いている間は表をさわれないようにする（スクロールはできる） */
 body.settings-open #mainTable{pointer-events:none;}
+body.settings-open.hol-mode #tHead tr:first-child th{pointer-events:auto;}
 /* 1日選択モードの候補日（☆）と確定日 */
 .hc.one-cand{background:#e8e4f8;color:#5b4a9a;}
 .hc.one-day{background:#d5f0e0;color:#1a7a40;box-shadow:inset 0 0 0 2px #7a5fd0;}
@@ -2169,6 +2170,7 @@ function resetTransientModes(skipRebuild) {
   selected.clear(); selAnchor = null;
   if (holMode) {
     holMode = false;
+    document.body.classList.remove('hol-mode');
     const b = document.getElementById('holBtn');
     if (b) { b.style.background = ''; b.textContent = '休業日設定'; }
   }
@@ -2177,6 +2179,7 @@ function resetTransientModes(skipRebuild) {
 function toggleHolMode() {
   if (getDat().assigned) return; /* 自動割り当て後は休業日を変更できない */
   holMode=!holMode;
+  document.body.classList.toggle('hol-mode', holMode);
   const b=document.getElementById('holBtn');
   b.style.background=holMode?'#c0392b':'';
   b.textContent=holMode?'休業日設定終了':'休業日設定';
@@ -3504,6 +3507,7 @@ function updateAssignUI() {
   /* 割り当て後に休業日設定モードが残っていたら終了する */
   if (assigned && holMode) {
     holMode = false;
+    document.body.classList.remove('hol-mode');
     if (hb) { hb.style.background = ''; hb.textContent = '休業日設定'; }
   }
   /* 割り当て後に複数選択モードが残っていたら終了する */
