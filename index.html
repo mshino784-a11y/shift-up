@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.87</title>
+<title>シフト希望表 ver.6.89</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -311,7 +311,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.87</h1>
+  <h1>シフト希望表 ver.6.89</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -3254,7 +3254,7 @@ function localSearchRepair(P) {
     for (let h=0; h<2; h++) {
       if (!slotNeed(d,h)) continue;
       const k = cnt[d][h];
-      if (k < req) c += HARD*(req-k); else if (k > req) c += (HARD*0.6)*(k-req);
+      if (k < req) c += (HARD*3)*(req-k); else if (k > req) c += (HARD*0.6)*(k-req);
     }
     if (dcnt[d] > dayMax) c += HARD*(dcnt[d]-dayMax); /* 1日の人数上限（4人）を超えた分 */
     return c;
@@ -3311,7 +3311,7 @@ function localSearchRepair(P) {
       }
     }
     c += runCost();
-    if (P.strictRun(si)) {
+    if (consolidatePhase && P.strictRun(si)) {
       for (let d=1; d<=days-2; d++) {
         const s0 = P.hols[d]?0:row[d], s2 = P.hols[d+2]?0:row[d+2];
         if (s0===3 && s2===3 && !(P.fixedDay(si,d) && P.fixedDay(si,d+2))) c += 45;
@@ -3366,6 +3366,7 @@ function localSearchRepair(P) {
   const startRows = cur.map(function(r){ return Int8Array.from(r); });
   let best = (startShort === 0) ? cur.map(function(r){ return Int8Array.from(r); }) : null;
   let bestShort = startShort;
+  let nearBest = null, nearBestScore = startShort * 300 + violations(startRows) * 200;
 
   /* 動かせるマス（選べる状態が2つ以上あるもの） */
   const cells = [];
@@ -3443,8 +3444,8 @@ function localSearchRepair(P) {
           if (canBe(si, d1, 0) && canBe(si, d2, 3)) return [[si, d1, 0], [si, d2, 3]];
         }
       }
-    } else if (r < 0.90) {
-      /* 2人の2日間スワップ（終日同士も含めて週バランスや半日数を整える交換） */
+    } else if (r < 0.88) {
+      /* 2人の2日間スワップ（違反解消・週バランス・半日集約のための交換） */
       const si = (rnd()*n)|0, sj = (rnd()*n)|0;
       const d1 = open[(rnd()*open.length)|0], d2 = open[(rnd()*open.length)|0];
       if (si !== sj && d1 !== d2 && !locked[si] && !locked[sj]) {
@@ -3612,10 +3613,11 @@ function localSearchRepair(P) {
   const t0 = Date.now(), LIMIT_MS = 5000;
   const ROUNDS = 60, ITER = 60000;
   for (let round=0; round<ROUNDS && bestShort>0 && (round<3 || Date.now()-t0 < LIMIT_MS); round++) {
-    for (let si=0; si<n; si++) cur[si].set(best ? best[si] : startRows[si]);
-    if (round > 0) {
-      /* 前回の最良を少しだけ崩してから焼きなます（同じ形ばかり試さないため） */
-      const k = 4 + ((rnd()*16)|0);
+    const seedRows = best ? best : (nearBest && round % 2 === 1 ? nearBest : startRows);
+    for (let si=0; si<n; si++) cur[si].set(seedRows[si]);
+    if (round > 0 && !(nearBest && round % 2 === 1)) {
+      /* 前回の最良を少しだけ崩してから焼きなます（準解から再開するときは崩さずにそのまま詰める） */
+      const k = (round % 3 === 0) ? (16 + ((rnd()*24)|0)) : (4 + ((rnd()*14)|0));
       for (let i=0; i<k; i++) {
         const cell = cells[(rnd()*cells.length)|0], st = states[cell[0]][cell[1]];
         cur[cell[0]][cell[1]] = st[(rnd()*st.length)|0];
@@ -3630,9 +3632,12 @@ function localSearchRepair(P) {
         r.commit();
         if (r.delta < 0 || it % 16 === 0) {
           const sh = shortage();
-          if (sh < bestShort) {
+          if (sh <= bestShort) {
             const rows = cur.map(function(x){ return Int8Array.from(x); });
-            if (violations(rows) === 0) { bestShort = sh; best = rows; if (sh === 0) break; }
+            const vv = violations(rows);
+            if (vv === 0 && sh < bestShort) { bestShort = sh; best = rows; if (sh === 0) break; }
+            const sc = sh * 300 + vv * 200;
+            if (sc < nearBestScore) { nearBestScore = sc; nearBest = rows; }
           }
         }
       } else r.undo();
