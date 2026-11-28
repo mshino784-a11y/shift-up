@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.79</title>
+<title>シフト希望表 ver.6.80</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -293,7 +293,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.79</h1>
+  <h1>シフト希望表 ver.6.80</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -3183,8 +3183,8 @@ function localSearchRepair(P) {
       const s = P.hols[d] ? 0 : row[d];
       if (consolidatePhase) {
         if ((s===1 || s===2) && !P.isSun(d) && !P.noHalf(si)) {
-          c += 10;
-          if (P.bothWish(si, d)) c += 2;
+          c += 18;
+          if (P.bothWish(si, d)) c += 4;
         }
         if (P.wishHalf) {
           for (let h=0; h<2; h++) { if (P.wishHalf(si, d, h) && !((s>>h)&1)) c += 1; }
@@ -3210,7 +3210,7 @@ function localSearchRepair(P) {
     const tc = P.targetCapHalves(si);
     if (halves > tc) c += HARD*(halves-tc);
     const th = P.targetHalves(si);
-    if (th !== null) c += (consolidatePhase ? 20 : 8)*Math.abs(halves - th);
+    if (th !== null) c += (consolidatePhase ? 30 : 8)*Math.abs(halves - th);
     if (cap) for (let k=0; k<per.length; k++) if (per[k] > cap) c += HARD*(per[k]-cap);
     return c;
   }
@@ -3317,7 +3317,7 @@ function localSearchRepair(P) {
       /* 同じ日の2人を入れ替える */
       const d = open[(rnd()*open.length)|0], a = (rnd()*n)|0, b2 = (rnd()*n)|0;
       if (a !== b2 && cur[a][d] !== cur[b2][d] && canBe(a,d,cur[b2][d]) && canBe(b2,d,cur[a][d])) return [[a,d,cur[b2][d]],[b2,d,cur[a][d]]];
-    } else if (r < 0.86) {
+    } else if (r < 0.84) {
       /* 同じ人の半日2回を終日1回にまとめる（d1の半日を外し、d2の半日を終日にする） */
       const si = (rnd()*n)|0;
       if (!locked[si] && !P.noHalf(si)) {
@@ -3328,6 +3328,30 @@ function localSearchRepair(P) {
           let i2 = (rnd()*(halfDays.length-1))|0; if (i2 >= i1) i2++;
           const d1 = halfDays[i1], d2 = halfDays[i2];
           if (canBe(si, d1, 0) && canBe(si, d2, 3)) return [[si, d1, 0], [si, d2, 3]];
+        }
+      }
+    } else if (r < 0.94) {
+      /* 2人の2日間スワップ（人数を保ったまま半日を終日にまとめる玉突き交換） */
+      const si = (rnd()*n)|0;
+      if (!locked[si] && !P.noHalf(si)) {
+        const halfDays = [];
+        for (const dd of open) { const s = cur[si][dd]; if (!P.isSun(dd) && (s===1 || s===2)) halfDays.push(dd); }
+        if (halfDays.length >= 1) {
+          const d1 = halfDays[(rnd()*halfDays.length)|0];
+          const d2 = open[(rnd()*open.length)|0];
+          const sj = (rnd()*n)|0;
+          if (d1 !== d2 && si !== sj && !locked[sj] && !P.isSun(d1) && !P.isSun(d2)) {
+            const s1 = cur[si][d1], s2 = cur[si][d2];
+            const t1 = cur[sj][d1], t2 = cur[sj][d2];
+            /* siがd1を空けてd2を終日にし、sjがd2の一部をd1に移すパターン */
+            if ((s2===1 || s2===2) && (t2 & (3-s2)) && !(t1 & s1)) {
+              const ns2 = 3;
+              const nt1 = t1 | s1, nt2 = t2 & ~(3-s2);
+              if (canBe(si, d1, 0) && canBe(si, d2, ns2) && canBe(sj, d1, nt1) && canBe(sj, d2, nt2)) {
+                return [[si, d1, 0], [si, d2, ns2], [sj, d1, nt1], [sj, d2, nt2]];
+              }
+            }
+          }
         }
       }
     }
@@ -3516,7 +3540,7 @@ function localSearchRepair(P) {
     for (const d of open) E += slotCost(d);
     let bestE = E;
     for (let it=0; it<ITER2 && (it % 2000 !== 0 || Date.now()-t2 < LIMIT2_MS); it++) {
-      const T = 12 * Math.pow(0.02, it/ITER2) + 0.2;
+      const T = 15 * Math.pow(0.02, it/ITER2) + 0.2;
       const mv = nextMoves(false); if (!mv) continue;
       const r = applyMoves(mv);
       if (r.delta <= 0 || rnd() < Math.exp(-r.delta/T)) {
@@ -3526,6 +3550,44 @@ function localSearchRepair(P) {
           if (violations(rows2) <= baseViol && totalTargetDiff(rows2) <= baseTargetDiff) { bestE = E; best = rows2; }
         }
       } else r.undo();
+    }
+    /* 仕上げの総当たりスワップ：人数を変えずに半日を減らせる2人組を最後まで拾い切る */
+    for (let si=0; si<n; si++) cur[si].set(best[si]);
+    recomputeCounts(true);
+    let swImproved = true;
+    while (swImproved) {
+      swImproved = false;
+      for (let si=0; si<n && !swImproved; si++) {
+        if (locked[si] || P.noHalf(si)) continue;
+        for (const d1 of open) {
+          if (P.isSun(d1)) continue;
+          const s1 = cur[si][d1];
+          if (s1 !== 1 && s1 !== 2) continue;
+          if (!canBe(si, d1, 0)) continue;
+          for (const d2 of open) {
+            if (d2 === d1 || P.isSun(d2)) continue;
+            const s2 = cur[si][d2];
+            if (s2 !== 1 && s2 !== 2) continue;
+            if (!canBe(si, d2, 3)) continue;
+            const needH = 3 - s2; /* d2でsiが埋めるべき半日 */
+            for (let sj=0; sj<n && !swImproved; sj++) {
+              if (sj === si || locked[sj]) continue;
+              const t1 = cur[sj][d1], t2 = cur[sj][d2];
+              if (!(t2 & needH) || (t1 & s1)) continue;
+              const nt1 = t1 | s1, nt2 = t2 & ~needH;
+              if (!canBe(sj, d1, nt1) || !canBe(sj, d2, nt2)) continue;
+              const r = applyMoves([[si, d1, 0], [si, d2, 3], [sj, d1, nt1], [sj, d2, nt2]]);
+              if (r.delta < -1e-9) {
+                const rows2 = cur.map(function(x){ return Int8Array.from(x); });
+                if (shortage() <= bestShort && violations(rows2) <= baseViol && totalTargetDiff(rows2) <= baseTargetDiff) {
+                  r.commit(); best = rows2; swImproved = true; break;
+                }
+              }
+              r.undo();
+            }
+          }
+        }
+      }
     }
   }
   return best;
