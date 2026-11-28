@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.78</title>
+<title>シフト希望表 ver.6.79</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -293,7 +293,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.78</h1>
+  <h1>シフト希望表 ver.6.79</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -2989,11 +2989,11 @@ function autoAssignRun() {
       fixedDay: function(si,d){ return isFixedDay(si,d); },
       fixedMask: function(si,d){ const fh = fixedHalves(dat, si, d); return (fh[0]?1:0) | (fh[1]?2:0); },
       firm: function(si,d,h){ return isFirm(dat,si,d,h); },
-      /* その半日に入れるか（×は不可） */
+      /* その半日に入れるか（×は不可。上限なしの人は空欄のみ、上限ありの人は○・空欄・◐） */
       okHalf: function(si,d,h){
         if (isFirm(dat,si,d,h)) return true;
         const v = slotVal(si,d,h);
-        return v !== 1;
+        return paceInfo(si).cap ? v!==1 : v===0;
       },
       isCandOrFirm: function(si,d,h){ return dat.shifts[si][d][h]===2; },
       halfFlag: function(si,d){ return !!(dat.half[si] && dat.half[si][d]); },
@@ -3161,8 +3161,9 @@ function localSearchRepair(P) {
     for (const q of partners[si]) { const t = cur[q][d]; c += bits[s&t] ; }
     return c;
   }
-  /* 1人分のコスト（ルール違反＋目標との差＋ペース超過） */
+  /* 1人分のコスト（ルール違反＋目標との差＋ペース超過。第2フェーズでは半日分散ペナルティも加える） */
   const weekN = P.weekCount;
+  let consolidatePhase = false;
   function personCost(si, row) {
     let halves = 0, sunN = 0, run = 0, runFull = false, runAllFull = true, c = 0;
     const cap = P.cap(si), per = new Array(weekN+1).fill(0);
@@ -3180,14 +3181,16 @@ function localSearchRepair(P) {
     }
     for (let d=1; d<=days; d++) {
       const s = P.hols[d] ? 0 : row[d];
-      /* 半日勤務を減らしてなるべく終日勤務にまとめる（目標日数の重み20より小さい10にして目標は崩さない） */
-      if ((s===1 || s===2) && !P.isSun(d) && !P.noHalf(si)) {
-        c += 10;
-        if (P.bothWish(si, d)) c += 2;
-      }
-      /* もともと○希望を出していた枠から外れていたら少し損（○希望を優先） */
-      if (P.wishHalf) {
-        for (let h=0; h<2; h++) { if (P.wishHalf(si, d, h) && !((s>>h)&1)) c += 1; }
+      if (consolidatePhase) {
+        if ((s===1 || s===2) && !P.isSun(d) && !P.noHalf(si)) {
+          c += 10;
+          if (P.bothWish(si, d)) c += 2;
+        }
+        if (P.wishHalf) {
+          for (let h=0; h<2; h++) { if (P.wishHalf(si, d, h) && !((s>>h)&1)) c += 1; }
+        }
+      } else {
+        if ((s===1 || s===2) && P.bothWish(si, d)) c += 4;
       }
       if (s) {
         const hh = (s===3) ? 2 : 1;
@@ -3207,7 +3210,7 @@ function localSearchRepair(P) {
     const tc = P.targetCapHalves(si);
     if (halves > tc) c += HARD*(halves-tc);
     const th = P.targetHalves(si);
-    if (th !== null) c += 20*Math.abs(halves - th);
+    if (th !== null) c += (consolidatePhase ? 20 : 8)*Math.abs(halves - th);
     if (cap) for (let k=0; k<per.length; k++) if (per[k] > cap) c += HARD*(per[k]-cap);
     return c;
   }
@@ -3490,6 +3493,7 @@ function localSearchRepair(P) {
   }
   /* 仕上げ：不足数を増やさず・ルール違反0のまま、目標日数との差と半日分散を最小化する */
   if (best) {
+    consolidatePhase = true;
     for (let si=0; si<n; si++) cur[si].set(best[si]);
     recomputeCounts(true);
     function totalTargetDiff(rows) {
