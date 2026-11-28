@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.80</title>
+<title>シフト希望表 ver.6.81</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -293,7 +293,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.80</h1>
+  <h1>シフト希望表 ver.6.81</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -3166,7 +3166,7 @@ function localSearchRepair(P) {
   let consolidatePhase = false;
   function personCost(si, row) {
     let halves = 0, sunN = 0, run = 0, runFull = false, runAllFull = true, c = 0;
-    const cap = P.cap(si), per = new Array(weekN+1).fill(0);
+    const cap = P.cap(si), per = new Array(weekN+1).fill(0), perW = new Array(weekN+1).fill(0);
     const monthly = P.unitMonth(si);
     /* 連勤の並びへの罰（連勤制限の人は厳しい方で数える） */
     function runCost(){
@@ -3196,6 +3196,7 @@ function localSearchRepair(P) {
         const hh = (s===3) ? 2 : 1;
         const hcount = P.isSun(d) ? 2 : hh;
         halves += hcount;
+        perW[P.weekOf(d)] += hcount;
         if (cap) per[monthly ? 0 : P.weekOf(d)] += hcount;
         if (P.isSun(d) && !P.fixedDay(si,d)) sunN++;
         run++; if (s===3) runFull = true; else runAllFull = false;
@@ -3212,6 +3213,7 @@ function localSearchRepair(P) {
     const th = P.targetHalves(si);
     if (th !== null) c += (consolidatePhase ? 30 : 8)*Math.abs(halves - th);
     if (cap) for (let k=0; k<per.length; k++) if (per[k] > cap) c += HARD*(per[k]-cap);
+    if (consolidatePhase) for (let k=0; k<weekN; k++) c += perW[k]*perW[k];
     return c;
   }
   const pcost = [];
@@ -3330,8 +3332,18 @@ function localSearchRepair(P) {
           if (canBe(si, d1, 0) && canBe(si, d2, 3)) return [[si, d1, 0], [si, d2, 3]];
         }
       }
-    } else if (r < 0.94) {
-      /* 2人の2日間スワップ（人数を保ったまま半日を終日にまとめる玉突き交換） */
+    } else if (r < 0.90) {
+      /* 2人の2日間スワップ（終日同士も含めて週バランスや半日数を整える交換） */
+      const si = (rnd()*n)|0, sj = (rnd()*n)|0;
+      const d1 = open[(rnd()*open.length)|0], d2 = open[(rnd()*open.length)|0];
+      if (si !== sj && d1 !== d2 && !locked[si] && !locked[sj]) {
+        const s1 = cur[si][d1], s2 = cur[si][d2], t1 = cur[sj][d1], t2 = cur[sj][d2];
+        if (s1 !== 0 && t2 !== 0 && s2 === 0 && t1 === 0 && canBe(si, d1, 0) && canBe(si, d2, t2) && canBe(sj, d1, s1) && canBe(sj, d2, 0)) {
+          return [[si, d1, 0], [si, d2, t2], [sj, d1, s1], [sj, d2, 0]];
+        }
+      }
+    } else if (r < 0.96) {
+      /* 2人の2日間スワップ（半日を終日にまとめる玉突き交換） */
       const si = (rnd()*n)|0;
       if (!locked[si] && !P.noHalf(si)) {
         const halfDays = [];
