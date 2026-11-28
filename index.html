@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.77</title>
+<title>シフト希望表 ver.6.78</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -12,6 +12,8 @@ header{background:#2c3e6b;color:#fff;padding:9px 14px;display:flex;align-items:c
 header h1{font-size:1rem;font-weight:700;letter-spacing:.04em;white-space:nowrap;}
 .hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto;}
 .hdr-right select{padding:6px 8px;border-radius:2px;border:none;font-size:.88rem;background:#3d5080;color:#fff;cursor:pointer;}
+#homeNavBtn{background:#f0f4ff;color:#1e2d50;border:1.5px solid #9db4e8;}
+#homeNavBtn:hover{background:#fff;opacity:1;}
 #saveStatus{font-size:.72rem;opacity:.85;white-space:nowrap;color:#adf;}
 .save-status-mobile{display:none;font-size:.75rem;color:#adf;white-space:nowrap;}
 .menuToggle{display:none;background:#3d5080;color:#fff;border:none;border-radius:2px;padding:6px 10px;font-size:.95rem;cursor:pointer;line-height:1;}
@@ -119,7 +121,7 @@ table{border-collapse:separate;border-spacing:0;table-layout:fixed;}
 
 thead th{background:#2c3e6b;color:#fff;font-weight:700;font-size:.74rem;text-align:center;padding:3px 1px;border-right:1px solid #3a507a;white-space:nowrap;vertical-align:middle;}
 th.s-no{position:sticky;left:0;z-index:30;background:#1e2d50;width:26px;min-width:26px;}
-th.s-name{position:sticky;left:26px;z-index:30;background:#1e2d50;width:96px;min-width:96px;}
+th.s-name{position:sticky;left:26px;z-index:30;background:#1e2d50;width:112px;min-width:112px;}
 th.s-target{position:sticky;right:0;z-index:30;background:#1e2d50;width:54px;min-width:54px;}
 th.s-actual{position:sticky;right:54px;z-index:30;background:#1e2d50;width:44px;min-width:44px;}
 th.sat{background:#1e3f7a!important;}
@@ -173,7 +175,7 @@ tr.data-row.row-locked .hc[data-s="0"]{background:#e2f2e6;}
 tr.data-row.row-locked .half-cell{background:#e8f0d8;}
 
 td.cell-day{min-width:44px;width:44px;max-width:44px;padding:0;}
-.s-no{max-width:26px;}.s-name{max-width:96px;}.s-actual{max-width:44px;}.s-target{max-width:54px;}
+.s-no{max-width:26px;}.s-name{max-width:none;}.s-actual{max-width:44px;}.s-target{max-width:54px;}
 td.cell-day.day-off{background:#d0cece!important;}
 .cell-wrap{display:grid;grid-template-columns:1fr 1fr;height:42px;}
 .hc{display:flex;align-items:center;justify-content:center;height:42px;line-height:1;overflow:hidden;cursor:pointer;font-size:1.05rem;font-weight:700;user-select:none;transition:background .1s;}
@@ -260,7 +262,10 @@ body.home-mode .hdr-ym{display:none;}
 .roster-pace-sel{border:1px solid #ccd;border-radius:5px;background:#fff;color:#555;font-size:.78rem;font-weight:700;padding:4px 2px;cursor:pointer;flex-shrink:0;max-width:120px;}
 .roster-pace-sel.on{background:#fdf0d5;color:#a5680c;border-color:#e0a050;}
 .row-pace-label{display:inline-block;margin-top:2px;font-size:.62rem;color:#a5680c;background:#fdf0d5;border-radius:2px;padding:1px 3px;font-weight:700;vertical-align:middle;}
-.row-flag-wrap{display:inline;margin-left:2px;}
+.s-name-sub{display:flex;align-items:center;gap:3px;white-space:nowrap;margin-top:2px;}
+.s-name-sub .row-pace-label{margin-top:0;}
+.s-name-sub .row-flag-label{margin:0;}
+.row-flag-wrap{display:inline-flex;align-items:center;gap:2px;margin-left:2px;}
 .row-flag-label{display:inline-block;color:#fff;font-size:.62rem;font-weight:700;border-radius:2px;padding:1px 3px;margin:2px 2px 0 0;white-space:nowrap;vertical-align:middle;text-align:center;min-width:15px;}
 .home-add{display:flex;gap:8px;margin-top:12px;}
 .home-add input{flex:1;padding:10px;border:1.5px solid #ccc;border-radius:6px;font-size:.95rem;min-width:0;}
@@ -288,7 +293,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.77</h1>
+  <h1>シフト希望表 ver.6.78</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -1707,6 +1712,7 @@ function rebuild() {
   const y=getY(),m=getM(),days=daysIn(y,m);
   buildHead(y,m,days);
   buildBody(y,m,days);
+  fitNameColWidth();
   updateUndoBtn();
   updateAssignUI();
 }
@@ -1722,7 +1728,7 @@ function buildHead(y,m,days) {
   if (oldCg) oldCg.remove();
   const cg=document.createElement('colgroup');
   cg.id='tCols';
-  const colW=[26,96];
+  const colW=[26,112];
   for (let cd=1;cd<=days;cd++) colW.push(44);
   colW.push(44,54);
   colW.forEach(function(wd){ const c=document.createElement('col'); c.style.width=wd+'px'; cg.appendChild(c); });
@@ -1856,7 +1862,9 @@ function buildBody(y,m,days) {
       paceLbl.textContent='\u00a0';
       paceLbl.style.visibility='hidden';
     }
-    tnm.appendChild(paceLbl);
+    const subRow=document.createElement('div');
+    subRow.className='s-name-sub';
+    subRow.appendChild(paceLbl);
     /* 名簿の制限指定（終日のみ・目標厳守・連勤制限）も表で見れるように、ペースと同じ行に1漢字で小さく表示する（変更は名簿ページで） */
     const flagDefs = [
       [noHalf[name], '終日のみ', '終', '#0e7a6d'],
@@ -1875,8 +1883,9 @@ function buildBody(y,m,days) {
         fl.title = f[1] + '（名簿で変更できます）';
         fw.appendChild(fl);
       });
-      tnm.appendChild(fw);
+      subRow.appendChild(fw);
     }
+    tnm.appendChild(subRow);
     tr.appendChild(tnm);
 
     /* 日付 */
@@ -1977,7 +1986,7 @@ function buildBody(y,m,days) {
     inp.type='number'; inp.min=0; inp.max=days; inp.step=0.5;
     inp.value=dat.targets[si]!==''&&dat.targets[si]!==undefined?dat.targets[si]:'';
     inp.placeholder='日';
-    inp.disabled=!!dat.assigned || isLocked; /* 自動割り当て後・行ロック中は目標日数を変更できない */
+    inp.disabled=!!dat.assigned; /* 自動割り当て後は目標日数を変更できない（行ロック中でも目標日数は変更可） */
     inp.addEventListener('change',function(){
       const raw = inp.value.trim();
       const prev = (dat.targets[si] !== '' && dat.targets[si] !== undefined) ? dat.targets[si] : '';
@@ -2019,6 +2028,36 @@ function buildBody(y,m,days) {
   const cr=document.createElement('td'); cr.className='s-target'; cr.id='cntTargetTotal'; cr.title='目標日数の合計'; ctr.appendChild(cr);
   body.appendChild(ctr);
   updateCounts();
+}
+
+function fitNameColWidth() {
+  const tbl = document.getElementById('mainTable');
+  const cg = document.getElementById('tCols');
+  if (!tbl || !cg) return;
+  const cols = cg.querySelectorAll('col');
+  if (cols.length < 2) return;
+  let maxW = 112;
+  document.querySelectorAll('#tBody td.s-name').forEach(function(td){
+    const lockBtn = td.querySelector('.row-lock-btn');
+    const nameSpan = td.querySelector('.row-name-text');
+    const subRow = td.querySelector('.s-name-sub');
+    let row1W = 18;
+    if (lockBtn) row1W += lockBtn.getBoundingClientRect().width + 3;
+    if (nameSpan) row1W += nameSpan.scrollWidth;
+    let row2W = 14;
+    if (subRow) row2W += subRow.scrollWidth;
+    const need = Math.ceil(Math.max(row1W, row2W));
+    if (need > maxW) maxW = need;
+  });
+  const prevW = parseInt(cols[1].style.width, 10) || 112;
+  if (maxW !== prevW) {
+    cols[1].style.width = maxW + 'px';
+    const thName = document.querySelector('#tHead th.s-name');
+    if (thName) { thName.style.width = maxW + 'px'; thName.style.minWidth = maxW + 'px'; }
+    const totalW = Array.from(cols).reduce(function(sum, c){ return sum + (parseInt(c.style.width, 10) || 0); }, 0);
+    tbl.style.width = totalW + 'px';
+    tbl.style.minWidth = totalW + 'px';
+  }
 }
 
 function updateCounts() {
@@ -2921,7 +2960,7 @@ function autoAssignRun() {
     });
   }
 
-  /* 人数が足りない枠が残っていたら、全体の入れ替え探索で埋め直す */
+  /* 人数不足の修復と、半日勤務が分散しないように終日へまとめる調整（常に実行） */
   (function(){
     let shortNow = 0;
     for (let d=1; d<=days; d++) {
@@ -2931,7 +2970,6 @@ function autoAssignRun() {
         if (idxsAll.filter(function(si){ return isFirm(dat,si,d,h); }).length < req) shortNow++;
       });
     }
-    if (shortNow === 0) return;
     const P = {
       days: days, req: req, dayMax: DAY_MAX, n: staffList.length, hols: dat.hols,
       isSun: isSun,
@@ -2943,6 +2981,7 @@ function autoAssignRun() {
       strictRun: function(si){ return !!noRun[staffList[si]]; },
       /* その日の希望が午前・午後どちらも○か（割り当て前の状態で判定。終日で入れる優先の目安） */
       bothWish: function(si,d){ const b = dat.beforeAssign; return !!(b && b.shifts && b.shifts[si] && b.shifts[si][d] && b.shifts[si][d][0]===2 && b.shifts[si][d][1]===2); },
+      wishHalf: function(si,d,h){ const b = dat.beforeAssign; return !!(b && b.shifts && b.shifts[si] && b.shifts[si][d] && b.shifts[si][d][h]===2); },
       targetHalves: function(si){ const t = targetOf(si); return t === 999 ? null : t*2; },
       targetCapHalves: function(si){ const c = targetCap(si); return isFinite(c) ? c*2 : Infinity; },
       locked: function(si){ return isOneDayPerson(si) && !autoOneDay[si]; },
@@ -2950,11 +2989,11 @@ function autoAssignRun() {
       fixedDay: function(si,d){ return isFixedDay(si,d); },
       fixedMask: function(si,d){ const fh = fixedHalves(dat, si, d); return (fh[0]?1:0) | (fh[1]?2:0); },
       firm: function(si,d,h){ return isFirm(dat,si,d,h); },
-      /* その半日に入れるか（×は不可。上限なしの人は空欄のみ、上限ありの人は○・空欄・◐） */
+      /* その半日に入れるか（×は不可） */
       okHalf: function(si,d,h){
         if (isFirm(dat,si,d,h)) return true;
         const v = slotVal(si,d,h);
-        return paceInfo(si).cap ? v!==1 : v===0;
+        return v !== 1;
       },
       isCandOrFirm: function(si,d,h){ return dat.shifts[si][d][h]===2; },
       halfFlag: function(si,d){ return !!(dat.half[si] && dat.half[si][d]); },
@@ -3141,8 +3180,15 @@ function localSearchRepair(P) {
     }
     for (let d=1; d<=days; d++) {
       const s = P.hols[d] ? 0 : row[d];
-      /* 午前・午後どちらも○希望の日を半日だけにしたら少し損（終日で入れる形を優先させるため） */
-      if ((s===1 || s===2) && P.bothWish(si, d)) c += 4;
+      /* 半日勤務を減らしてなるべく終日勤務にまとめる（目標日数の重み20より小さい10にして目標は崩さない） */
+      if ((s===1 || s===2) && !P.isSun(d) && !P.noHalf(si)) {
+        c += 10;
+        if (P.bothWish(si, d)) c += 2;
+      }
+      /* もともと○希望を出していた枠から外れていたら少し損（○希望を優先） */
+      if (P.wishHalf) {
+        for (let h=0; h<2; h++) { if (P.wishHalf(si, d, h) && !((s>>h)&1)) c += 1; }
+      }
       if (s) {
         const hh = (s===3) ? 2 : 1;
         const hcount = P.isSun(d) ? 2 : hh;
@@ -3161,7 +3207,7 @@ function localSearchRepair(P) {
     const tc = P.targetCapHalves(si);
     if (halves > tc) c += HARD*(halves-tc);
     const th = P.targetHalves(si);
-    if (th !== null) c += 8*Math.abs(halves - th);
+    if (th !== null) c += 20*Math.abs(halves - th);
     if (cap) for (let k=0; k<per.length; k++) if (per[k] > cap) c += HARD*(per[k]-cap);
     return c;
   }
@@ -3201,9 +3247,9 @@ function localSearchRepair(P) {
     let u=0; for (const d of open) for (let h=0;h<2;h++){ if(!slotNeed(d,h)) continue; if (cnt[d][h]<req) u+=req-cnt[d][h]; } return u;
   }
   const startShort = shortage();
-  if (startShort === 0) return null;
   const startRows = cur.map(function(r){ return Int8Array.from(r); });
-  let best = null, bestShort = startShort;
+  let best = (startShort === 0) ? cur.map(function(r){ return Int8Array.from(r); }) : null;
+  let bestShort = startShort;
 
   /* 動かせるマス（選べる状態が2つ以上あるもの） */
   const cells = [];
@@ -3264,10 +3310,23 @@ function localSearchRepair(P) {
           if (canBe(si,d1,s2)) return [[si,d1,s2],[si,d2,s1]];
         }
       }
-    } else if (r < 0.75) {
+    } else if (r < 0.72) {
       /* 同じ日の2人を入れ替える */
       const d = open[(rnd()*open.length)|0], a = (rnd()*n)|0, b2 = (rnd()*n)|0;
       if (a !== b2 && cur[a][d] !== cur[b2][d] && canBe(a,d,cur[b2][d]) && canBe(b2,d,cur[a][d])) return [[a,d,cur[b2][d]],[b2,d,cur[a][d]]];
+    } else if (r < 0.86) {
+      /* 同じ人の半日2回を終日1回にまとめる（d1の半日を外し、d2の半日を終日にする） */
+      const si = (rnd()*n)|0;
+      if (!locked[si] && !P.noHalf(si)) {
+        const halfDays = [];
+        for (const dd of open) { const s = cur[si][dd]; if (!P.isSun(dd) && (s===1 || s===2)) halfDays.push(dd); }
+        if (halfDays.length >= 2) {
+          const i1 = (rnd()*halfDays.length)|0;
+          let i2 = (rnd()*(halfDays.length-1))|0; if (i2 >= i1) i2++;
+          const d1 = halfDays[i1], d2 = halfDays[i2];
+          if (canBe(si, d1, 0) && canBe(si, d2, 3)) return [[si, d1, 0], [si, d2, 3]];
+        }
+      }
     }
     const cell = cells[(rnd()*cells.length)|0], st = states[cell[0]][cell[1]];
     const nw = st[(rnd()*st.length)|0];
@@ -3429,16 +3488,30 @@ function localSearchRepair(P) {
       } else r.undo();
     }
   }
-  /* 仕上げ：不足が0になった後も、目標日数との差を詰める（不足0・違反0を保ったまま） */
+  /* 仕上げ：不足数を増やさず・ルール違反0のまま、目標日数との差と半日分散を最小化する */
   if (best) {
     for (let si=0; si<n; si++) cur[si].set(best[si]);
     recomputeCounts(true);
-    const ITER2 = (bestShort === 0) ? 250000 : 80000; /* 不足が残る場合は目標の微調整を軽めにして待ち時間を抑える */
+    function totalTargetDiff(rows) {
+      let td = 0;
+      for (let si=0; si<n; si++) {
+        const th = P.targetHalves(si);
+        if (th === null) continue;
+        let halves = 0;
+        for (const d of open) { const s = rows[si][d]; if (s) halves += (P.isSun(d) || s===3) ? 2 : 1; }
+        td += Math.abs(halves - th);
+      }
+      return td;
+    }
+    const baseTargetDiff = totalTargetDiff(best);
+    const baseViol = violations(best);
+    const ITER2 = (bestShort === 0) ? 250000 : 80000;
+    const t2 = Date.now(), LIMIT2_MS = 2200;
     let E = 0;
     for (let si=0; si<n; si++) E += pcost[si];
     for (const d of open) E += slotCost(d);
     let bestE = E;
-    for (let it=0; it<ITER2; it++) {
+    for (let it=0; it<ITER2 && (it % 2000 !== 0 || Date.now()-t2 < LIMIT2_MS); it++) {
       const T = 12 * Math.pow(0.02, it/ITER2) + 0.2;
       const mv = nextMoves(false); if (!mv) continue;
       const r = applyMoves(mv);
@@ -3446,7 +3519,7 @@ function localSearchRepair(P) {
         r.commit(); E += r.delta;
         if (E < bestE - 1e-9 && shortage() <= bestShort) {
           const rows2 = cur.map(function(x){ return Int8Array.from(x); });
-          if (violations(rows2) === 0) { bestE = E; best = rows2; }
+          if (violations(rows2) <= baseViol && totalTargetDiff(rows2) <= baseTargetDiff) { bestE = E; best = rows2; }
         }
       } else r.undo();
     }
