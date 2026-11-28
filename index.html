@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.89</title>
+<title>シフト希望表 ver.6.91</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -311,7 +311,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.89</h1>
+  <h1>シフト希望表 ver.6.91</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -2714,6 +2714,36 @@ function autoAssignRun() {
     return Math.max(0,left);
   }
 
+  /* 今後この人が入れる残りの有効コマ数と、目標までに必要なコマ数の差（余裕）を概算する */
+  function personSlack(si) {
+    const t = targetOf(si);
+    if (t === 999) return 999;
+    const needH = Math.max(0, Math.round((t - assignedDays[si]) * 2));
+    if (needH === 0) return 999;
+    let availH = 0;
+    const pi = paceInfo(si);
+    if (pi.cap) {
+      const keys = pi.unit === 'month' ? ['m'] : Array.from({length:weekCount}, function(_,i){ return 'w'+i; });
+      keys.forEach(function(k){
+        const used = paceUse[si][k] ? paceUse[si][k].halves : 0;
+        const leftCap = Math.max(0, pi.cap - used);
+        let openInPeriod = 0;
+        for (let dd=1; dd<=days; dd++) {
+          if (dat.hols[dd] || periodKey(pi,y,m,dd) !== k) continue;
+          if (isSun(dd)) { if (!isFirm(dat,si,dd,0) && slotVal(si,dd,0)!==1) openInPeriod += 2; }
+          else { [0,1].forEach(function(hh){ if (!isFirm(dat,si,dd,hh) && slotVal(si,dd,hh)!==1) openInPeriod++; }); }
+        }
+        availH += Math.min(leftCap, openInPeriod);
+      });
+    } else {
+      for (let dd=1; dd<=days; dd++) {
+        if (dat.hols[dd]) continue;
+        if (isSun(dd)) { if (!isFirm(dat,si,dd,0) && slotVal(si,dd,0)===0) availH += 2; }
+        else { [0,1].forEach(function(hh){ if (!isFirm(dat,si,dd,hh) && slotVal(si,dd,hh)===0) availH++; }); }
+      }
+    }
+    return availH - needH;
+  }
   /* 「残り必要日数」＝目標－現在の確定日数。負の値は「すでに目標超過」を意味する。
      出勤ペースに上限がある人は、上限で残れる日数を超えないようにする。 */
   function remaining(si){ return Math.min(targetOf(si) - assignedDays[si], capLeft(si)); }
@@ -2844,6 +2874,8 @@ function autoAssignRun() {
       const fa = (slotVal(a,d,0)===2 && slotVal(a,d,1)===2)?1:0, fb = (slotVal(b,d,0)===2 && slotVal(b,d,1)===2)?1:0;
       if (fa!==fb) return fb - fa;
       if (useRemainingSort) {
+        const sa = personSlack(a), sb = personSlack(b);
+        if (sa !== sb) return sa - sb;
         const diff = remaining(b) - remaining(a);
         if (diff!==0) return diff;
       }
@@ -3322,7 +3354,7 @@ function localSearchRepair(P) {
     const tc = P.targetCapHalves(si);
     if (halves > tc) c += HARD*(halves-tc);
     const th = P.targetHalves(si);
-    if (th !== null) c += (consolidatePhase ? 30 : 8)*Math.abs(halves - th);
+    if (th !== null) c += (consolidatePhase ? 30 : 50)*Math.abs(halves - th);
     if (cap) for (let k=0; k<per.length; k++) if (per[k] > cap) c += HARD*(per[k]-cap);
     if (consolidatePhase) for (let k=0; k<weekN; k++) c += perW[k]*perW[k];
     return c;
