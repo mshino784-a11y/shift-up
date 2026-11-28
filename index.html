@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>シフト希望表 ver.6.86</title>
+<title>シフト希望表 ver.6.87</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;background:#e8eaf0;color:#222;min-height:100vh;font-size:13px;}
@@ -311,7 +311,7 @@ body.home-mode .hdr-ym{display:none;}
 <body>
 
 <header>
-  <h1>シフト希望表 ver.6.86</h1>
+  <h1>シフト希望表 ver.6.87</h1>
   <div class="hdr-right">
     <button class="btn btn-dark" id="homeNavBtn" onclick="goHome()">ホーム</button>
     <span class="hdr-ym"><select id="yearSel"></select>年
@@ -2645,11 +2645,7 @@ function autoAssignRun() {
     while (end < days && dayIsWork(si, end+1)) end++;
     const len = end - start + 1;
     if (strictRun(si)) {
-      /* 連勤制限の人：3日以上の連勤は不可。2日連続は両日とも終日のとき不可。さらにどちらも終日なら中1日（2日空け未満）も不可 */
-      if (dFull) {
-        if (d - 2 >= 1 && dayIsFull(si, d - 2)) return false;
-        if (d + 2 <= days && dayIsFull(si, d + 2)) return false;
-      }
+      /* 連勤制限の人：3日以上の連勤は不可。2日連続は両日とも終日のときだけ不可（半日が1日でもあればよい） */
       if (len <= 1) return true;
       if (len >= 3) return false;
       for (let x = start; x <= end; x++) {
@@ -3318,7 +3314,7 @@ function localSearchRepair(P) {
     if (P.strictRun(si)) {
       for (let d=1; d<=days-2; d++) {
         const s0 = P.hols[d]?0:row[d], s2 = P.hols[d+2]?0:row[d+2];
-        if (s0===3 && s2===3 && !(P.fixedDay(si,d) && P.fixedDay(si,d+2))) c += HARD;
+        if (s0===3 && s2===3 && !(P.fixedDay(si,d) && P.fixedDay(si,d+2))) c += 45;
       }
     }
     if (sunN > 2) c += HARD*(sunN-2);
@@ -3348,12 +3344,6 @@ function localSearchRepair(P) {
       } else { if (runBad()) v++; run=0; runFull=false; runAllFull=true; runAllFx=true; }
     }
     if (runBad()) v++;
-    if (P.strictRun(si)) {
-      for (let d=1; d<=days-2; d++) {
-        const s0 = P.hols[d]?0:row[d], s2 = P.hols[d+2]?0:row[d+2];
-        if (s0===3 && s2===3 && !(P.fixedDay(si,d) && P.fixedDay(si,d+2))) v++;
-      }
-    }
     if (sunN>2) v++;
     if (oneC[si]) { let wd=0; for (let d=1; d<=days; d++) if (!P.hols[d] && row[d]) wd++; if (wd > 1) v++; }
     /* 確定分は本人の指定。自動で入れた分が、確定分を差し引いた上限を超えたら違反 */
